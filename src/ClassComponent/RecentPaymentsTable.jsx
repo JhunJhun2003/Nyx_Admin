@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import { Dialog } from "@mui/material";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
@@ -14,257 +14,9 @@ const formatDateToDMY = (dateStr) => {
   return `${day}-${month}-${year}`;
 };
 
-const ReceiptModal = ({ selectedTransaction, isOpen, onClose, onDownload, onPrint }) => {
-  if (!selectedTransaction) return null;
-
-  return (
-    <Dialog open={isOpen} onClose={onClose} maxWidth="xs" fullWidth>
-      <div
-        style={{
-          background: "#fff",
-          borderRadius: "12px",
-          padding: "24px",
-          position: "relative",
-          fontFamily: "Inter, sans-serif",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginBottom: "8px",
-          }}
-        >
-          <button
-            onClick={onClose}
-            style={{
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              color: "#6b7280",
-            }}
-          >
-            <CloseIcon fontSize="small" />
-          </button>
-        </div>
-
-        <div id="invoice-modal-content" style={{ padding: "10px" }}>
-          <div style={{ textAlign: "center", marginBottom: "20px" }}>
-            <h1
-              style={{
-                fontSize: "20px",
-                fontWeight: 700,
-                margin: "0 0 4px 0",
-                color: "#111827",
-              }}
-            >
-              Registration Successfully!
-            </h1>
-            <p style={{ fontSize: "13px", color: "#6b7280", margin: 0 }}>
-              Thank you for shopping with us
-            </p>
-          </div>
-
-          <div
-            style={{
-              borderBottom: "1px dashed #e5e7eb",
-              marginBottom: "16px",
-            }}
-          ></div>
-
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "12px",
-              fontSize: "14px",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "#6b7280", fontWeight: 500 }}>
-                REGISTRATION ID
-              </span>
-              <span style={{ fontWeight: 700, color: "#111827" }}>
-                {selectedTransaction.id || "—"}
-              </span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "#6b7280", fontWeight: 500 }}>DATE</span>
-              <span style={{ color: "#111827" }}>
-                {formatDateToDMY(selectedTransaction.date)}
-              </span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "#6b7280", fontWeight: 500 }}>PAYMENT</span>
-              <span style={{ color: "#111827", textTransform: "uppercase" }}>
-                {selectedTransaction.paymentMethod}
-              </span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "#6b7280", fontWeight: 500 }}>TIME</span>
-              <span style={{ color: "#111827" }}>
-                {selectedTransaction.time || "12:25 AM"}
-              </span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "#6b7280", fontWeight: 500 }}>
-                STUDENT NAME
-              </span>
-              <span style={{ color: "#111827", fontWeight: 500 }}>
-                {selectedTransaction.studentName}
-              </span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "#6b7280", fontWeight: 500 }}>
-                TRAINING NAME
-              </span>
-              <span style={{ color: "#2563eb", fontWeight: 600 }}>
-                {selectedTransaction.trainingName}
-              </span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "#6b7280", fontWeight: 500 }}>
-                TRAINING LEVEL
-              </span>
-              <span style={{ color: "#2563eb", fontWeight: 600 }}>
-                {selectedTransaction.className || "Beginner Class"}
-              </span>
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: "8px",
-                paddingTop: "8px",
-                borderTop: "1px solid #f3f4f6",
-              }}
-            >
-              <span style={{ color: "#111827", fontWeight: 700 }}>AMOUNT</span>
-              <span
-                style={{
-                  fontSize: "16px",
-                  fontWeight: 700,
-                  color: "#111827",
-                }}
-              >
-                {selectedTransaction.amount}
-              </span>
-            </div>
-
-            <div
-              style={{
-                borderBottom: "1px dashed #e5e7eb",
-                margin: "16px 0",
-              }}
-            ></div>
-
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "6px",
-              }}
-            >
-              <span
-                style={{
-                  color: "#6b7280",
-                  fontWeight: 500,
-                  fontSize: "12px",
-                }}
-              >
-                PAYMENT PROOF IMAGE
-              </span>
-              {selectedTransaction.proof ? (
-                <div
-                  style={{
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "6px",
-                    overflow: "hidden",
-                    background: "#f9fafb",
-                  }}
-                >
-                  <img
-                    src={selectedTransaction.proof}
-                    alt="View Modal Proof"
-                    style={{
-                      width: "100%",
-                      maxHeight: "180px",
-                      objectFit: "contain",
-                      display: "block",
-                    }}
-                  />
-                </div>
-              ) : (
-                <span style={{ color: "#9ca3af" }}>—</span>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div
-          className="modal-actions-hide-on-print"
-          style={{ display: "flex", gap: "8px", marginTop: "24px" }}
-        >
-          {selectedTransaction.proof && (
-            <button
-              onClick={onDownload}
-              style={{
-                background: "#f3f4f6",
-                border: "1px solid #d1d5db",
-                borderRadius: "6px",
-                padding: "8px",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              title="Download Payment Proof"
-            >
-              <FileDownloadIcon fontSize="small" />
-            </button>
-          )}
-          <button
-            onClick={onPrint}
-            style={{
-              flex: 1,
-              background: "#2563eb",
-              color: "#fff",
-              border: "none",
-              borderRadius: "6px",
-              fontWeight: 600,
-              fontSize: "14px",
-              cursor: "pointer",
-            }}
-          >
-            Print
-          </button>
-          <button
-            onClick={onClose}
-            style={{
-              background: "#fff",
-              border: "1px solid #d1d5db",
-              color: "#4b5563",
-              borderRadius: "6px",
-              padding: "8px 16px",
-              fontWeight: 500,
-              fontSize: "14px",
-              cursor: "pointer",
-            }}
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </Dialog>
-  );
-};
-
 export default function RecentPaymentsTable({ 
-  transactions, 
   paymentMode, 
-  onPaymentModeChange,
-  onExport 
+  onPaymentModeChange 
 }) {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -272,8 +24,54 @@ export default function RecentPaymentsTable({
   const [endDate, setEndDate] = useState("");
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const itemsPerPage = 5;
+
+  // Fetch data from API
+  const fetchTrainingOverview = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch(
+        "http://38.60.216.25:5000/api/trainingoverview/training_overview"
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch training overview data");
+      }
+      const jsonResult = await response.json();
+      
+      if (jsonResult.success && jsonResult.data) {
+        // Transform API data to match table structure
+        const transformedData = jsonResult.data.map((item) => ({
+          id: `#T-${item.id}`,
+          studentName: item.name,
+          trainingName: item.course_name,
+          className: item.title_level,
+          amount: `${item.price.toLocaleString()} Ks`,
+          date: item.date,
+          paymentMethod: item.payment_method,
+          proof: item.payment_image_url,
+          mode: item.source || "mobile", // Use source from API (mobile/admin)
+          originalData: item // Keep original data if needed
+        }));
+        setTransactions(transformedData);
+      } else {
+        throw new Error("No data found");
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error("Error fetching training overview:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTrainingOverview();
+  }, []);
 
   const filteredTransactions = transactions.filter((t) => {
     if (t.mode !== paymentMode) return false;
@@ -318,6 +116,76 @@ export default function RecentPaymentsTable({
   const handlePrintReceipt = () => {
     window.print();
   };
+
+  const handleExportToExcel = () => {
+    if (filteredTransactions.length === 0) {
+      alert("Export ထုတ်ရန် ဒေတာ မရှိသေးပါ!");
+      return;
+    }
+
+    const excelData = filteredTransactions.map((t) => ({
+      "STUDENT ID": t.id,
+      "STUDENT NAME": t.studentName,
+      "TRAINING NAME": t.trainingName,
+      "CLASS NAME": t.className,
+      AMOUNT: t.amount,
+      DATE: t.date,
+      "PAYMENT METHOD": t.paymentMethod,
+      "PAYMENT PROOF": t.proof,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Payments");
+    XLSX.writeFile(workbook, "filtered_training_payments.xlsx");
+  };
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          background: "#fff",
+          border: "1px solid #e5e7eb",
+          borderRadius: "12px",
+          padding: "24px",
+          textAlign: "center",
+        }}
+      >
+        <div className="st-spinner" style={{ margin: "20px auto" }}></div>
+        <p style={{ color: "#6b7280" }}>Loading training payments data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div
+        style={{
+          background: "#fff",
+          border: "1px solid #e5e7eb",
+          borderRadius: "12px",
+          padding: "24px",
+          textAlign: "center",
+        }}
+      >
+        <p style={{ color: "#ef4444" }}>Error: {error}</p>
+        <button
+          onClick={fetchTrainingOverview}
+          style={{
+            marginTop: "16px",
+            padding: "8px 16px",
+            background: "#1e293b",
+            color: "#fff",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+          }}
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -378,25 +246,13 @@ export default function RecentPaymentsTable({
 
           <div style={{ display: "flex", gap: "8px" }}>
             <button
-              onClick={() => onPaymentModeChange("Local")}
-              style={{
-                background: paymentMode === "Local" ? "#1e293b" : "#fff",
-                color: paymentMode === "Local" ? "#fff" : "#374151",
-                border: "1px solid #e5e7eb",
-                borderRadius: "6px",
-                padding: "8px 16px",
-                fontWeight: 600,
-                fontSize: "14px",
-                cursor: "pointer",
+              onClick={() => {
+                onPaymentModeChange("mobile");
+                setCurrentPage(1);
               }}
-            >
-              Local
-            </button>
-            <button
-              onClick={() => onPaymentModeChange("Mobile")}
               style={{
-                background: paymentMode === "Mobile" ? "#1e293b" : "#fff",
-                color: paymentMode === "Mobile" ? "#fff" : "#374151",
+                background: paymentMode === "mobile" ? "#1e293b" : "#fff",
+                color: paymentMode === "mobile" ? "#fff" : "#374151",
                 border: "1px solid #e5e7eb",
                 borderRadius: "6px",
                 padding: "8px 16px",
@@ -407,10 +263,28 @@ export default function RecentPaymentsTable({
             >
               Mobile
             </button>
+            <button
+              onClick={() => {
+                onPaymentModeChange("admin");
+                setCurrentPage(1);
+              }}
+              style={{
+                background: paymentMode === "admin" ? "#1e293b" : "#fff",
+                color: paymentMode === "admin" ? "#fff" : "#374151",
+                border: "1px solid #e5e7eb",
+                borderRadius: "6px",
+                padding: "8px 16px",
+                fontWeight: 600,
+                fontSize: "14px",
+                cursor: "pointer",
+              }}
+            >
+              Admin
+            </button>
           </div>
 
           <button
-            onClick={onExport}
+            onClick={handleExportToExcel}
             style={{
               background: "#1e293b",
               color: "#fff",
@@ -431,6 +305,7 @@ export default function RecentPaymentsTable({
         </div>
       </div>
 
+      {/* Date Filter Row for Table */}
       <div
         style={{
           display: "flex",
@@ -469,6 +344,7 @@ export default function RecentPaymentsTable({
         />
       </div>
 
+      {/* Table Section */}
       <div style={{ overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
@@ -572,6 +448,8 @@ export default function RecentPaymentsTable({
                 >
                   {t.paymentMethod}
                 </td>
+
+                {/* Payment Proof Image */}
                 <td style={{ padding: "14px 12px" }}>
                   <img
                     src={t.proof}
@@ -593,6 +471,8 @@ export default function RecentPaymentsTable({
                     }}
                   />
                 </td>
+
+                {/* View Button */}
                 <td style={{ padding: "14px 12px" }}>
                   <button
                     onClick={() => {
@@ -644,14 +524,289 @@ export default function RecentPaymentsTable({
         </table>
       </div>
 
-      <ReceiptModal
-        selectedTransaction={selectedTransaction}
-        isOpen={isModalOpen && Boolean(selectedTransaction)}
+      {/* Receipt Dialog Modal Box */}
+      <Dialog
+        open={isModalOpen && Boolean(selectedTransaction)}
         onClose={() => setIsModalOpen(false)}
-        onDownload={handleDownloadPNG}
-        onPrint={handlePrintReceipt}
-      />
+        maxWidth="xs"
+        fullWidth
+      >
+        {selectedTransaction && (
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: "12px",
+              padding: "24px",
+              position: "relative",
+              fontFamily: "Inter, sans-serif",
+            }}
+          >
+            {/* Top Right Close Button */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginBottom: "8px",
+              }}
+            >
+              <button
+                onClick={() => setIsModalOpen(false)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "#6b7280",
+                }}
+              >
+                <CloseIcon fontSize="small" />
+              </button>
+            </div>
 
+            {/* Printable Section */}
+            <div id="invoice-modal-content" style={{ padding: "10px" }}>
+              <div style={{ textAlign: "center", marginBottom: "20px" }}>
+                <h1
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: 700,
+                    margin: "0 0 4px 0",
+                    color: "#111827",
+                  }}
+                >
+                  Registration Successfully!
+                </h1>
+                <p style={{ fontSize: "13px", color: "#6b7280", margin: 0 }}>
+                  Thank you for shopping with us
+                </p>
+              </div>
+
+              <div
+                style={{
+                  borderBottom: "1px dashed #e5e7eb",
+                  marginBottom: "16px",
+                }}
+              ></div>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "12px",
+                  fontSize: "14px",
+                }}
+              >
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                    REGISTRATION ID
+                  </span>
+                  <span style={{ fontWeight: 700, color: "#111827" }}>
+                    {selectedTransaction.id || "—"}
+                  </span>
+                </div>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                    DATE
+                  </span>
+                  <span style={{ color: "#111827" }}>
+                    {formatDateToDMY(selectedTransaction.date)}
+                  </span>
+                </div>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                    PAYMENT
+                  </span>
+                  <span
+                    style={{ color: "#111827", textTransform: "uppercase" }}
+                  >
+                    {selectedTransaction.paymentMethod}
+                  </span>
+                </div>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                    TIME
+                  </span>
+                  <span style={{ color: "#111827" }}>
+                    {selectedTransaction.time || "12:25 AM"}
+                  </span>
+                </div>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                    STUDENT NAME
+                  </span>
+                  <span style={{ color: "#111827", fontWeight: 500 }}>
+                    {selectedTransaction.studentName}
+                  </span>
+                </div>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                    TRAINING NAME
+                  </span>
+                  <span style={{ color: "#2563eb", fontWeight: 600 }}>
+                    {selectedTransaction.trainingName}
+                  </span>
+                </div>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                    TRAINING LEVEL
+                  </span>
+                  <span style={{ color: "#2563eb", fontWeight: 600 }}>
+                    {selectedTransaction.className || "Beginner Class"}
+                  </span>
+                </div>
+
+                {/* Amount Section */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginTop: "8px",
+                    paddingTop: "8px",
+                    borderTop: "1px solid #f3f4f6",
+                  }}
+                >
+                  <span style={{ color: "#111827", fontWeight: 700 }}>
+                    AMOUNT
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "16px",
+                      fontWeight: 700,
+                      color: "#111827",
+                    }}
+                  >
+                    {selectedTransaction.amount}
+                  </span>
+                </div>
+
+                <div
+                  style={{
+                    borderBottom: "1px dashed #e5e7eb",
+                    margin: "16px 0",
+                  }}
+                ></div>
+
+                {/* Payment Proof Image Section */}
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "6px",
+                  }}
+                >
+                  <span
+                    style={{
+                      color: "#6b7280",
+                      fontWeight: 500,
+                      fontSize: "12px",
+                    }}
+                  >
+                    PAYMENT PROOF IMAGE
+                  </span>
+                  {selectedTransaction.proof ? (
+                    <div
+                      style={{
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "6px",
+                        overflow: "hidden",
+                        background: "#f9fafb",
+                      }}
+                    >
+                      <img
+                        src={selectedTransaction.proof}
+                        alt="View Modal Proof"
+                        style={{
+                          width: "100%",
+                          maxHeight: "180px",
+                          objectFit: "contain",
+                          display: "block",
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <span style={{ color: "#9ca3af" }}>—</span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Actions Footer */}
+            <div
+              className="modal-actions-hide-on-print"
+              style={{ display: "flex", gap: "8px", marginTop: "24px" }}
+            >
+              {/* Download Button */}
+              {selectedTransaction.proof && (
+                <button
+                  onClick={handleDownloadPNG}
+                  style={{
+                    background: "#f3f4f6",
+                    border: "1px solid #d1d5db",
+                    borderRadius: "6px",
+                    padding: "8px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  title="Download Payment Proof"
+                >
+                  <FileDownloadIcon fontSize="small" />
+                </button>
+              )}
+
+              {/* Print Button */}
+              <button
+                onClick={handlePrintReceipt}
+                style={{
+                  flex: 1,
+                  background: "#2563eb",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "6px",
+                  fontWeight: 600,
+                  fontSize: "14px",
+                  cursor: "pointer",
+                }}
+              >
+                Print
+              </button>
+
+              {/* Cancel Button */}
+              <button
+                onClick={() => setIsModalOpen(false)}
+                style={{
+                  background: "#fff",
+                  border: "1px solid #d1d5db",
+                  color: "#4b5563",
+                  borderRadius: "6px",
+                  padding: "8px 16px",
+                  fontWeight: 500,
+                  fontSize: "14px",
+                  cursor: "pointer",
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </Dialog>
+
+      {/* Pagination Section */}
       <div
         style={{
           display: "flex",
@@ -667,6 +822,7 @@ export default function RecentPaymentsTable({
           {filteredTransactions.length} transactions
         </span>
         <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+          {/* Previous Button */}
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
@@ -688,6 +844,7 @@ export default function RecentPaymentsTable({
             ‹
           </button>
 
+          {/* Dynamic Page Buttons */}
           {Array.from({ length: totalPages }).map((_, index) => {
             const pageNum = index + 1;
             return (
@@ -714,6 +871,7 @@ export default function RecentPaymentsTable({
             );
           })}
 
+          {/* Next Button */}
           <button
             onClick={() =>
               setCurrentPage((prev) => Math.min(prev + 1, totalPages))
