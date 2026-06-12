@@ -11,8 +11,9 @@ import {
 import DollarIcon from "@mui/icons-material/Paid";
 import ProductIcon from "@mui/icons-material/Widgets";
 import CustomerIcon from "@mui/icons-material/Groups";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import Shoe from "./images/shoe.png";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Context } from "./Hooks/context";
 import CustomerLoading from "./Components/loadingcustomer";
 import Swal from "sweetalert2";
@@ -22,10 +23,99 @@ import { useTableFooter } from "./Hooks/tablefooter";
 function PosOverview() {
   const { backcolor } = useContext(Context);
   const { MOrders, GetMobileOrders } = useGetOrder();
+  const [overviewData, setOverviewData] = useState(null);
+  const [chartData, setChartData] = useState([]);
+  const [popularProduct, setPopularProduct] = useState(null);
+  const [topCustomer, setTopCustomer] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
   const Font_color = Boolean(backcolor == "#1A1C1E");
   const FontStyle = {
     color: Font_color ? "#E1E1E1" : "#0D1B2A",
   };
+
+  // All months template
+  const allMonths = [
+    { name: "Jan", month_num: 1, sales: 0, year: new Date().getFullYear() },
+    { name: "Feb", month_num: 2, sales: 0, year: new Date().getFullYear() },
+    { name: "Mar", month_num: 3, sales: 0, year: new Date().getFullYear() },
+    { name: "Apr", month_num: 4, sales: 0, year: new Date().getFullYear() },
+    { name: "May", month_num: 5, sales: 0, year: new Date().getFullYear() },
+    { name: "Jun", month_num: 6, sales: 0, year: new Date().getFullYear() },
+    { name: "Jul", month_num: 7, sales: 0, year: new Date().getFullYear() },
+    { name: "Aug", month_num: 8, sales: 0, year: new Date().getFullYear() },
+    { name: "Sep", month_num: 9, sales: 0, year: new Date().getFullYear() },
+    { name: "Oct", month_num: 10, sales: 0, year: new Date().getFullYear() },
+    { name: "Nov", month_num: 11, sales: 0, year: new Date().getFullYear() },
+    { name: "Dec", month_num: 12, sales: 0, year: new Date().getFullYear() },
+  ];
+
+  // Fetch POS Overview Data
+  const fetchPosOverview = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch(
+        "http://38.60.216.25:5000/api/posoverview/showposoverview"
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch POS overview data");
+      }
+      const jsonResult = await response.json();
+      
+      if (jsonResult) {
+        setOverviewData(jsonResult);
+        
+        // Create a map of month_num to sale data
+        const salesMap = new Map();
+        jsonResult.saleTrend.forEach((item) => {
+          salesMap.set(item.month_num, {
+            name: item.month_name,
+            sales: parseInt(item.total_amount),
+            month_num: item.month_num,
+            year: item.year
+          });
+        });
+        
+        // Merge API data with all months template
+        const completeData = allMonths.map(month => {
+          const apiData = salesMap.get(month.month_num);
+          if (apiData) {
+            return {
+              name: month.name,
+              month_num: month.month_num,
+              sales: apiData.sales,
+              year: apiData.year
+            };
+          }
+          return month;
+        });
+        
+        setChartData(completeData);
+        
+        // Set popular product data
+        if (jsonResult.popular_product_data) {
+          setPopularProduct(jsonResult.popular_product_data);
+        }
+        
+        // Set top customer data
+        if (jsonResult.top_customer_data) {
+          setTopCustomer(jsonResult.top_customer_data);
+        }
+      } else {
+        throw new Error("No data found");
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error("Error fetching POS overview:", err);
+      // Set all months with zero values as fallback
+      setChartData(allMonths);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   //for img preview
   const showImagePreview = (imageUrl) => {
     Swal.fire({
@@ -42,143 +132,242 @@ function PosOverview() {
 
   useEffect(() => {
     GetMobileOrders();
+    fetchPosOverview();
   }, []);
 
   const { TableFooterJsx, startnumber, endnumber } = useTableFooter(
     MOrders?.data,
   );
 
-  let data = [
-    { name: "Jan", sales: 3000 },
-    { name: "Feb", sales: 4000 },
-    { name: "Mar", sales: 5000 },
-    { name: "Apr", sales: 6000 },
-    { name: "May", sales: 7000 },
-    { name: "Jun", sales: 8000 },
-  ];
-
-  let headerdata = [
+  // Header data from API
+  const headerdata = overviewData ? [
     {
       title: "Total Revenue",
-      amount: "60000ks",
-      increasement: "11%",
-      compare: "from yesterday",
+      amount: `${overviewData.total_revenue?.toLocaleString() || 0} ks`,
+      icon: <DollarIcon style={{ fontSize: "24px", color: "#10b981" }} />
     },
     {
       title: "Total Order",
-      amount: "1200",
-      increasement: "-3%",
-      compare: "from yesterday",
+      amount: overviewData.total_order?.toString() || "0",
+      icon: <ShoppingBagIcon style={{ fontSize: "24px", color: "#3b82f6" }} />
     },
     {
       title: "Total Product",
-      amount: "55",
-      increasement: "+5",
-      compare: "New Products",
+      amount: overviewData.total_products?.toString() || "0",
+      icon: <ProductIcon style={{ fontSize: "24px", color: "#ec4899" }} />
     },
     {
       title: "Total Customers",
-      amount: "245",
-      increasement: "+12",
-      compare: "New Customers",
+      amount: overviewData.total_customer?.toString() || "0",
+      icon: <CustomerIcon style={{ fontSize: "24px", color: "#8b5cf6" }} />
     },
-  ];
+  ] : [];
+
+  // Find max sales for Y-axis domain
+  const maxSales = Math.max(...chartData.map(d => d.sales), 0);
+  const yAxisDomain = [0, Math.ceil(maxSales * 1.1)]; // Add 10% padding
+
+  if (loading) {
+    return (
+      <div className="posoverviewmain">
+        <div className="posheader">
+          <h1 style={FontStyle}>Point of Sale Overview Dashboard</h1>
+          <p style={FontStyle}>Welcome back. Here's today's shop overview</p>
+        </div>
+        <div style={{ textAlign: "center", padding: "50px" }}>
+          <div className="spinner"></div>
+          <p>Loading dashboard data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="posoverviewmain">
+        <div className="posheader">
+          <h1 style={FontStyle}>Point of Sale Overview Dashboard</h1>
+          <p style={FontStyle}>Welcome back. Here's today's shop overview</p>
+        </div>
+        <div style={{ textAlign: "center", padding: "50px", color: "#ef4444" }}>
+          <p>Error: {error}</p>
+          <button 
+            onClick={fetchPosOverview}
+            style={{
+              marginTop: "16px",
+              padding: "8px 16px",
+              background: "#1e293b",
+              color: "#fff",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer"
+            }}
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
       <div className="posoverviewmain">
         <div className="posheader">
           <h1 style={FontStyle}>Point of Sale Overview Dashboard</h1>
-          <p style={FontStyle}>Welcome back.Here's today's shop overview</p>
+          <p style={FontStyle}>Welcome back. Here's today's shop overview</p>
         </div>
+        
         <div className="posbody">
           {headerdata.map((item, index) => {
             return (
               <div className="posbodyheader" key={index}>
-                <p>{item.title}</p>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                  <p>{item.title}</p>
+                  {item.icon}
+                </div>
                 <h3>{item.amount}</h3>
                 <h5>
-                  <span>{item.increasement}</span>
-                  {item.compare}
+                  <span></span>
                 </h5>
               </div>
             );
           })}
         </div>
+        
         <div className="posbody2">
           <div className="poschart">
             <h2>Sale Statistics</h2>
             <div style={{ width: "100%", height: "270px" }}>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data}>
+                <LineChart data={chartData}>
                   <CartesianGrid
                     strokeDasharray="0"
                     vertical={false}
                     stroke="#ccc"
                   />
-                  <XAxis datakey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="sales" stroke="red" />
+                  <XAxis 
+                    dataKey="name" 
+                    tick={{ fontSize: 12 }}
+                    interval={0}
+                  />
+                  <YAxis 
+                    tickFormatter={(value) => value.toLocaleString()}
+                    domain={yAxisDomain}
+                  />
+                  <Tooltip 
+                    formatter={(value) => [`${value.toLocaleString()} ks`, "Sales"]}
+                    labelFormatter={(label) => `${label}`}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="sales" 
+                    stroke="#3b82f6" 
+                    strokeWidth={2}
+                    dot={{ r: 4, fill: "#3b82f6" }}
+                    activeDot={{ r: 6 }}
+                    connectNulls={true}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </div>
+          
           <div className="top">
+            {/* Popular Product Section */}
             <div
               className="topProduct"
               style={{ background: Font_color && "#E1E1E1" }}
             >
               <h2>Popular Product</h2>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  marginLeft: "1em",
-                }}
-              >
-                <img src={Shoe} alt="Product" />
+              {popularProduct ? (
                 <div
                   style={{
                     display: "flex",
-                    flexDirection: "column",
+                    alignItems: "center",
                     gap: "10px",
+                    marginLeft: "1em",
                   }}
                 >
-                  <p>Adidas Shoe</p>
-                  <p>25000ks</p>
+                  <img 
+                    src={popularProduct.popular_product_image || Shoe} 
+                    alt="Popular Product" 
+                    style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "8px" }}
+                    onError={(e) => {
+                      e.target.src = Shoe;
+                    }}
+                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
+                    }}
+                  >
+                    <p style={{ fontWeight: 600, margin: 0 }}>
+                      {popularProduct.popular_product_name || "No product"}
+                    </p>
+                    <p style={{ color: "#10b981", fontWeight: 600, margin: 0 }}>
+                      {popularProduct.popular_product_price?.toLocaleString() || "0"} ks
+                    </p>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div style={{ textAlign: "center", padding: "20px", color: "#9ca3af" }}>
+                  No popular product data
+                </div>
+              )}
             </div>
+
+            {/* Top Customer Section */}
             <div
               className="topProduct"
               style={{ background: Font_color && "#E1E1E1" }}
             >
-              <h2>Popular Product</h2>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  marginLeft: "1em",
-                }}
-              >
-                <img src={Shoe} alt="Product" />
+              <h2>Top Customer</h2>
+              {topCustomer ? (
                 <div
                   style={{
                     display: "flex",
-                    flexDirection: "column",
+                    alignItems: "center",
                     gap: "10px",
+                    marginLeft: "1em",
                   }}
                 >
-                  <p>Adidas Shoe</p>
-                  <p>25000ks</p>
+                  <img 
+                    src={topCustomer.top_customer_image || "https://via.placeholder.com/60"} 
+                    alt="Top Customer" 
+                    style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "50%" }}
+                    onError={(e) => {
+                      e.target.src = "https://via.placeholder.com/60";
+                    }}
+                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
+                    }}
+                  >
+                    <p style={{ fontWeight: 600, margin: 0 }}>
+                      {topCustomer.top_customer_name || "No customer"}
+                    </p>
+                    {topCustomer.top_customer_address && (
+                      <p style={{ fontSize: "12px", color: "#6b7280", margin: 0 }}>
+                        {topCustomer.top_customer_address}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div style={{ textAlign: "center", padding: "20px", color: "#9ca3af" }}>
+                  No top customer data
+                </div>
+              )}
             </div>
           </div>
         </div>
+
         <div className="posfooter1">
           <h2>Recent Order</h2>
           <div className="towarpthetable">
@@ -219,6 +408,7 @@ function PosOverview() {
                                   onClick={() =>
                                     showImagePreview(item.payment_proof)
                                   }
+                                  alt="Payment Proof"
                                 />
                               </td>
                               <td>
@@ -234,7 +424,7 @@ function PosOverview() {
                     ) : (
                       <tr>
                         <td
-                          colSpan="7"
+                          colSpan="8"
                           style={{
                             textAlign: "center",
                             padding: "20px",
@@ -265,4 +455,5 @@ function PosOverview() {
     </>
   );
 }
+
 export default PosOverview;
