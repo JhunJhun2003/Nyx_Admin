@@ -49,7 +49,7 @@ import ClassCustomer from "./Class/classcustomer";
 import ClassMobileBooking from "./ClassComponent/classmobilebooking";
 import ClassLoaclBooking from "./ClassComponent/classlocalbooking";
 import ClassProtectedRoute from "./Hooks/ClassProtectedRouted";
-import ClassTrainingOverview from "./ClassComponent/ClassTrainingOverview";
+import ClassTrainingOverview from "./ClassComponent/classtrainingoverview";
 import ClassRentalOverveiw from "./ClassComponent/classrentaloverview";
 import ClassCanteenOverview from "./ClassComponent/classcanteenoverview";
 import Courses from "./ClassComponent/courses";
