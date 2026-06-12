@@ -139,8 +139,14 @@ const StudentsTable = () => {
       try {
         setIsActionProcessing(true);
 
+        // Get the student's source from the filteredStudents data
+        const studentToDelete = filteredStudents.find(
+          (student) => student.id === studentId,
+        );
+        const studentSource = studentToDelete?.source ; // Default to "admin" if source not found
+
         const response = await fetch(
-          `http://38.60.216.25:5000/api/course/deletetrainingstudent/${studentId}`,
+          `http://38.60.216.25:5000/api/course/deletetrainingstudent/${studentId}/${studentSource}`,
           {
             method: "DELETE",
             headers: {
@@ -153,7 +159,7 @@ const StudentsTable = () => {
 
         if (response.ok && result.success) {
           alert("Student deleted successfully from database!");
-          await fetchAllStudentsData();
+          await fetchAllStudentsData(); // Refresh the data after deletion
         } else {
           alert(
             `Failed to delete student: ${result.message || "Server Error"}`,
@@ -354,7 +360,9 @@ const StudentsTable = () => {
                         </button>
                         <button
                           className="st-action-btn st-delete-btn"
-                          onClick={() => handleDeleteStudent(student.id)}
+                          onClick={() =>
+                            handleDeleteStudent(student.id, student.source)
+                          }
                           disabled={isActionProcessing}
                         >
                           <DeleteIcon style={{ fontSize: 16 }} />
@@ -414,170 +422,171 @@ const StudentsTable = () => {
       </div>
 
       {/* Student Profile Detail Modal */}
-{isModalOpen && selectedStudentMain && (
-  <div className="st-modal-overlay" onClick={handleCloseModal}>
-    <div
-      className="st-modal-content"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <div className="st-modal-header">
-        <h2 className="st-modal-title">Student Profile Detail</h2>
-        <button className="st-modal-close-btn" onClick={handleCloseModal}>
-          <CloseIcon style={{ fontSize: 20 }} />  
-        </button>
-      </div>
+      {isModalOpen && selectedStudentMain && (
+        <div className="st-modal-overlay" onClick={handleCloseModal}>
+          <div
+            className="st-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="st-modal-header">
+              <h2 className="st-modal-title">Student Profile Detail</h2>
+              <button className="st-modal-close-btn" onClick={handleCloseModal}>
+                <CloseIcon style={{ fontSize: 20 }} />
+              </button>
+            </div>
 
-      <div className="st-modal-body">
-        <div className="st-info-section-title">
-          <BadgeIcon style={{ fontSize: 18, color: "#4b5563" }} />
-          <span>STUDENT INFORMATION</span>
+            <div className="st-modal-body">
+              <div className="st-info-section-title">
+                <BadgeIcon style={{ fontSize: 18, color: "#4b5563" }} />
+                <span>STUDENT INFORMATION</span>
+              </div>
+
+              <div className="st-info-grid">
+                <div className="st-info-item">
+                  <label className="st-info-label">ID</label>
+                  <div className="st-info-value">
+                    {selectedStudentMain.id || "-"}
+                  </div>
+                </div>
+                <div className="st-info-item">
+                  <label className="st-info-label">NAME</label>
+                  <div className="st-info-value">
+                    {selectedStudentMain.name || "-"}
+                  </div>
+                </div>
+                <div className="st-info-item">
+                  <label className="st-info-label">GENDER</label>
+                  <div
+                    className="st-info-value"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    {selectedStudentMain.gender || "-"}
+                  </div>
+                </div>
+                <div className="st-info-item">
+                  <label className="st-info-label">AGE</label>
+                  <div className="st-info-value">
+                    {selectedStudentMain.age || "-"}
+                  </div>
+                </div>
+                <div className="st-info-item">
+                  <label className="st-info-label">PHONE</label>
+                  <div className="st-info-value">
+                    {selectedStudentMain.phone || "-"}
+                  </div>
+                </div>
+                <div className="st-info-item">
+                  <label className="st-info-label">EMAIL</label>
+                  <div className="st-info-value">
+                    {selectedStudentMain.email || "-"}
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="st-info-section-title"
+                style={{ marginTop: "24px" }}
+              >
+                <SchoolIcon style={{ fontSize: 18, color: "#4b5563" }} />
+                <span>COURSE TABLE</span>
+              </div>
+
+              {modalLoading ? (
+                <div className="st-loading-container">
+                  <div className="st-spinner"></div>
+                  <p className="st-loading-text">
+                    Loading course information... Please wait.
+                  </p>
+                </div>
+              ) : modalError ? (
+                <div className="st-error-text">
+                  {modalError}
+                  <p
+                    style={{
+                      fontSize: "12px",
+                      color: "#6b7280",
+                      marginTop: "4px",
+                    }}
+                  >
+                    Please double check your network connection.
+                  </p>
+                </div>
+              ) : selectedStudentDetail && selectedStudentDetail.length > 0 ? (
+                <div className="st-modal-table-wrapper">
+                  <table className="st-modal-table">
+                    <thead>
+                      <tr>
+                        <th className="st-mth">NO</th>
+                        <th className="st-mth">COURSE NAME</th>
+                        <th className="st-mth">LEVEL</th>
+                        <th className="st-mth">PRICE</th>
+                        <th className="st-mth">PAYMENT NAME</th>
+                        <th className="st-mth">PAYMENT METHOD</th>
+                        <th className="st-mth st-th-center">RECEIPT</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedStudentDetail.map((courseItem, index) => (
+                        <tr key={index}>
+                          <td className="st-mtd">{index + 1}</td>
+                          <td
+                            className="st-mtd"
+                            style={{ textTransform: "capitalize" }}
+                          >
+                            {courseItem.course_name || "N/A"}
+                          </td>
+                          <td className="st-mtd st-text-muted">
+                            {courseItem.student?.scheduleData?.title_level ||
+                              "Standard Level"}
+                          </td>
+                          <td className="st-mtd">
+                            {courseItem.student?.scheduleData?.price
+                              ? `${courseItem.student.scheduleData.price.toLocaleString()} Ks`
+                              : "N/A"}
+                          </td>
+                          <td className="st-mtd">
+                            {courseItem.student?.payment_name || "N/A"}
+                          </td>
+                          <td className="st-mtd">
+                            {courseItem.student?.payment_method || "N/A"}
+                          </td>
+                          <td className="st-mtd st-th-center">
+                            <button
+                              className="st-receipt-btn"
+                              onClick={() =>
+                                handleOpenImageModal(
+                                  courseItem.student?.payment_image_url,
+                                )
+                              }
+                            >
+                              <ImageIcon
+                                style={{ fontSize: 18, color: "#4b5563" }}
+                              />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="st-error-text" style={{ color: "#6b7280" }}>
+                  No course information found for this student.
+                </div>
+              )}
+            </div>
+
+            <div className="st-modal-footer">
+              <button
+                className="st-modal-action-close-btn"
+                onClick={handleCloseModal}
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
-
-        <div className="st-info-grid">
-          <div className="st-info-item">
-            <label className="st-info-label">ID</label>
-            <div className="st-info-value">
-              {selectedStudentMain.id || "-"}
-            </div>
-          </div>
-          <div className="st-info-item">
-            <label className="st-info-label">NAME</label>
-            <div className="st-info-value">
-              {selectedStudentMain.name || "-"}
-            </div>
-          </div>
-          <div className="st-info-item">
-            <label className="st-info-label">GENDER</label>
-            <div
-              className="st-info-value"
-              style={{ textTransform: "capitalize" }}
-            >
-              {selectedStudentMain.gender || "-"}
-            </div>
-          </div>
-          <div className="st-info-item">
-            <label className="st-info-label">AGE</label>
-            <div className="st-info-value">
-              {selectedStudentMain.age || "-"}
-            </div>
-          </div>
-          <div className="st-info-item">
-            <label className="st-info-label">PHONE</label>
-            <div className="st-info-value">
-              {selectedStudentMain.phone || "-"}
-            </div>
-          </div>
-          <div className="st-info-item">
-            <label className="st-info-label">EMAIL</label>
-            <div className="st-info-value">
-              {selectedStudentMain.email || "-"}
-            </div>
-          </div>
-        </div>
-
-        <div
-          className="st-info-section-title"
-          style={{ marginTop: "24px" }}
-        >
-          <SchoolIcon style={{ fontSize: 18, color: "#4b5563" }} />
-          <span>COURSE TABLE</span>
-        </div>
-
-        {modalLoading ? (
-          <div className="st-loading-container">
-            <div className="st-spinner"></div>
-            <p className="st-loading-text">
-              Loading course information... Please wait.
-            </p>
-          </div>
-        ) : modalError ? (
-          <div className="st-error-text">
-            {modalError}
-            <p
-              style={{
-                fontSize: "12px",
-                color: "#6b7280",
-                marginTop: "4px",
-              }}
-            >
-              Please double check your network connection.
-            </p>
-          </div>
-        ) : selectedStudentDetail && selectedStudentDetail.length > 0 ? (
-          <div className="st-modal-table-wrapper">
-            <table className="st-modal-table">
-              <thead>
-                <tr>
-                  <th className="st-mth">NO</th>
-                  <th className="st-mth">COURSE NAME</th>
-                  <th className="st-mth">LEVEL</th>
-                  <th className="st-mth">PRICE</th>
-                  <th className="st-mth">PAYMENT NAME</th>
-                  <th className="st-mth">PAYMENT METHOD</th>
-                  <th className="st-mth st-th-center">RECEIPT</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedStudentDetail.map((courseItem, index) => (
-                  <tr key={index}>
-                    <td className="st-mtd">{index + 1}</td>
-                    <td
-                      className="st-mtd"
-                      style={{ textTransform: "capitalize" }}
-                    >
-                      {courseItem.course_name || "N/A"}
-                    </td>
-                    <td className="st-mtd st-text-muted">
-                      {courseItem.student?.scheduleData?.title_level || "Standard Level"}
-                    </td>
-                    <td className="st-mtd">
-                      {courseItem.student?.scheduleData?.price
-                        ? `${courseItem.student.scheduleData.price.toLocaleString()} Ks`
-                        : "N/A"}
-                    </td>
-                    <td className="st-mtd">
-                      {courseItem.student?.payment_name || "N/A"}
-                    </td>
-                    <td className="st-mtd">
-                      {courseItem.student?.payment_method || "N/A"}
-                    </td>
-                    <td className="st-mtd st-th-center">
-                      <button
-                        className="st-receipt-btn"
-                        onClick={() =>
-                          handleOpenImageModal(
-                            courseItem.student?.payment_image_url
-                          )
-                        }
-                      >
-                        <ImageIcon
-                          style={{ fontSize: 18, color: "#4b5563" }}
-                        />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="st-error-text" style={{ color: "#6b7280" }}>
-            No course information found for this student.
-          </div>
-        )}
-      </div>
-
-      <div className="st-modal-footer">
-        <button
-          className="st-modal-action-close-btn"
-          onClick={handleCloseModal}
-        >
-          Close
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+      )}
       {/* Image Modal Pop-up Box */}
       {isImageModalOpen && (
         <div
