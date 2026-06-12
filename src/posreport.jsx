@@ -207,30 +207,22 @@ function PosReport() {
     {
       title: "Total Revenue",
       amount: `${overviewData.total_revenue?.toLocaleString() || 0} ks`,
-      change: "+11%",
-      changeType: "up",
-      icon: <DollarIcon />
+      
     },
     {
       title: "Order Received",
       amount: overviewData.total_order?.toString() || "0",
-      change: "-3%",
-      changeType: "down",
-      icon: <ProductIcon />
+      
     },
     {
       title: "Total Product",
       amount: overviewData.total_products?.toString() || "0",
-      change: "+5%",
-      changeType: "up",
-      icon: <ProductIcon />
+      
     },
     {
       title: "Total Customers",
       amount: overviewData.total_customer?.toString() || "0",
-      change: "+12",
-      changeType: "up",
-      icon: <CustomerIcon />
+      
     },
   ] : [];
 
@@ -293,13 +285,7 @@ function PosReport() {
               </p>
               <h3>{item.amount}</h3>
               <h5>
-                <TriangleIcon 
-                  style={{ 
-                    color: item.changeType === "up" ? "green" : "red", 
-                    fontSize: "30px",
-                    transform: item.changeType === "down" ? "rotate(180deg)" : "none"
-                  }} 
-                />
+                
                 <span>{item.change}</span>
               </h5>
             </div>
