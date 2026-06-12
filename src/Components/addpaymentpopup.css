@@ -1,0 +1,128 @@
+.addpaymentmain {
+  width: calc(100% - 230px);
+  height: 100vh;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: rgba(128, 128, 128, 0.185);
+}
+.addpaymentwarper {
+  position: absolute;
+  width: 450px;
+  height: 500px;
+  border-radius: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f0f0f0;
+  z-index: 5;
+  padding: 10px 1em;
+  border: 1px solid #1b263b;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ap1 {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+.ap1 button {
+  border: none;
+  outline: none;
+  background-color: initial;
+}
+.ap1 h3 {
+  font-family: Inter;
+}
+.ap2 {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.ap2 p {
+  font-family: Inter;
+  padding: 10px 3px;
+}
+.ap2 input {
+  width: 90%;
+  border: none;
+  outline: none;
+  padding: 10px 7px;
+  border-radius: 5px;
+  background-color: #d9d9d9;
+}
+.ap5 {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.ap5 p {
+  font-family: Inter;
+  padding: 5px 3px;
+}
+.ap5 div {
+  width: 90px;
+  height: 80px;
+  border: 1px dashed #1b263b;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.ap5 div img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.ap6 {
+  display: flex;
+  align-items: center;
+  align-self: flex-end;
+  gap: 10px;
+  margin-top: auto;
+}
+.ap6 button {
+  padding: 7px 2em;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background-color: #c4bfbf;
+}
+.hiddenfile {
+  opacity: 0;
+  width: 30px;
+  position: absolute;
+}
+.ap7 {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+}
+.ap7 button {
+  padding: 7px 2em;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+}
+.ap71 {
+  background-color: #d12c2c;
+  color: white;
+}
+.ap72 {
+  margin-left: auto;
+  background-color: #16f90e56;
+}
+.ap73 {
+  background-color: #0d1b2a;
+  color: white;
+}
+.ap73:disabled {
+  opacity: 0.4;
+}

@@ -1,0 +1,211 @@
+.blmain {
+  padding: 1em;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.blheader {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-family: Belanosima;
+  font-size: 20px;
+}
+.bltitle {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.bltitle div {
+  width: 23%;
+  background-color: #ffffff;
+  padding: 10px;
+  height: 110px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  border-radius: 5px;
+}
+.bltitle div span {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.bltitle div span h4 {
+  text-transform: uppercase;
+  color: #5e5e5e;
+  font-family: Work Sans;
+  font-size: small;
+}
+.bltitle div h3 {
+  color: #000000;
+  font-family: Work Sans;
+}
+.blswitch {
+  width: 600px;
+  border-radius: 10px;
+  margin-top: 10px;
+  width: 240px;
+  display: flex;
+}
+.blswitch a {
+  padding: 10px 10px;
+  width: 50% !important;
+  text-align: center;
+  background-color: #ffffff;
+  text-decoration: none;
+  color: #0d1b2a;
+  font-size: small;
+  font-family: Inter;
+}
+.blswitch :first-child {
+  border-top-left-radius: 7px;
+  border-bottom-left-radius: 7px;
+}
+.blswitch :last-child {
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px;
+}
+.blswitch a.active {
+  background-color: #0d1b2a;
+  color: white;
+}
+
+/*for mobile order and local order*/
+.mbmain {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  background-color: #ffffff;
+  padding: 10px;
+  width: 100%;
+  height: 62vh;
+  overflow: hidden;
+}
+.mb1 {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.mb1 h2 {
+  font-family: Inter;
+  font-size: large;
+}
+.mb2 {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  border-radius: 10px;
+  padding: 5px 15px;
+  background-color: #0d1b2a;
+  padding-right: 5px;
+  gap: 5px;
+  width: 230px;
+  justify-content: space-between;
+  color: white;
+}
+.mb2 input {
+  border: none;
+  outline: none;
+  background-color: initial;
+  color: white;
+  font-family: Work Sans;
+}
+.mb1 button {
+  border: none;
+  outline: none;
+  padding: 5px 15px;
+  display: flex;
+  align-items: center;
+  color: white;
+  background-color: #0d1b2a;
+  border-radius: 10px;
+  gap: 5px;
+}
+.mb3 {
+  width: 100%;
+  margin-top: 15px;
+  height: 60vh;
+  overflow: scroll;
+  max-height: 80vh;
+}
+.mb4 {
+  width: 100%;
+  border-collapse: collapse;
+}
+.mb4 thead {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+  border-bottom: 1px solid #71717a;
+}
+.mb4 th {
+  color: #000000;
+  font-weight: 600;
+  font-family: Work Sans;
+  font-size: 14px;
+  border-bottom: 1px solid #71717a;
+  text-overflow: clip;
+  padding: 10px;
+  text-align: left;
+  word-break: keep-all;
+}
+
+.mb4 td {
+  padding: 15px 10px !important;
+  text-overflow: ellipsis;
+  line-break: anywhere;
+  height: 20px;
+  font-family: Inter;
+  color: #52525b;
+  font-size: 12px;
+  border-bottom: 1px solid #71717a;
+}
+.specialdiv {
+  width: 50px;
+  height: 30px;
+  border-radius: 3px;
+  background-color: rgb(122, 114, 114);
+}
+.specialdiv img {
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+}
+.specialdiv1 {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+.specialdiv1 button {
+  text-align: center;
+  padding: 5px 5px;
+  font-size: 11px;
+  font-family: Work Sans;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+}
+.specialdiv1 :first-child {
+  background-color: #16f90e44;
+  width: 50px;
+}
+.specialdiv1 :last-child {
+  background-color: #c80808be;
+  color: #ffffff;
+  width: 50px;
+}
+.mobilebookingtablewaper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 60vh;
+  max-height: 80vh;
+  overflow: scroll;
+}

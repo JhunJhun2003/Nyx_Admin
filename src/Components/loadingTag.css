@@ -1,0 +1,42 @@
+@keyframes loading {
+    from {
+        opacity: 0.2;
+    }
+    to {
+        opacity: 0.8;
+    }
+}
+.loadingtags{
+    display: flex;
+    margin: 10px;
+    justify-content: center;
+    width: 23%;
+    border: 1px solid rgba(0, 0, 0, 0.212);
+    height: 120px;
+    border-radius: 1em;
+    align-items: flex-start;
+    background-color: #d0dcff54;
+    animation: loading 1.2s ease-in-out infinite alternate;
+    gap: 3px;
+    flex-direction: column;
+    padding: 5px;
+    cursor: wait;
+}
+.loadingtagstext{
+    width: 90%;
+    height: 35px;
+    background-color: rgba(128, 128, 128, 0.178);
+    border-radius: 10px;
+}
+.loadingtagstext1{
+    width: 70%;
+    height: 32px;
+    background-color: rgba(128, 128, 128, 0.178);
+    border-radius: 10px;
+}
+.loadingtagstext2{
+    width: 50%;
+    height: 30px;
+    background-color: rgba(128, 128, 128, 0.178);
+    border-radius: 10px;
+}

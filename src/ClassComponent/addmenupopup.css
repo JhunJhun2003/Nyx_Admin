@@ -1,0 +1,129 @@
+.addmenupopupwarper {
+  width: calc(100% - 230px);
+  height: 100vh;
+  background-color: rgba(128, 128, 128, 0.253);
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.addmenumain {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid #1b263b63;
+  padding: 10px 1em;
+  width: 500px;
+  border-radius: 10px;
+  background-color: #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+.addmenuclose {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: none;
+  background-color: initial;
+  outline: none;
+}
+.addmenuheader {
+  font-family: Inter;
+}
+.addmenubody {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.addmenubody span {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.addmenubody span p,
+p {
+  font-family: Inter;
+  font-weight: 400;
+}
+.addmenubody span input,
+.addmenubody11 > input {
+  border: none;
+  outline: none;
+  padding: 7px 10px;
+  border-radius: 10px;
+  width: 200px;
+  background-color: #d9d9d9;
+}
+.addmenubody span select {
+  border: none;
+  outline: none;
+  width: 200px;
+  border-radius: 10px;
+  padding: 7px 0;
+  background-color: #d9d9d9;
+}
+.addmenubody1 {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.addmenubody11 {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.addmenubody12 {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 200px;
+}
+.addmenupreimg {
+  width: 80px;
+  height: 70px;
+  border: 1px dashed black;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #d9d9d9;
+}
+.addmenuhidden {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+  left: 50%;
+}
+.addmenupreimg img {
+  width: 100%;
+  height: 100%;
+}
+.addmenuadd {
+  display: flex;
+  gap: 10px;
+  align-self: flex-end;
+  margin-top: 1em;
+}
+.addmenuupdate {
+  display: flex;
+  gap: 10px;
+  margin-top: 1em;
+}
+.addmenucheckbox {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+}
+.addmenuadd button,
+.addmenuupdate button {
+  padding: 7px 2em;
+  border-radius: 10px;
+  border: none;
+}
+.addmenuupdate button:disabled {
+  opacity: 0.3;
+}

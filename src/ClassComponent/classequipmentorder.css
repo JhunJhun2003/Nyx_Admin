@@ -1,0 +1,159 @@
+.addorderproductmain {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  background-color: rgb(240, 240, 240);
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  padding-top: 10px;
+  z-index: 100;
+  gap: 10px;
+  padding: 1px 10px;
+}
+.Aptcloseicon {
+  align-self: flex-end;
+  border: none;
+  outline: none;
+  background-color: initial;
+  margin: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.Adpheader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.3em;
+}
+.Adpheader span {
+  padding: 1px 5px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #0d1b2a;
+  border-radius: 13px;
+  background-color: #0d1b2a;
+}
+.Adpheader input {
+  border: none;
+  outline: none;
+  background-color: initial;
+  padding: 7px;
+  color: white;
+}
+.Adpheader h2 {
+  font-family: Inter;
+  padding: 0;
+  position: initial;
+  background-color: initial;
+  margin: 0;
+}
+.Adpcategories {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  overflow-x: scroll;
+  margin: 0 5px;
+  flex-shrink: 0;
+  gap: 10px;
+}
+.active {
+  background-color: #0d1b2a;
+  color: white;
+}
+.Adpcategories p {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(128, 128, 128, 0.397);
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: small;
+  font-weight: bold;
+}
+.Adpproduct {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(23%, 1fr));
+  padding: 1em 5px;
+  width: 100%;
+  height: 80vh;
+  overflow-y: scroll;
+  border-top: 1px solid rgba(128, 128, 128, 0.267);
+  border-bottom: 1px solid rgba(128, 128, 128, 0.267);
+}
+.addequipment {
+  height: 150px;
+  padding: 10px;
+  border: 1px solid #c3c6d6;
+  border-radius: 10px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+.addequipment p {
+  align-self: flex-end;
+  background-color: #e0e9f2;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: x-small;
+  color: #003d9b;
+  font-family: Work Sans;
+}
+.addequipment h3 {
+  align-self: flex-start;
+  font-family: Work Sans;
+  color: #141d23;
+  padding: 5px 2px;
+  text-transform: capitalize;
+}
+.addequipment span {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+.addequipment span h4 {
+  font-family: Work Sans;
+  color: #1b263b;
+}
+.addequipment span button {
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background-color: #1b263b;
+  color: #ffffff;
+  padding: 10px 1em;
+}
+.addequipment span button:disabled {
+  opacity: 0.5;
+}
+.Adpfooter {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: auto;
+  margin-bottom: 10px;
+}
+.Adpfooter button {
+  width: 100px;
+  height: 30px;
+  border-radius: 5px;
+  outline: none;
+  color: white;
+  border: 1px solid #b7102a;
+  background-color: #b7102a;
+}
+.Adpfooter button:active {
+  opacity: 0.5;
+}
+
+/* for loading category*/
+.loadingp {
+  height: 30px;
+  width: 80px;
+  background-color: gray;
+  border-radius: 10px;
+}

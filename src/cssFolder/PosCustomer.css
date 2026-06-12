@@ -1,0 +1,100 @@
+.Poscustomermain {
+  display: flex;
+  flex-direction: column;
+  padding: 1em 2em;
+  gap: 1em;
+  color: #0d1b2a;
+  height: 100vh;
+}
+.Poscustomerheader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+}
+.Poscustomerheader h1 {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: x-large;
+}
+.Poscustomerheader div {
+  display: flex;
+  align-items: center;
+  width: 220px;
+  height: 30px;
+  border-radius: 9px;
+  padding: 1px 7px;
+  justify-content: space-between;
+}
+.Poscustomerheader div input {
+  border: none;
+  outline: none;
+  background-color: initial;
+  padding: 5px;
+}
+.customertableContainer {
+  width: 100%;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 1em;
+  background-color: #e1e1e1;
+  height: 90vh;
+  overflow-y: scroll;
+}
+.customertable {
+  width: 100%;
+  border-collapse: collapse;
+}
+.customertable tr {
+  border-bottom: 1px solid black;
+}
+.customertable thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #e1e1e1;
+}
+.customertable th,
+td {
+  text-align: left;
+  font-family: inter;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  font-size: 13px;
+  padding: 5px 5px !important;
+}
+.customertable td {
+  font-size: 12px;
+}
+.editbutton {
+  padding: 3px 5px;
+  border-radius: 7px;
+  background-color: #b2ce38d2;
+  border: none;
+  outline: none;
+  color: black;
+  font-weight: lighter;
+  font-size: 10px;
+  font-style: italic;
+}
+.deletebutton {
+  padding: 3px 5px;
+  border-radius: 7px;
+  background-color: #db0707ec;
+  border: none;
+  outline: none;
+  color: #f0f0f0;
+  font-weight: lighter;
+  font-size: 10px;
+  font-style: italic;
+}
+.customerbuttoncontainer {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: center;
+}

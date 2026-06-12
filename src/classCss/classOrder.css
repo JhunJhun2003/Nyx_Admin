@@ -1,0 +1,158 @@
+.classordermain {
+  padding: 1em 1.5em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  height: 100vh;
+  width: 100%;
+}
+.classorderbody1 {
+  display: flex;
+  width: 100% !important;
+  justify-content: space-between !important;
+  align-items: center;
+  height: 5vh;
+}
+.classorderheader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.classorderbody1 button {
+  font-size: 12px;
+  border: 1px solid #0d1b2a;
+  padding: 6px 1em;
+  border-radius: 10px;
+  color: white;
+  background-color: #0d1b2a;
+}
+.classorderbody2 {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  height: auto;
+}
+.classorderdata {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 10px;
+  width: 23%;
+  border-radius: 5px;
+}
+.classorderbody2 > :first-child {
+  background-color: #becefd;
+}
+.classorderbody2 > :nth-child(2) {
+  background-color: #b0fdad;
+}
+.classorderbody2 > :nth-child(3) {
+  background-color: #ddc2ff;
+}
+.classorderbody2 > :last-child {
+  background-color: #fa6767;
+}
+
+.classorderbody3 {
+  width: 100%;
+  border: 1px solid black;
+  border-radius: 10px;
+  flex-grow: 1;
+  background-color: #ffffff;
+}
+.classorderfooter1 {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding: 10px;
+  gap: 1em;
+}
+.classorderfooter1 h2 {
+  font-weight: bold;
+  font-family: Inter;
+  font-size: larger;
+}
+.classorderfooter1 div {
+  margin-left: auto;
+  display: flex;
+  width: 230px;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0d1b2a;
+  border-radius: 10px;
+  padding: 3px 7px;
+}
+.classorderfooter1 div input {
+  border: none;
+  outline: none;
+  background-color: initial;
+  color: white;
+}
+.classorderfooter1 button {
+  border: 1px solid #0d1b2a;
+  border-radius: 10px;
+  background-color: #0d1b2a;
+  padding: 3px 10px;
+  font-size: 12px;
+  outline: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: white;
+}
+.classorderfooter2 {
+  padding-top: 1px !important;
+  width: 100%;
+  padding: 10px;
+  margin-top: 2em;
+  height: 55vh;
+  overflow: scroll;
+}
+.classorderfooter2 .classordertable {
+  width: 100%;
+  border-collapse: collapse;
+}
+.classorderfooter2 .classordertable thead {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+}
+.classorderfooter2 .classordertable th {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.384);
+  font-family: Inter;
+  padding: 14px 10px;
+  font-size: 14px;
+  text-align: center;
+}
+.classorderfooter2 .classordertable td {
+  font-family: Inter;
+  padding: 1em 10px !important;
+  text-align: center;
+  font-size: 13px;
+  border-bottom: 1px solid #0d1b2a57;
+}
+.imgrow {
+  width: 50px;
+  height: 30px;
+  border-radius: 3px;
+  display: inline-block;
+  background-color: gray;
+}
+.imgrow img {
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+}
+.classordertdbtn button {
+  border: none;
+  outline: none;
+  padding: 5px 10px;
+  background-color: #16f90e4b;
+  border-radius: 10px;
+}
+.towarpthetable {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}

@@ -1,0 +1,218 @@
+.classmenumain {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  flex-direction: column;
+  padding: 1em 1.5em;
+  gap: 15px;
+}
+.classmenuheader {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.classmenuheading {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+.classmenuheading > :first-child {
+  background-color: #becefd;
+}
+.classmenuheading > :nth-child(2) {
+  background-color: #b0fdad;
+}
+.classmenuheading > :nth-child(3) {
+  background-color: #fa676777;
+}
+.classmenuheading > :last-child {
+  background-color: #ddc2ff;
+}
+.classmenuheadchild {
+  width: 23%;
+  border-radius: 10px;
+  border: 1px solid rgba(128, 128, 128, 0.438);
+  height: 100px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  justify-content: center;
+}
+.classmenuheadchild span {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.classmenuheadchild span h3 {
+  font-weight: 500;
+  font-family: Inter;
+  color: #000000;
+  font-size: medium;
+}
+.classmenuheadchild p {
+  font-family: Inter;
+  color: #898484;
+}
+
+.classmenuheadchildicon {
+  font-size: 35px;
+  padding: 7px;
+  border-radius: 5px;
+}
+.classmenuheadchild0 {
+  background-color: #a8b5de;
+  color: #000000;
+}
+.classmenuheadchild1 {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+.classmenuheadchild2 {
+  background-color: #b710293d;
+  color: #b7102a;
+}
+.classmenuheadchild3 {
+  background-color: #c4abe3;
+  color: #1d4fd8e5;
+}
+.classmenubody {
+  width: 100%;
+  justify-content: space-between;
+  display: flex;
+}
+.classmenubody1 {
+  display: flex;
+  justify-content: flex-start;
+  background-color: #ffffff;
+  border-radius: 5px;
+  width: 360px;
+  height: auto;
+}
+.classmenubody1 p {
+  padding: 10px 2em;
+  width: 90px;
+  font-family: Inter;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+}
+.menu_active {
+  background-color: #0d1b2a;
+  color: #ffffff;
+  border-radius: 10px;
+}
+.addmenubtn {
+  height: 35px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background-color: #0d1b2a;
+  color: #ffffff;
+  cursor: pointer;
+}
+.classmenufooter {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  gap: 7px;
+}
+.singlemenuproduct {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 180px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow:
+    1px 1px 1px 1px #c4c6cc,
+    -1px 1px 1px #c4c6cc;
+  font-family: Work Sans;
+  text-transform: capitalize;
+  font-weight: 600;
+}
+.menuimg {
+  width: 100%;
+  height: 150px;
+  background-color: #a6b1b9;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.menuimg img {
+  width: 100%;
+  height: 100%;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+.singlemenutext {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 10px;
+  gap: 5px;
+}
+.singlemenutext1 {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  font-family: Inter;
+}
+.singlemenutext1 p {
+  font-size: small;
+  color: #0d1b2a;
+  width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.singlemenutext1 h3 {
+  font-size: smaller;
+  color: #0d1b2a;
+  font-weight: 500;
+  width: 40%;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.singlemenutext2 {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+.singlemenutext21 {
+  width: 50%;
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+.singlemenutext21 p {
+  font-size: small !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+.singlemenutext22 {
+  width: 50%;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+}
+.singlemenutext22 p {
+  font-size: x-small;
+  text-align: right;
+  color: #64748b;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: auto;
+  text-transform: initial;
+}

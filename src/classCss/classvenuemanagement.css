@@ -1,0 +1,296 @@
+.venuemain {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 1em;
+  width: 100%;
+  height: 100vh;
+  gap: 1em;
+  background-color: #f0f0f0;
+}
+.venueheader {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.venueheader h1 {
+  font-weight: 800;
+  font-size: larger;
+}
+.venuebody {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 5px;
+}
+.venuebodyheader {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.venuebodyheader p {
+  font-family: Inter;
+  font-weight: 800;
+  font-size: medium;
+  color: #000000;
+  padding: 5px;
+}
+.venuebodycourt {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  background-color: #5e5e5e0e;
+  flex-shrink: 0;
+  padding: 5px 0;
+}
+.addvenuecourt {
+  display: flex;
+  width: 180px;
+  height: 190px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px dashed #c4c6cc;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: sticky;
+  right: 0;
+  z-index: 20;
+}
+.venuecourt {
+  display: flex;
+  flex-direction: column;
+  width: 180px;
+  height: 190px;
+  background-color: #ffffff;
+  position: relative;
+  border-radius: 10px;
+  box-shadow:
+    1px 1px 1px 1px #c4c6cc,
+    -1px 1px 1px #c4c6cc;
+  flex-shrink: 0;
+}
+.venuecourt img {
+  width: 180px;
+  height: 130px;
+  border-bottom: 1px solid black;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.available {
+  color: green;
+  font-size: 10px;
+  position: absolute;
+  z-index: 10;
+  top: 5%;
+  right: 5%;
+  padding: 5px 10px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  font-family: Work Sans;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+.unavailable {
+  color: red;
+  font-size: 10px;
+  position: absolute;
+  z-index: 10;
+  top: 5%;
+  right: 5%;
+  padding: 5px 10px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  font-family: Work Sans;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+.venuecourttext {
+  display: flex;
+}
+.venuecourtdetail {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 5px;
+  align-items: flex-start;
+  width: 70%;
+  height: 100%;
+}
+.venuecourtbtn {
+  display: flex;
+  width: 30%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+.venuecourtdetail p {
+  font-family: Inter;
+  font-weight: 500;
+  font-size: small;
+  color: #5e5e5e;
+}
+.venuecourt h3 {
+  font-family: Inter;
+  font-weight: 600;
+  font-size: smaller;
+}
+.venuecourt button {
+  border: 1px solid #c4c7c7;
+  outline: none;
+  background-color: initial;
+  cursor: pointer;
+  height: 25px;
+  width: 25px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*venuecourt footer*/
+.venuefooter {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+.venuefooterheader h3 {
+  font-family: Inter;
+  font-weight: 700;
+  padding: 3px 5px;
+}
+.venuefootercourt {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  overflow-y: scroll;
+  gap: 10px;
+}
+.court {
+  padding: 1em 10px;
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  height: 150px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #1b263b;
+  gap: 5px;
+}
+.court span {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 3px;
+}
+.court1 h3 {
+  font-family: Inter;
+  font-weight: 600;
+  font-size: small;
+  color: #a1a1aa;
+  width: 170px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+/*for switch*/
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 35px;
+  height: 18px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 20px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 2px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .slider {
+  background-color: #f44336;
+}
+
+input:checked + .slider:before {
+  transform: translateX(14px);
+}
+/*________________________________________*/
+.court2 h3 {
+  font-family: Inter;
+  font-weight: 400;
+  font-size: 13px;
+  color: #000000;
+}
+.court3 {
+  margin-top: 20px;
+}
+.court4 {
+  margin-top: 7px;
+}
+.court3 p,
+.court4 p {
+  font-family: Work Sans;
+  font-weight: 600;
+  font-size: smaller;
+  color: #000000;
+}
+.court3 h4,
+.court4 h4 {
+  font-family: Inter;
+  font-weight: 600;
+  font-size: small;
+  color: #000000;
+}
+.addcourt {
+  display: flex;
+  width: 150px;
+  height: 150px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px dashed #c4c6cc;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  z-index: 20;
+}
+.addcourt p {
+  font-family: Inter;
+  font-weight: 500;
+  font-size: small;
+  color: #5e5e5e;
+}

@@ -1,0 +1,30 @@
+@keyframes loadingtable {
+    from{opacity: 0.2;}
+    to{opacity: 0.7;}
+}
+@keyframes loadingtable1 {
+    from{opacity: 0.7;}
+    to{opacity: 0.2;}
+}
+.loadingcustomermain{
+    width: 100%;
+    margin-bottom: 5px !important;
+    border-bottom: 10px solid transparent;
+}
+.loadingcustomertd {
+    padding: 10px; 
+}
+.loadingcustomer {
+    height: 30px;
+    background-color: rgba(128, 128, 128, 0.452);
+    border-radius: 2px;
+    animation: loadingtable 1.2s ease-in-out infinite alternate;
+    width: 90%;
+}
+.loadingcustomer1{
+    height: 30px;
+    background-color: rgba(128, 128, 128, 0.479);
+    border-radius: 2px;
+    animation: loadingtable1 1.2s ease-in-out infinite alternate;
+    width: 90%;
+}

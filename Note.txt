@@ -1,0 +1,15 @@
+In ClassCourtDetail ,its file name is classcourtadd.jsx;
+
+All Api Calling function exist ClassApi folder(for class) and Api_Call folder (for Pos);
+
+The new court add route file exist in ClassComponent/classaddcourt.jsx;
+
+Loading ,Show success box when we have done a action and Error when we do't complete a action ;All those alert files are
+exist in alert.jsx.
+
+The comfirm box file is also exist in alert.jsx;
+
+In Class, The nav bar of 'Customers' file name is classcustomer.jsx and export as ClassMember;
+
+
+

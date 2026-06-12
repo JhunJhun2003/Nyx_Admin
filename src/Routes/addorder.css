@@ -1,0 +1,281 @@
+.addordermain {
+  position: absolute;
+  width: calc(100% - 230px);
+  height: 100vh;
+  background-color: #f0f0f0;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow-y: hidden;
+}
+.addordertitle {
+  font-family: Inter;
+  font-size: x-large;
+  padding: 7px 10px;
+}
+.addordernav {
+  background-color: #0d1b2a;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.addorderbody {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.addorderbody1 {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 1em;
+}
+.addorderreciept {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #0d1b2a;
+  justify-content: space-evenly;
+  border-radius: 10px;
+  width: 60%;
+  background-color: #ffffff;
+  padding: 0 10px;
+  height: 90px;
+}
+.addorderreciept span {
+  padding: 7px 8px;
+  width: 100%;
+  color: gray;
+  border-radius: 5px;
+  border: 1px solid rgba(128, 128, 128, 0.397);
+}
+.addorderamount {
+  display: flex;
+  flex-direction: column;
+  width: 38%;
+  padding: 0 10px;
+  border: 1px solid #0d1b2a;
+  border-radius: 10px;
+  background-color: #ffffff;
+  justify-content: space-evenly;
+  font-family: Inter;
+}
+.addorderamount h2 {
+  position: initial;
+}
+.addorderbody2 {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding: 5px 1em;
+  height: 70vh;
+}
+.addorderchoice {
+  width: 60%;
+  background-color: #ffffff;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 10px;
+  border: 1px solid #0d1b2a;
+  height: 100%;
+}
+.addorderchoiceheader {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.addorderchoiceheader1 {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.addorderchoiceheader2 {
+  color: white;
+  background-color: #0d1b2a;
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-family: Inter;
+  font-size: small;
+  font-weight: 400;
+  cursor: pointer;
+  border: 1px solid #0d1b2a;
+  outline: none;
+}
+
+/*for fake table by display flex*/
+.toorder {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 60vh;
+  overflow-y: scroll;
+}
+.toorderheader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  background-color: #e5e7eb;
+  padding: 10px;
+}
+.toorderheader :first-child {
+  text-align: left;
+  width: 40%;
+}
+.toorderheader :nth-child(2) {
+  text-align: center;
+  width: 30%;
+}
+.toorderheader :last-child {
+  text-align: right;
+  width: 30%;
+  padding-right: 24px;
+}
+.toorderbody {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.281);
+}
+.toorderchild {
+  width: 40%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.toorderbody .toorderchild div {
+  width: 40px;
+  height: 30px;
+}
+.toorderbody .toorderchild div img {
+  width: 100%;
+  border-radius: 4px;
+  height: 100%;
+  object-fit: cover;
+  background-color: #44474c88;
+}
+.toorderchild1 {
+  width: 30%;
+  text-align: center;
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  justify-content: center;
+}
+.toorderchild1 * {
+  outline: none;
+  padding: 1px 7px;
+}
+.toorderchild1 button {
+  height: 20px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #0d1b2a4b;
+  border-radius: 4px;
+}
+.toorderchild2 {
+  width: 30%;
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  font-size: small;
+  padding-right: 5px;
+}
+.toorderchild2 button {
+  outline: none;
+  border: none;
+  background-color: initial;
+}
+.orderprint {
+  display: flex;
+  flex-direction: column;
+  width: 38%;
+  gap: 10px;
+  border-radius: 10px;
+  justify-content: space-between;
+}
+.orderprint1 {
+  width: 100%;
+  border: 1px solid #0d1b2a;
+  border-radius: 10px;
+  height: 90%;
+  background-color: #ffffff;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.orderprintheader {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+.ssx {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+.ssx select {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 5px;
+  outline: none;
+  border: 1px solid rgba(128, 128, 128, 0.548);
+}
+.receipet {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+.paymentmain {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+.paymentwarper {
+  border: 1px solid rgba(128, 128, 128, 0.548);
+  padding: 7px;
+  border-radius: 10px;
+}
+.paymentwarper span {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.paymentwarper span p {
+  padding: 5px;
+  font-size: small;
+  font-family: Inter;
+}
+.addorderreceipet {
+  width: 100%;
+  height: 44%;
+  border-radius: 10px;
+  border: 1px dashed gray;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.addorderbtn {
+  display: flex;
+  gap: 10px;
+  align-self: flex-end;
+}
+.addorderbtn button {
+  padding: 10px 2em;
+  border-radius: 5px;
+  border: 1px solid #0d1b2a;
+  outline: none;
+}
+.addorderbtn button:disabled {
+  opacity: 0.4;
+}

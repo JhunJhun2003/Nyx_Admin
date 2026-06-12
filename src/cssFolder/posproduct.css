@@ -1,0 +1,117 @@
+.posproductmain {
+  display: flex;
+  flex-direction: column;
+  margin: 1em 2em;
+  gap: 1em;
+  color: #0d1b2a;
+}
+.productheader {
+  display: flex;
+  gap: 1em;
+  align-items: center;
+}
+.productheader h1 {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-size: x-large;
+}
+.productsearch {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  width: 250px;
+  padding: 5px 10px;
+  border-radius: 10px;
+  height: 30px;
+  justify-content: space-between;
+}
+.productsearch input {
+  border: none;
+  outline: none;
+  background-color: initial;
+  color: #ffffff;
+  font-size: small;
+}
+.productheader button {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 5px 1em;
+  border-radius: 10px;
+  font-family: Inter;
+  font-size: small;
+  font-weight: 600;
+  outline: none;
+  border: 1px solid #0d1b2a;
+}
+.productheader button * {
+  font-size: large;
+}
+.productbody {
+  display: grid;
+  width: 100%;
+  /* grid-template-columns: repeat(auto-fill,minmax(200px,250px)); */
+  /* gap: 10px; */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.singleproduct {
+  width: 24%;
+  text-transform: capitalize;
+  height: 150px;
+  border-radius: 1em;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  padding: 10px;
+  box-shadow: 0px 1px 2px 1px gray;
+  background-color: #ffffff;
+  font-size: small;
+}
+
+.productimgcontainer {
+  height: 120px;
+  width: 90px;
+  border-radius: 10px;
+  background-color: #6b737a;
+}
+.singleproduct img {
+  height: 120px;
+  width: 90px !important;
+  border-radius: 10px;
+  object-fit: cover;
+}
+.singleproduct .producttext {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 150px;
+  word-break: break-all;
+  padding: 3px;
+  gap: 0;
+  width: 120px;
+}
+.singleproduct .producttext p {
+  padding: 5px 5px;
+  width: 90px;
+  text-align: center;
+  font-family: Inter;
+  border-radius: 10px;
+  white-space: nowrap;
+  align-self: flex-end;
+  font-size: smaller;
+  font-style: italic;
+}
+
+.singleproduct .producttext h4 {
+  font-weight: 600 !important;
+  font-size: smaller !important;
+}
+
+.singleproduct .producttext h3 {
+  font-weight: lighter;
+}
+
+/* for upload */

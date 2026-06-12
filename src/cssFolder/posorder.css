@@ -1,0 +1,252 @@
+.ordermain {
+  padding: 1em 2em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  width: 100%;
+}
+.orderbody {
+  display: flex;
+  justify-content: space-between;
+}
+.orderitem {
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+  height: 120px;
+  border-radius: 5px;
+  justify-content: space-around;
+  background-color: #becefd;
+}
+.orderitem p {
+  padding: 1px 10px;
+  font-weight: lighter;
+  opacity: 0.4;
+}
+.orderitem h4 {
+  padding: 4px 10px;
+  font-family: inter;
+}
+.orderheader {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+.addorderbutton {
+  padding: 7px 1em !important;
+  border-radius: 10px;
+  font-weight: bold;
+  border: 1px solid #0d1b2a;
+  outline: none;
+  padding: 5px 10px;
+}
+.orderheader h2 {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-size: x-large;
+  font-weight: 600;
+}
+.ordertableheader {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+
+  z-index: 2;
+  margin: 0;
+  height: 10%;
+  align-items: center;
+  gap: 10px;
+  background-color: #f0f0f0;
+}
+.ordertableheader h2 {
+  font-family: Inter;
+}
+.ordersearch {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  padding: 5px;
+  width: 200px;
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: #0d1b2a;
+  justify-content: space-between;
+  color: white;
+  z-index: 1;
+  margin-left: auto;
+}
+.ordersearch input {
+  border: none;
+  outline: none;
+  width: 170px !important;
+  padding: 5px 10px;
+  background-color: #0d1b2a;
+  color: white;
+  font-size: small;
+}
+.orderexportbtn {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 3px 15px;
+  border-radius: 7px;
+  border: none;
+  outline: none;
+  background-color: #0d1b2a;
+  color: white;
+}
+.addorderbutton a {
+  text-decoration: none;
+  color: white;
+}
+.Orderswitch {
+  display: flex;
+  justify-content: space-around;
+  border: 1px solid black;
+  width: fit-content;
+  padding: 0;
+  border-radius: 5px;
+}
+.OrderswitchD {
+  display: flex;
+  justify-content: space-around;
+  border: 1px solid rgb(255, 255, 255);
+  width: fit-content;
+  padding: 0;
+  border-radius: 5px;
+}
+.Orderswitch a {
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #000000;
+}
+.Orderswitch a.active {
+  background-color: #0d1b2a;
+  color: #ffffff !important;
+}
+.OrderswitchD a {
+  padding: 10px 15px;
+  text-decoration: none;
+  color: white;
+  background-color: #ffffff70;
+}
+.OrderswitchD a.active {
+  background-color: #f0f5f9;
+  color: #0d1b2a !important;
+}
+.posfooter {
+  height: 60vh;
+  overflow-y: scroll;
+  padding-top: 0;
+  padding: 0;
+}
+
+/*for Mobile order and local order*/
+.posordertablewarper {
+  width: 100%;
+  height: 55vh;
+}
+.posordertable {
+  width: 100%;
+  border-collapse: collapse;
+}
+.posordertable thead {
+  z-index: 2;
+  background-color: #f0f0f0;
+}
+.posordertable th {
+  font-family: Inter;
+  font-size: small;
+  font-weight: 700;
+  color: #000000;
+  padding: 15px 4px !important;
+  text-align: left;
+}
+.posordertable td {
+  font-family: Inter;
+  font-size: small;
+  padding: 0;
+  text-align: left;
+  padding: 5px 4px !important;
+}
+
+.posordertable .ordertablerow:hover td {
+  background-color: rgba(128, 128, 128, 0.411);
+  border-bottom: 1px solid rgba(128, 128, 128, 0.281);
+}
+.posordertable .actioncolumn p {
+  text-align: center;
+  width: 70%;
+  padding: 3px;
+  border-radius: 10px;
+  line-height: 20px;
+  background-color: #16f90e49;
+  cursor: pointer;
+}
+#vss select option {
+  background-color: white;
+  border-radius: 5px;
+  margin: 3px;
+  border: 1px solid #0d1b2a;
+  padding: 5px 3px;
+}
+
+.completedaction select {
+  background-color: #16f90e;
+  text-align: center;
+  padding: 5px 3px;
+  border-radius: 10px;
+  width: 70%;
+  line-height: 20px;
+  border: none;
+  outline: none;
+  font-size: 12px;
+}
+.pendingaction select {
+  /* background-color: #874bd3; */
+  background-color: rgb(236, 236, 57);
+  text-align: center;
+  width: 70%;
+  padding: 5px 3px;
+  border-radius: 10px;
+  line-height: 20px;
+  border: none;
+  outline: none;
+  font-size: 12px;
+}
+.cancelaction select {
+  background-color: #fa676785;
+  text-align: center;
+  width: 70%;
+  padding: 5px 3px;
+  border-radius: 10px;
+  line-height: 20px;
+  background-color: rgb(224, 39, 39);
+  border: none;
+  outline: none;
+  font-size: 12px;
+}
+.Paymentimgcontaienr {
+  width: 50px;
+  height: 40px;
+  padding: 0;
+}
+.posorderimg {
+  width: 60px;
+  height: 30px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+/*for pop up*/
+/* overlay */
+.towarpthetableorder {
+  width: 100%;
+  height: 55vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}

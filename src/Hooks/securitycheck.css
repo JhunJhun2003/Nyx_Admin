@@ -1,0 +1,82 @@
+.securitywarpermain {
+  width: calc(100% - 230px);
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  background-color: rgba(128, 128, 128, 0.247);
+}
+.securitywarper {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 350px;
+  height: 250px;
+  background-color: #f0f0f0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+}
+.secybutton {
+  border: none;
+  outline: none;
+  background-color: initial;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px;
+}
+.secyimg {
+  width: 50px;
+  height: 50px;
+  align-self: center;
+}
+.secyheader {
+  align-self: center;
+  font-weight: 500;
+  font-family: Inter;
+  font-size: large;
+}
+.secyp {
+  align-self: center;
+  font-family: Inter;
+  font-size: small;
+  color: rgba(128, 128, 128, 0.774);
+}
+.secyh3 {
+  margin-top: 10px;
+  padding: 5px;
+  font-weight: 400;
+  font-family: Inter;
+  font-size: medium;
+}
+.secyinput {
+  background-color: #c5c5d3;
+  padding: 10px 7px;
+  outline: none;
+  border-radius: 10px;
+  border: none;
+  width: 85%;
+  align-self: flex-start;
+}
+.secybtn {
+  display: flex;
+  align-self: flex-end;
+  gap: 7px;
+  margin-top: auto;
+}
+.secybtn button {
+  padding: 7px 1em;
+  border: 1px solid #c5c5d3;
+  border-radius: 10px;
+}
+.wrongpassword {
+  color: red;
+  font-weight: 400;
+  font-family: Inter;
+  font-size: x-small;
+  padding: 4px 7px;
+  letter-spacing: 1px;
+}

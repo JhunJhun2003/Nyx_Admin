@@ -1,0 +1,94 @@
+.cupwarper {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: rgba(128, 128, 128, 0.404);
+  z-index: 30;
+}
+.cupmain {
+  width: 400px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 1em;
+}
+.cupcontent1 {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+.cupcontent1 h2 {
+  font-family: Inter;
+  font-weight: 600;
+  font-size: medium;
+}
+.cupcontent1 button {
+  border: none;
+  outline: none;
+  background-color: initial;
+}
+.cupcontent2 {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cupcontent2 p {
+  font-family: Inter;
+  font-size: small;
+  padding: 5px;
+}
+.cupcontent2 input {
+  border-radius: 10px;
+  background-color: #d9d9d9;
+  border: none;
+  padding: 10px;
+  outline-color: blueviolet;
+  font-size: small;
+}
+.cupcontent3 {
+  display: flex;
+  gap: 10px;
+  align-self: flex-end;
+  margin-top: auto;
+}
+.cupcontent3 :last-child {
+  padding: 7px 1.5em;
+  background-color: #1b263b;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  color: white;
+}
+.cupcontent3 :first-child {
+  padding: 7px 1.5em;
+  border: 1px solid #1b263b;
+  border-radius: 10px;
+  outline: none;
+}
+.cupcontent4 {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cupcontent4 p {
+  font-family: Inter;
+  font-size: small;
+  padding: 5px;
+}
+.cupcontent4 textarea {
+  border: none;
+  outline-color: blueviolet;
+  border-radius: 10px;
+  background-color: #d9d9d9;
+  padding: 10px;
+  font-family: Inter;
+}

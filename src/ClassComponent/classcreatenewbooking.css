@@ -1,0 +1,381 @@
+.createordermain {
+  position: absolute;
+  width: calc(100% - 230px);
+  height: 100vh;
+  background-color: #f0f0f0;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow-y: hidden;
+}
+.createordermain .createordertitle {
+  font-family: Belanosima;
+  font-size: x-large;
+  padding: 7px 15px;
+  font-weight: 600;
+  height: 6vh;
+}
+.createordermain .createordernav {
+  background-color: #0d1b2a;
+  display: flex;
+  align-items: center;
+  height: 30px;
+}
+.createordermain .addclassorderbody {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: calc(95vh - 40px);
+}
+
+.createordermain .addclassorderbody1 {
+  display: flex;
+  flex-direction: column;
+  padding: 5px 10px;
+  width: 60%;
+  gap: 10px;
+  height: calc(95vh - 45px);
+}
+.createordermain .createorderreciept {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #0d1b2a;
+  justify-content: space-evenly;
+  border-radius: 10px;
+  width: 100%;
+  background-color: #ffffff;
+  padding: 10px 10px;
+  padding-bottom: 15px;
+}
+.createordermain .createorderreciept p {
+  font-family: Inter;
+  font-size: smaller;
+  padding: 3px;
+}
+.createordermain .createorderreciept span {
+  padding: 7px 8px;
+  width: 100%;
+  color: gray;
+  border-radius: 5px;
+  border: 1px solid rgba(128, 128, 128, 0.397);
+}
+
+.createordermain .addclassorderbody2 {
+  display: flex;
+  width: 40%;
+  justify-content: space-between;
+  padding: 5px 10px;
+  height: calc(95vh - 45px);
+  flex-direction: column;
+  gap: 10px;
+  overflow: scroll;
+}
+.createordermain .addclassorderchoice {
+  width: 100%;
+  background-color: #ffffff;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 10px;
+  border: 1px solid #0d1b2a;
+  flex-grow: 1;
+}
+.createordermain .createorderchoiceheader {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.createordermain .createorderchoiceheader1 {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+}
+.createordermain .createorderchoiceheader2 {
+  color: white;
+  background-color: #0d1b2a;
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-family: Inter;
+  font-size: small;
+  font-weight: 400;
+  cursor: pointer;
+  border: 1px solid #0d1b2a;
+  outline: none;
+}
+
+/*for fake table by display flex*/
+.createordermain .toorder {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 30vh;
+  overflow-y: scroll;
+}
+.createordermain .toorderheader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  background-color: #e5e7eb;
+  padding: 10px;
+}
+.createordermain .toorderheader :first-child {
+  text-align: left;
+  width: 40%;
+}
+.createordermain .toorderheader :nth-child(2) {
+  text-align: center;
+  width: 30%;
+}
+.createordermain .toorderheader :last-child {
+  text-align: right;
+  width: 30%;
+  padding-right: 24px;
+}
+.createordermain .toorderbody {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.281);
+}
+.createordermain .toorderchild {
+  width: 40%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.createordermain .toorderbody p {
+  font-family: Work Sans;
+  font-size: small;
+}
+.createordermain .toorderchild1 {
+  width: 30%;
+  text-align: center;
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  justify-content: center;
+}
+.createordermain .toorderchild1 * {
+  outline: none;
+  padding: 1px 7px;
+}
+.createordermain .toorderchild1 button {
+  height: 20px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #0d1b2a4b;
+  border-radius: 4px;
+}
+.createordermain .toorderchild2 {
+  width: 30%;
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  font-size: small;
+  padding-right: 5px;
+}
+.createordermain .toorderchild2 button {
+  outline: none;
+  border: none;
+  background-color: initial;
+}
+.createordermain .orderprint {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+  border-radius: 10px;
+  justify-content: space-between;
+  height: 80%;
+}
+.createordermain .orderprint1 {
+  width: 100%;
+  border: 1px solid #0d1b2a;
+  border-radius: 10px;
+  height: 90%;
+  background-color: #ffffff;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.createordermain .orderprintheader {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+.createordermain .ssx {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+.createordermain .ssx select {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 5px;
+  outline: none;
+  border: 1px solid rgba(128, 128, 128, 0.548);
+  font-family: Work Sans;
+}
+.createordermain .receipet {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+.createordermain .paymentmain {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+.createordermain .paymentwarper {
+  border: 1px solid rgba(128, 128, 128, 0.548);
+  padding: 7px;
+  border-radius: 10px;
+}
+.createordermain .paymentwarper span {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.createordermain .paymentwarper span p {
+  padding: 5px;
+  font-size: small;
+  font-family: Inter;
+}
+.createorderreceipet {
+  width: 100%;
+  height: 44%;
+  border-radius: 10px;
+  border: 1px dashed gray;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.createorderbtn {
+  display: flex;
+  gap: 10px;
+  align-self: flex-end;
+}
+.createorderbtn button {
+  padding: 10px 2em;
+  border-radius: 5px;
+  border: 1px solid #0d1b2a;
+  outline: none;
+}
+.createorderbtn button:disabled {
+  opacity: 0.4;
+}
+/*________________*/
+/* new added ui*/
+.createorderselect {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 1em;
+  border-radius: 10px;
+  border: 1px solid #1b263b;
+  gap: 10px;
+  background-color: #ffffff;
+}
+
+.aos1 {
+  display: flex;
+  gap: 5px;
+  font-family: Work Sans;
+  padding: 0;
+  font-size: medium;
+  align-items: center;
+}
+.aos2 {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.aos2 span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 30%;
+}
+.aos2 h5,
+.timeslottitle {
+  font-family: Work Sans;
+  font-size: x-small;
+  color: #5e5e5e;
+  padding: 4px 2px;
+}
+.ccnb {
+  font-family: Work Sans;
+  padding: 7px;
+  border-radius: 3px;
+  font-size: smaller;
+  border: 1px solid #c4c7c7;
+}
+.aos3 {
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: scroll;
+  gap: 7px;
+}
+.aos3 p {
+  padding: 10px 15px;
+  border: 1px solid #c4c7c7;
+  border-radius: 5px;
+  font-family: Work Sans;
+  font-size: small;
+  background-color: #fafafa;
+  white-space: nowrap;
+}
+
+/* for show amount*/
+.orderamount {
+  display: flex;
+  flex-direction: column;
+  background-color: #fdf8f8;
+  border-radius: 10px;
+  border-left: 5px solid #0d1b2a;
+  padding: 10px;
+  gap: 4px;
+}
+.orderamount h3 {
+  font-family: Work Sans;
+  color: #1b263b;
+  font-size: medium;
+}
+.orderamount span {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.orderamount > :nth-child(2) {
+  border-top: 1px solid #f1edec;
+  padding-top: 10px;
+}
+.orderamount > :nth-child(3) {
+  border-bottom: 1px solid #1b263bcb;
+  padding-bottom: 15px;
+}
+.orderamount span p {
+  font-family: Work Sans;
+  color: #5e5e5e;
+  font-size: small;
+}
+.orderamount h2 {
+  font-family: Work Sans;
+  color: #5e5e5e;
+  font-size: large;
+  align-self: flex-end;
+}

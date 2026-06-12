@@ -1,0 +1,117 @@
+.pospaymentwarper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 1em;
+  height: 80vh;
+  overflow-y: scroll;
+}
+.pospaymentwarper .pospaymentchild2 {
+  display: flex;
+  width: 50%;
+  justify-content: space-between;
+}
+.pospaymentwarper .pospaymentchild2 div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.pospaymentwarper .pospaymentchild2 div input {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
+.pospaymentmethod {
+  font-weight: 500;
+}
+.pospaymentbody {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  height: 60vh;
+  align-content: flex-start;
+}
+.pospaymentbody .poscurrency {
+  display: flex;
+  width: 200px;
+  align-items: center;
+  border: 1px solid black;
+  justify-content: space-between;
+  padding: 5px;
+  height: 100px;
+  background-color: #becefd;
+  border-radius: 10px;
+}
+.poscurrecytext {
+  display: flex;
+  flex-direction: column;
+  width: 110px;
+  height: 95%;
+  justify-content: space-between;
+  overflow: hidden;
+}
+.poscurrecytext :last-child {
+  padding: 2px 5px;
+  width: 110px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.poscurrecytext :nth-child(2) {
+  margin-top: auto;
+  padding: 2px 5px;
+  width: 110px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.poscurrecytext :first-child {
+  padding: 5px;
+  font-weight: bold;
+  font-family: Inter;
+  width: 110px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.poscurrency img {
+  width: 70px;
+  height: 80%;
+  border-radius: 5px;
+  object-fit: cover;
+  align-self: flex-start;
+}
+.paymentaddbtn {
+  display: flex;
+  border: 1px solid black;
+  height: 100px;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  width: 200px !important;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #becefd;
+}
+.paymentaddbtn p {
+  font-weight: bold;
+  font-family: Inter;
+  white-space: wrap;
+}
+
+.pospaymentbutton {
+  align-self: flex-end;
+  display: flex;
+  gap: 5px;
+  margin-top: 3em;
+}
+.pospaymentbutton button {
+  padding: 10px 1em;
+  border-radius: 10px;
+  font-weight: 500;
+  outline: none;
+  border: 1px solid #0d1b2a;
+}

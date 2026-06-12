@@ -1,0 +1,32 @@
+@keyframes loadingtable {
+    from{opacity: 0.2;}
+    to{opacity: 0.7;}
+}
+@keyframes loadingtable1 {
+    from{opacity: 0.7;}
+    to{opacity: 0.2;}
+}
+.loadingtable{
+    width: 100%;
+    margin-bottom: 5px !important;
+    border-bottom: 10px solid transparent;
+}
+.td-container {
+    padding: 10px; 
+}
+.loading-bar {
+    height: 30px;
+    background-color: #e2e8f0;
+    border-radius: 2px;
+    animation: loadingtable 1.2s ease-in-out infinite alternate;
+    width: 90%;
+    margin-top: 3px !important;
+}
+.loading-bar1{
+    height: 30px;
+    background-color: #e2e8f0;
+    border-radius: 2px;
+    animation: loadingtable1 1.2s ease-in-out infinite alternate;
+    width: 90%;
+    margin-top: 3px !important;
+}

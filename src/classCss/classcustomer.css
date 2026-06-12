@@ -1,0 +1,125 @@
+.classcustomermain {
+  padding: 1.5em 1em;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  gap: 10px;
+}
+.ccheader {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.ccheader h2 {
+  font-weight: 600;
+  font-size: x-large;
+}
+.ccbody {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #1b263b;
+  padding: 10px;
+  gap: 15px;
+  background-color: #f0f0f0;
+}
+.ccnav {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.ccnav1 {
+  display: flex;
+  gap: 5px;
+  width: 40%;
+  overflow-x: scroll;
+  flex-wrap: nowrap;
+  padding: 5px;
+  border-radius: 10px;
+  background-color: #0d1b2a;
+}
+.ccnav1 h3 {
+  border: 1px solid #ffffff;
+  border-radius: 10px;
+  padding: 5px 10px;
+  width: 100px;
+  font-family: Inter;
+  font-size: small;
+  font-weight: 300;
+  text-align: center;
+}
+.ccnav2 {
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  background-color: #0d1b2a;
+}
+.ccnav2 input {
+  background-color: initial;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-family: Work Sans;
+  width: 200px;
+  padding: 5px 10px;
+}
+.cctablewarper {
+  width: 100%;
+  overflow: scroll;
+  height: 80vh;
+}
+.cctablewarper table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.cctablewarper table thead {
+  position: sticky;
+  top: 0;
+}
+
+.cctablewarper th {
+  font-family: Work Sans;
+  color: #0d1b2a;
+  font-size: 14px;
+  background-color: #d9d9d9;
+  padding: 10px 1px;
+  border-bottom: 1px solid #0d1b2a6c;
+  border-top: 1px solid #0d1b2a6c;
+}
+.cctablewarper table td {
+  text-align: center;
+  font-family: Work Sans;
+  border-bottom: 1px solid #0d1b2a6c;
+  padding: 10px 1px !important;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.classactiondiv {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+}
+.classactiondiv button {
+  border: none;
+  outline: none;
+  background-color: initial;
+  font-size: 12px;
+  font-weight: 600;
+}
+.classactiondiv :first-child {
+  color: #bebe18;
+}
+.classactiondiv :last-child {
+  color: #ba1a1a;
+}
+.towarpthetable {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}

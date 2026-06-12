@@ -1,0 +1,210 @@
+.recharts-wrapper,
+.recharts-surface {
+  outline: none !important;
+  border: none !important;
+}
+
+.posreportcontainer {
+  display: flex;
+  flex-direction: column;
+  margin: 1em 2em;
+  gap: 1em;
+  color: #0d1b2a;
+}
+
+.reporttitle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: x-large;
+}
+.reporttitle .titleicon {
+  font-size: 25px;
+}
+
+.posreportbody {
+  display: flex;
+  justify-content: space-between;
+}
+
+.posreportbody .posreporttitle {
+  background-color: #f0f0f0;
+  padding: 5px 1em;
+  width: 250px;
+  height: 100px;
+  box-shadow: 0px 1px 2px 1px gray;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 7px;
+  align-items: flex-start;
+}
+.posreportbody .posreporttitle p {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  color: #898484;
+  padding: 2px 1px 3px 1px !important;
+}
+.posreportbody .posreporttitle h3 {
+  color: #1b263b;
+  font-weight: lighter;
+}
+.posreportbody .posreporttitle h5 {
+  color: #898484;
+  font-size: large;
+  font-weight: lighter;
+  display: flex;
+  gap: 1px;
+  align-items: center;
+}
+.posreportbody .posreporttitle h5 span {
+  width: 35px;
+  height: auto;
+  padding: 1px 5px 1px 5px;
+  background-color: #16f90e;
+  border-radius: 10px;
+}
+.posreportbody2 {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: #e1e1e1;
+}
+
+.posreportbody2 .posreportbody2header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 10px;
+  gap: 10px;
+}
+
+.posreportbody2header button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 15px;
+  border-radius: 10px;
+  background-color: #0d1b2a;
+  color: white;
+  outline: none;
+  border: 1px solid #0d1b2a;
+}
+
+.posreportbody2header h2 {
+  font-family: Inter;
+  padding: 5px;
+  font-size: large;
+}
+
+.posreportbody2 .posreportbody2header div {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: #0d1b2a;
+}
+
+.posreportbody2 .posreportbody2header div input {
+  padding: 0;
+  padding-left: 10px;
+  border: none;
+  outline: none;
+  background-color: initial;
+  color: white;
+}
+
+.posreportbody2secheader {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding-right: 10px;
+  gap: 10px;
+}
+
+.posreportbody2secheader input {
+  border-radius: 10px;
+  padding: 3px 1px;
+}
+
+.posreporttablecontainer {
+  padding: 10px;
+  padding-top: 0;
+  background-color: #f0f0f0;
+  height: 70vh;
+  overflow-y: scroll;
+}
+
+.posreporttable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.posreporttable thead {
+  background-color: #f0f0f0;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+}
+.posreporttable th {
+  padding: 10px;
+}
+.posreporttable th,
+.posreporttable td {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.329);
+  text-align: left;
+  margin: 3px;
+  font-size: smaller;
+  font-family: Inter;
+}
+.posreporttable td {
+  font-size: 12px !important;
+  padding-left: 10px !important;
+}
+.posreporttable .posreporttablecancel {
+  background-color: rgba(255, 0, 0, 0.986);
+  border-radius: 10px;
+  padding: 5px 10px;
+  font-size: smaller;
+  font-weight: 500;
+  display: inline-block;
+  text-align: center;
+  min-width: 70px;
+  color: white;
+}
+.posreporttable .posreporttablecompleted {
+  background-color: #ddc2ff;
+  border-radius: 10px;
+  padding: 5px 10px;
+  font-size: smaller;
+  font-weight: 500;
+  display: inline-block;
+  text-align: center;
+  min-width: 70px;
+}
+.posreporttable .posreporttablepending {
+  background-color: #16f90e;
+  border-radius: 10px;
+  padding: 5px 10px;
+  font-size: smaller;
+  font-weight: 500;
+  display: inline-block;
+  text-align: center;
+  min-width: 70px;
+}
+.reportimg div {
+  width: 50px;
+  height: 30px;
+  border: 1px solid #0d1b2a4f;
+  border-radius: 3px;
+}
+.reportimg div img {
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+  object-fit: cover;
+}
