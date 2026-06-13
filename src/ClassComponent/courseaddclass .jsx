@@ -30,7 +30,9 @@ const AddClassForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Get courseId and courseName from navigation state
   const courseId = location.state?.courseId;
+  const courseName = location.state?.courseName || "Course";
 
   const toggleDay = (day) => {
     setSelectedDays(day);
@@ -239,6 +241,8 @@ const AddClassForm = () => {
     }
 
     console.log("=== SENDING FORM DATA ===");
+    console.log("Course ID:", courseId);
+    console.log("Course Name:", courseName);
     console.log("Toggle is:", isOptionalEnabled ? "ON" : "OFF");
     for (let pair of formData.entries()) {
       console.log(
@@ -269,7 +273,7 @@ const AddClassForm = () => {
           Swal.fire({
             icon: "success",
             title: "Success!",
-            text: responseData.message || "Training program created successfully!",
+            text: `Training program for "${courseName}" created successfully!`,
             confirmButtonColor: "#3085d6",
           }).then(() => {
             // Reset form
@@ -341,7 +345,7 @@ const AddClassForm = () => {
           <button className="custom-back-btn" onClick={() => navigate(-1)}>
             <ChevronLeftIcon />
           </button>
-          <span>Badminton Pro Training Center</span>
+          <span>{courseName} Training Center</span>
         </div>
         <div className="custom-tabs-container">
           <div className="custom-tab custom-active-tab">

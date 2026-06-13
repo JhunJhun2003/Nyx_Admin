@@ -74,9 +74,7 @@ const Courses = () => {
 
   return (
     <div className="dashboard-container">
-      {/* 1. SIDEBAR NAVIGATION */}
-
-      {/* 2. MAIN CONTENT AREA */}
+      {/* MAIN CONTENT AREA */}
       <main className="main-content">
         {/* HEADER SECTION */}
         <header className="content-header">
@@ -97,14 +95,26 @@ const Courses = () => {
                 alt={c.course_name || "Course Banner"}
                 className="course-banner-img"
                 onClick={() =>
-                  navigate("add_courseclass", { state: { courseId: c.id } })
+                  navigate("add_courseclass", { 
+                    state: { 
+                      courseId: c.id,
+                      courseName: c.course_name  // Pass the course name
+                    } 
+                  })
                 }
               />
             </div>
           ))}
         </div>
+
+        {courses.length === 0 && (
+          <div className="no-courses-message">
+            <p>No courses available. Click "Add Course" to create one.</p>
+          </div>
+        )}
       </main>
       <Outlet />
+
       {/* CREATE COURSE MODAL */}
       {showModal && (
         <div className="modal-overlay">
@@ -118,24 +128,25 @@ const Courses = () => {
             </div>
             <div className="modal-body">
               <div className="input-group">
-                <label>COURSE NAME</label>
+                <label>COURSE NAME *</label>
                 <input
                   className="cona"
                   type="text"
+                  placeholder="Enter course name (e.g., Badminton Pro)"
                   value={courseName}
                   onChange={(e) => setCourseName(e.target.value)}
                 />
               </div>
               <div className="input-group">
-                <label>CATEGORY CARD THUMBNAIL</label>
+                <label>CATEGORY CARD THUMBNAIL *</label>
                 <div className="upload-box">
                   <input
                     type="file"
                     id="file-upload"
                     style={{ display: "none" }}
+                    accept="image/*"
                     onChange={(e) => setImage(e.target.files[0])}
                   />
-
                   <label htmlFor="file-upload" className="upload-label">
                     <PhotoCameraIcon className="camera-icon" />
                     <span>{image ? image.name : "Upload Course Image"}</span>
@@ -194,7 +205,7 @@ const Courses = () => {
               className="success-btn"
               onClick={() => setShowSuccessModal(false)}
             >
-              Great,Thank!
+              Great, Thank You!
             </button>
           </div>
         </div>
