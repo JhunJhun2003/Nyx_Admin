@@ -1,100 +1,264 @@
+/* 🌓 Theme Variables Configuration */
+.light-theme {
+  --bg-main: #f8fafc;
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --table-header-bg: #f1f5f9;
+  --table-header-text: #475569;
+  --table-row-hover: #f8fafc;
+  --row-warned-bg: #fffbeb;
+  --row-warned-text: #92400e;
+  --pagination-btn-disabled: #f8fafc;
+}
+
+.dark-theme {
+  --bg-main: #141517;
+  --card-bg: #1a1c1e;
+  --border-color: #2d3139;
+  --text-main: #e1e1e1;
+  --text-muted: #94a3b8;
+  --table-header-bg: #22252a;
+  --table-header-text: #94a3b8;
+  --table-row-hover: #23262c;
+  --row-warned-bg: #2d2417;
+  --row-warned-text: #f59e0b;
+  --pagination-btn-disabled: #141517;
+}
+
 .Poscustomermain {
   display: flex;
   flex-direction: column;
-  padding: 1em 2em;
-  gap: 1em;
-  color: #0d1b2a;
+  padding: 24px;
+  gap: 16px;
+  background-color: var(--bg-main);
   height: 100vh;
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
 }
+
+/* Header UI Styling */
 .Poscustomerheader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px;
 }
+
 .Poscustomerheader h1 {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: x-large;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
 }
-.Poscustomerheader div {
+
+.search-box-wrapper {
   display: flex;
   align-items: center;
-  width: 220px;
-  height: 30px;
-  border-radius: 9px;
-  padding: 1px 7px;
-  justify-content: space-between;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  width: 260px;
+  height: 38px;
+  border-radius: 8px;
+  padding: 0 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
-.Poscustomerheader div input {
+
+.search-box-wrapper input {
   border: none;
   outline: none;
-  background-color: initial;
-  padding: 5px;
+  background: transparent;
+  width: 100%;
+  font-size: 14px;
+  color: var(--text-main);
 }
+
+.search-box-wrapper input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-icon-inside {
+  color: var(--text-muted);
+  font-size: 20px;
+}
+
+/* Table Container Block */
 .customertableContainer {
   width: 100%;
-  border: 1px solid black;
-  border-radius: 5px;
-  padding: 1em;
-  background-color: #e1e1e1;
-  height: 90vh;
-  overflow-y: scroll;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+  flex: 1;
 }
+
 .customertable {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
-.customertable tr {
-  border-bottom: 1px solid black;
-}
+
 .customertable thead {
   position: sticky;
   top: 0;
-  z-index: 2;
-  background-color: #e1e1e1;
+  z-index: 10;
+  background-color: var(--table-header-bg);
 }
-.customertable th,
-td {
+
+.customertable th {
+  padding: 12px 16px;
   text-align: left;
-  font-family: inter;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 150px;
   font-size: 13px;
-  padding: 5px 5px !important;
+  font-weight: 600;
+  color: var(--table-header-text);
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--table-header-bg);
 }
+
+/* Table Row heights and alignment */
+.customertable tr {
+  height: 48px;
+}
+
 .customertable td {
-  font-size: 12px;
+  padding: 8px 16px;
+  font-size: 14px;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
 }
-.editbutton {
-  padding: 3px 5px;
-  border-radius: 7px;
-  background-color: #b2ce38d2;
-  border: none;
-  outline: none;
-  color: black;
-  font-weight: lighter;
-  font-size: 10px;
-  font-style: italic;
+
+.id-cell {
+  font-weight: 600;
+  color: var(--text-muted);
 }
-.deletebutton {
-  padding: 3px 5px;
-  border-radius: 7px;
-  background-color: #db0707ec;
-  border: none;
-  outline: none;
-  color: #f0f0f0;
-  font-weight: lighter;
-  font-size: 10px;
-  font-style: italic;
+
+.customer-name-cell {
+  font-weight: 600;
+  color: var(--text-main);
 }
+
+/* Row states background controls */
+.row-normal:hover {
+  background-color: var(--table-row-hover);
+}
+
+.row-warned {
+  background-color: var(--row-warned-bg);
+}
+
+.row-warned td {
+  color: var(--row-warned-text);
+}
+
+/* ကွက်လပ်ဖြည့်ထားတဲ့ row ပုံစံ */
+.row-empty {
+  background-color: transparent !important;
+  cursor: default;
+}
+
+.remark-badge {
+  color: var(--text-muted);
+}
+
+/* Action Control Buttons Layout */
 .customerbuttoncontainer {
-  text-align: center;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   justify-content: center;
+  height: 48px;
+}
+
+.editbutton {
+  padding: 5px 12px;
+  border-radius: 6px;
+  background-color: #fef3c7;
+  border: 1px solid #fde68a;
+  color: #d97706;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.editbutton.active-warned {
+  background-color: #d97706;
+  color: #ffffff;
+  border-color: #b45309;
+}
+
+.deletebutton {
+  padding: 5px 12px;
+  border-radius: 6px;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* 🏁 Pagination Block Area styling */
+.pos-pagination-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--card-bg);
+  padding: 12px 20px;
+  border: 1px solid var(--border-color);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.pagination-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: var(--table-row-hover);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background-color: var(--pagination-btn-disabled);
+}
+
+.page-number-display {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  min-width: 80px;
+  text-align: center;
 }

@@ -1,5 +1,4 @@
 import "./cssFolder/productadd.css";
-import "./cssFolder/posproduct.css";
 import ProductIcon from "@mui/icons-material/Inventory2Outlined";
 import SearchIcon from "@mui/icons-material/SearchSharp";
 import AddIcon from "@mui/icons-material/AddCircleOutlineSharp";
@@ -219,7 +218,11 @@ function AddProduct() {
       >
         {Loading}
         <div className="posadditemcontainer">
+          {/* Header Section */}
           <div className="additemheader">
+            <h2 className="categoryupload3">
+              {info ? "Product Details" : "New Product"}
+            </h2>
             <button
               onClick={() => {
                 navigate(-1);
@@ -227,259 +230,274 @@ function AddProduct() {
                 setinfo(null);
               }}
               type="button"
+              className="close-top-btn"
             >
               <CloseIcon />
             </button>
-            <h2 className="categoryupload3 ">
-              {info ? "Product Details" : "New Product"}
-            </h2>
           </div>
-          <div className="container">
-            <div className="categoryupload5 ">
-              <label>Product Name</label>
-              <input
-                type="text"
-                placeholder=""
-                ref={nameref}
-                required
-                defaultValue={info ? info.productName : ""}
-                readOnly={allowupdate}
-              />
 
-              <label>Brand</label>
-              <input
-                type="text"
-                placeholder=""
-                ref={brandref}
-                required
-                defaultValue={info ? info.brand : ""}
-                readOnly={allowupdate}
-              />
-
-              <label>Made</label>
-              <input
-                type="text"
-                placeholder=""
-                ref={maderef}
-                required
-                defaultValue={info ? info.made : ""}
-                readOnly={allowupdate}
-              />
-
-              <label>Type</label>
-              <input
-                type="text"
-                placeholder=""
-                ref={typeref}
-                required
-                readOnly={allowupdate}
-                defaultValue={info ? info.types : ""}
-              />
-
-              <label>Stock</label>
-              <input
-                type="number"
-                placeholder=""
-                ref={stockref}
-                required
-                readOnly={allowupdate}
-                defaultValue={info ? info.total_stock : ""}
-              />
-
-              <label>Description</label>
-              <textarea
-                className="textarea"
-                rows="2"
-                cols="30"
-                placeholder=""
-                ref={descriptionref}
-                required
-                readOnly={allowupdate}
-                defaultValue={info ? info.description : ""}
-              />
-            </div>
-
-            <div className="categoryupload7">
-              <label>Category</label>
-              <select
-                className="categoryupload8"
-                ref={categoryref}
-                required
-                defaultValue={info ? info.category : ""}
-                disabled={allowupdate}
-              >
-                {Array.isArray(Categories.data) &&
-                Categories.data.length > 0 ? (
-                  Categories.data.map((item, index) => {
-                    return (
-                      <option key={index} value={item.name}>
-                        {item.name}
-                      </option>
-                    );
-                  })
-                ) : (
-                  <option disabled>Loading...</option>
-                )}
-              </select>
-
-              <label>Cost</label>
-              <input
-                type="number"
-                placeholder=""
-                ref={costref}
-                required
-                readOnly={allowupdate}
-                defaultValue={info ? info.cost : ""}
-              />
-
-              <label>Color</label>
-              <input
-                type="text"
-                placeholder=""
-                ref={colorref}
-                required
-                readOnly={allowupdate}
-                defaultValue={info ? info.colors : ""}
-              />
-
-              <label>Weight</label>
-              <input
-                type="text"
-                placeholder=""
-                ref={weightref}
-                required
-                readOnly={allowupdate}
-                defaultValue={info ? info.weights : ""}
-              />
-
-              <label>Rating</label>
-              <input
-                type="text"
-                placeholder=""
-                ref={ratingref}
-                required
-                readOnly={allowupdate}
-                defaultValue={info ? info.rating : ""}
-              />
-              <label style={{ padding: "3px" }}>Upload Image</label>
+          {/* Core Content Layout */}
+          <div className="pos-detail-layout">
+            {/* 📸 Left Section: Image Card */}
+            <div className="pos-detail-left-card">
+              <label className="section-title-label">Product Media</label>
               <div
                 className="categoryupload9"
-                onClick={() => imageref.current.click()}
+                onClick={() => !allowupdate && imageref.current.click()}
+                style={{ cursor: allowupdate ? "default" : "pointer" }}
               >
                 <input
                   type="file"
-                  placeholder=""
                   ref={imageref}
                   required={!info}
                   onChange={imgpreview}
                   disabled={allowupdate}
+                  style={{ display: "none" }}
                 />
                 {file ? (
-                  <img src={filepath} />
+                  <img src={filepath} alt="Preview" />
                 ) : info ? (
-                  <img src={info.images} />
+                  <img src={info.images} alt="Product" />
                 ) : (
                   <div className="upload91">
                     <span>
-                      <UploadIcon />
-                      <p>Upload</p>
+                      <UploadIcon
+                        style={{ fontSize: "32px", color: "#4F46E5" }}
+                      />
+                      <p>Click to Upload</p>
                     </span>
                   </div>
                 )}
               </div>
             </div>
-            <div className="categoryupload11">
-              <label>Tags</label>
 
-              <select
-                className="categoryupload12"
-                ref={tagref}
-                required
-                defaultValue={info ? info.tag : ""}
-                disabled={allowupdate}
-              >
-                {Array.isArray(Tags.data) && Tags.data.length > 0 ? (
-                  Tags.data.map((item, index) => {
-                    return (
-                      <option key={index} value={item.name}>
-                        {item.name}
-                      </option>
-                    );
-                  })
-                ) : (
-                  <option disabled>Loading...</option>
-                )}
-              </select>
+            {/* 📝 Right Section: Form Input Grid Card */}
+            <div className="pos-detail-right-card">
+              <div className="pos-input-grid">
+                {/* Row 1 */}
+                <div className="input-field-group">
+                  <label>Product Name</label>
+                  <input
+                    type="text"
+                    ref={nameref}
+                    required
+                    defaultValue={info ? info.productName : ""}
+                    readOnly={allowupdate}
+                  />
+                </div>
+                <div className="input-field-group">
+                  <label>Brand</label>
+                  <input
+                    type="text"
+                    ref={brandref}
+                    required
+                    defaultValue={info ? info.brand : ""}
+                    readOnly={allowupdate}
+                  />
+                </div>
 
-              <label>Price</label>
-              <input
-                type="number"
-                placeholder=""
-                ref={priceref}
-                required
-                readOnly={allowupdate}
-                defaultValue={info ? info.price : ""}
-              />
+                {/* Row 2 */}
+                <div className="input-field-group">
+                  <label>Category</label>
+                  <select
+                    ref={categoryref}
+                    required
+                    defaultValue={info ? info.category : ""}
+                    disabled={allowupdate}
+                  >
+                    {Array.isArray(Categories.data) &&
+                    Categories.data.length > 0 ? (
+                      Categories.data.map((item, index) => (
+                        <option key={index} value={item.name}>
+                          {item.name}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>Loading...</option>
+                    )}
+                  </select>
+                </div>
+                <div className="input-field-group">
+                  <label>Tags</label>
+                  <select
+                    ref={tagref}
+                    required
+                    defaultValue={info ? info.tag : ""}
+                    disabled={allowupdate}
+                  >
+                    {Array.isArray(Tags.data) && Tags.data.length > 0 ? (
+                      Tags.data.map((item, index) => (
+                        <option key={index} value={item.name}>
+                          {item.name}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>Loading...</option>
+                    )}
+                  </select>
+                </div>
 
-              <label>size</label>
-              <input
-                type="number"
-                placeholder=""
-                ref={sizeref}
-                required
-                readOnly={allowupdate}
-                defaultValue={info ? info.sizes : ""}
-              />
+                {/* Row 3 */}
+                <div className="input-field-group">
+                  <label>Price (MMK)</label>
+                  <input
+                    type="number"
+                    ref={priceref}
+                    required
+                    readOnly={allowupdate}
+                    defaultValue={info ? info.price : ""}
+                  />
+                </div>
+                <div className="input-field-group">
+                  <label>Cost (MMK)</label>
+                  <input
+                    type="number"
+                    ref={costref}
+                    required
+                    readOnly={allowupdate}
+                    defaultValue={info ? info.cost : ""}
+                  />
+                </div>
 
-              <label>Warranty</label>
-              <input
-                type="text"
-                placeholder=""
-                ref={wranartref}
-                required
-                readOnly={allowupdate}
-                defaultValue={info ? info.warranty : ""}
-              />
+                {/* Row 4 */}
+                <div className="input-field-group">
+                  <label>Stock Qty</label>
+                  <input
+                    type="number"
+                    ref={stockref}
+                    required
+                    readOnly={allowupdate}
+                    defaultValue={info ? info.total_stock : ""}
+                  />
+                </div>
+                <div className="input-field-group">
+                  <label>Type</label>
+                  <input
+                    type="text"
+                    ref={typeref}
+                    required
+                    readOnly={allowupdate}
+                    defaultValue={info ? info.types : ""}
+                  />
+                </div>
 
-              <label>Date</label>
-              <input
-                type="date"
-                placeholder=""
-                ref={dateref}
-                required
-                readOnly={allowupdate}
-                defaultValue={info ? info.date : ""}
-              />
+                {/* Row 5 */}
+                <div className="input-field-group">
+                  <label>Made In</label>
+                  <input
+                    type="text"
+                    ref={maderef}
+                    required
+                    defaultValue={info ? info.made : ""}
+                    readOnly={allowupdate}
+                  />
+                </div>
+                <div className="input-field-group">
+                  <label>Color</label>
+                  <input
+                    type="text"
+                    ref={colorref}
+                    required
+                    readOnly={allowupdate}
+                    defaultValue={info ? info.colors : ""}
+                  />
+                </div>
+
+                {/* Row 6 */}
+                <div className="input-field-group">
+                  <label>Size</label>
+                  <input
+                    type="number"
+                    ref={sizeref}
+                    required
+                    readOnly={allowupdate}
+                    defaultValue={info ? info.sizes : ""}
+                  />
+                </div>
+                <div className="input-field-group">
+                  <label>Weight</label>
+                  <input
+                    type="text"
+                    ref={weightref}
+                    required
+                    readOnly={allowupdate}
+                    defaultValue={info ? info.weights : ""}
+                  />
+                </div>
+
+                {/* Row 7 */}
+                <div className="input-field-group">
+                  <label>Warranty</label>
+                  <input
+                    type="text"
+                    ref={wranartref}
+                    required
+                    readOnly={allowupdate}
+                    defaultValue={info ? info.warranty : ""}
+                  />
+                </div>
+                <div className="input-field-group">
+                  <label>Date</label>
+                  <input
+                    type="date"
+                    ref={dateref}
+                    required
+                    readOnly={allowupdate}
+                    defaultValue={info ? info.date : ""}
+                  />
+                </div>
+
+                {/* Row 8 */}
+                <div className="input-field-group">
+                  <label>Rating</label>
+                  <input
+                    type="text"
+                    ref={ratingref}
+                    required
+                    readOnly={allowupdate}
+                    defaultValue={info ? info.rating : ""}
+                  />
+                </div>
+                <div className="input-field-group">
+                  <label>Description</label>
+                  <textarea
+                    className="textarea"
+                    rows="2"
+                    ref={descriptionref}
+                    required
+                    readOnly={allowupdate}
+                    defaultValue={info ? info.description : ""}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
+          {/* Action Footer Buttons */}
           {info ? (
-            <div className=" categoryupload132">
+            <div className="categoryupload132">
               <button
                 type="button"
                 className="up132btn1"
                 onClick={() => deleteProduct(info.id)}
               >
-                Delete
+                Delete Product
               </button>
               <div>
                 <button
                   type="button"
                   className="up132btn2"
-                  onClick={() => {
-                    setallowupdate(false);
-                  }}
+                  onClick={() => setallowupdate(false)}
                 >
-                  Edit
+                  Edit Details
                 </button>
                 <button disabled={allowupdate} className="up132btn3">
-                  Update
+                  Save Changes
                 </button>
               </div>
             </div>
           ) : (
-            <div className=" categoryupload13">
-              <button className="categoryupload14">Create</button>
+            <div className="categoryupload13">
               <button
                 type="button"
                 className="categoryupload15"
@@ -488,8 +506,9 @@ function AddProduct() {
                   setinfo(null);
                 }}
               >
-                cancel
+                Cancel
               </button>
+              <button className="categoryupload14">Create Product</button>
             </div>
           )}
         </div>

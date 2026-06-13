@@ -1,117 +1,209 @@
 .posproductmain {
   display: flex;
   flex-direction: column;
-  margin: 1em 2em;
-  gap: 1em;
-  color: #0d1b2a;
+  padding: 24px;
 }
+
+/* ==========================================
+   ✨ HEADER PANEL SECTION
+   ========================================== */
 .productheader {
   display: flex;
-  gap: 1em;
+  justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
 }
+
 .productheader h1 {
   display: flex;
-  gap: 5px;
+  gap: 8px;
   align-items: center;
-  font-size: x-large;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
 }
+
+/* Search Box နှင့် Add Button ကို ညာဘက်အစွန် ကပ်ပေးမည့် Container */
+.productheader-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto; /* 👈 ညာဘက်အစွန်သို့ အပြည့်တွန်းပို့ခြင်း */
+}
+
+/* Modern Search Box */
 .productsearch {
   display: flex;
   align-items: center;
-  margin-left: auto;
-  width: 250px;
-  padding: 5px 10px;
-  border-radius: 10px;
-  height: 30px;
+  width: 260px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  height: 38px;
   justify-content: space-between;
+  transition: all 0.2s ease;
 }
+
 .productsearch input {
   border: none;
   outline: none;
-  background-color: initial;
-  color: #ffffff;
-  font-size: small;
+  background-color: transparent;
+  font-size: 14px;
+  width: 100%;
 }
-.productheader button {
+
+/* Indigo Add Button */
+.productheader-right button {
   display: flex;
-  gap: 5px;
+  gap: 6px;
   align-items: center;
-  padding: 5px 1em;
-  border-radius: 10px;
-  font-family: Inter;
-  font-size: small;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
   font-weight: 600;
   outline: none;
-  border: 1px solid #0d1b2a;
+  border: none;
+  background-color: #4f46e5;
+  color: #ffffff;
+  cursor: pointer;
+  height: 38px;
+  transition: background-color 0.2s ease;
 }
-.productheader button * {
-  font-size: large;
+
+.productheader-right button:hover {
+  background-color: #4338ca;
 }
+
+/* ==========================================
+   📦 PRODUCT GRID LAYOUT
+   ========================================== */
 .productbody {
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
   width: 100%;
-  /* grid-template-columns: repeat(auto-fill,minmax(200px,250px)); */
-  /* gap: 10px; */
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  margin-top: 24px;
 }
+
+/* Modern Product Card */
 .singleproduct {
-  width: 24%;
-  text-transform: capitalize;
-  height: 150px;
-  border-radius: 1em;
+  border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 1em;
-  padding: 10px;
-  box-shadow: 0px 1px 2px 1px gray;
-  background-color: #ffffff;
-  font-size: small;
+  gap: 16px;
+  padding: 12px;
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.05),
+    0 1px 2px -1px rgba(0, 0, 0, 0.03);
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  height: 120px; /* Card အမြင့် ပုံသေထိန်းထားသည် */
 }
 
-.productimgcontainer {
-  height: 120px;
-  width: 90px;
-  border-radius: 10px;
-  background-color: #6b737a;
+.singleproduct:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
+
+/* Image Wrapper */
+.productimgcontainer {
+  height: 96px;
+  width: 96px;
+  border-radius: 8px;
+  background-color: #f1f5f9;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
 .singleproduct img {
-  height: 120px;
-  width: 90px !important;
-  border-radius: 10px;
+  height: 100%;
+  width: 100%;
   object-fit: cover;
 }
-.singleproduct .producttext {
+
+/* ==========================================
+   📝 CARD TEXT & BADGE FLEX LOGIC (သီးသန့် Unique Class များ)
+   ========================================== */
+.singleproduct .pos-card-text {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  height: 150px;
-  word-break: break-all;
-  padding: 3px;
-  gap: 0;
-  width: 120px;
+  justify-content: space-between; /* 👈 Title ကိုအပေါ်ပို့ပြီး Badge ကိုအောက်ခြေတွန်းချရန် အဓိက Key */
+  height: 100%;
+  flex-grow: 1;
+  min-width: 0;
+  width: 100%;
 }
-.singleproduct .producttext p {
-  padding: 5px 5px;
-  width: 90px;
-  text-align: center;
-  font-family: Inter;
-  border-radius: 10px;
+
+/* Title & Price Box */
+.pos-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.singleproduct .pos-card-text h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
   white-space: nowrap;
-  align-self: flex-end;
-  font-size: smaller;
-  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 
-.singleproduct .producttext h4 {
-  font-weight: 600 !important;
-  font-size: smaller !important;
+.singleproduct .pos-card-text h4 {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4f46e5;
+  margin: 0;
 }
 
-.singleproduct .producttext h3 {
-  font-weight: lighter;
+/* Badge ကို ညာဘက်အောက်ခြေကပ်ပေးမည့် Container */
+.pos-badge-container {
+  display: flex;
+  justify-content: flex-end; /* 👈 ညာဘက်သို့ အပြည့်ကပ်ရန် */
+  width: 100%;
+  margin-top: auto;
 }
 
-/* for upload */
+/* Base Badge Style */
+.pos-status-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-family: "Inter", sans-serif;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Available Style */
+.pos-status-tag.pos-tag-available {
+  background-color: #e6f4ea !important;
+  color: #137333 !important;
+}
+
+/* Out of Stock Style */
+.pos-status-tag.pos-tag-out {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+/* ==========================================
+   ⚠️ EMPTY ALERT BOX
+   ========================================== */
+.noproduct-box {
+  width: 100%;
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  border-radius: 12px;
+  background-color: rgba(148, 163, 184, 0.05);
+  font-size: 15px;
+}
