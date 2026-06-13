@@ -11,17 +11,17 @@ function PosInventory() {
   const [text, settext] = useState("");
   const [value, setvalue] = useState("All");
   const [filteredData, setfiltered] = useState(null);
+  const [inventoryStats, setInventoryStats] = useState({
+    totalInventory: "0",
+    outOfStock: "0",
+    lowStock: "0",
+    topCategory: "N/A"
+  });
+  const [statsLoading, setStatsLoading] = useState(true);
 
   const { Categories, GetCategories } = useGetCategory();
   const { Inventory, GetInventory } = useGetInventroy();
   const { backcolor } = useContext(Context);
-
-  let Condition = [
-    { title: "Total Inventory", data: "1200" },
-    { title: "Out of Stocks", data: "98" },
-    { title: "Out of Stocks", data: "98" },
-    { title: "Top Categories", data: "Badminton" },
-  ];
 
   const Font_color = Boolean(backcolor == "#1A1C1E");
   const FontStyle = {
@@ -31,9 +31,43 @@ function PosInventory() {
     backgroundColor: Font_color ? "#E1E1E1" : "#0D1B2A",
   };
 
+  // Fetch inventory statistics from API
+  const fetchInventoryStats = async () => {
+    try {
+      const response = await fetch(
+        "http://38.60.216.25:5000/api/inventory/totalinventory"
+      );
+      const data = await response.json();
+      console.log("Inventory Stats:", data);
+      
+      if (data && data["total inventory"]) {
+        setInventoryStats({
+          totalInventory: data["total inventory"].total_inventory || "0",
+          outOfStock: data["total inventory"].out_of_stock || "0",
+          lowStock: data["total inventory"].low_stock || "0",
+          topCategory: data["top category"] || "N/A"
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching inventory stats:", error);
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    (GetInventory(), GetCategories());
+    GetInventory();
+    GetCategories();
+    fetchInventoryStats();
   }, []);
+
+  // Condition data from API
+  const Condition = [
+    { title: "Total Inventory", data: inventoryStats.totalInventory },
+    { title: "Out of Stocks", data: inventoryStats.outOfStock },
+    { title: "Low Stocks", data: inventoryStats.lowStock },
+    { title: "Top Categories", data: inventoryStats.topCategory },
+  ];
 
   //for option
   function changevalue(event) {
@@ -52,14 +86,14 @@ function PosInventory() {
     let result = Inventory.data;
     if (value != "All") {
       result = result.filter((item) => {
-        return item.category.toLowerCase().includes(value.toLowerCase());
+        return item.category?.toLowerCase().includes(value.toLowerCase());
       });
     }
     if (text.trim() !== "") {
       result = result.filter((item) => {
         return (
-          item.productName.toLowerCase().includes(text.trim().toLowerCase()) ||
-          item.tags.toLowerCase().includes(text.trim().toLowerCase())
+          item.productName?.toLowerCase().includes(text.trim().toLowerCase()) ||
+          item.tags?.toLowerCase().includes(text.trim().toLowerCase())
         );
       });
     }
@@ -81,6 +115,7 @@ function PosInventory() {
       console.log(error);
     }
   }
+
   return (
     <>
       <div className="posinventorymain">
@@ -91,6 +126,7 @@ function PosInventory() {
           />
           Inventory
         </h1>
+        
         <div className="inventoryCondition">
           {Condition.map((item, index) => {
             return (
@@ -100,11 +136,18 @@ function PosInventory() {
                 style={{ border: "1px solid #0d1b2a3a" }}
               >
                 <p>{item.title}</p>
-                <h4>{item.data}</h4>
+                <h4>
+                  {statsLoading ? (
+                    <span className="loading-text">...</span>
+                  ) : (
+                    item.data
+                  )}
+                </h4>
               </div>
             );
           })}
         </div>
+        
         <div className="inventoryheader">
           <h2 style={FontStyle}>Product Stocks Overview</h2>
           <select onChange={changevalue}>
@@ -131,6 +174,7 @@ function PosInventory() {
             <SearchIcon style={{ color: !backcolor ? "white" : "#0D1B2A" }} />
           </div>
         </div>
+        
         <div className="inventorytablecontainer">
           <table className="inventorytable" id="inventorytable">
             <thead>
@@ -166,6 +210,7 @@ function PosInventory() {
                         <td
                           style={{
                             color: item.current_stock > 0 ? "#0f0e0e" : "red",
+                            fontWeight: item.current_stock === 0 ? "bold" : "normal"
                           }}
                         >
                           {item.status}
@@ -201,4 +246,5 @@ function PosInventory() {
     </>
   );
 }
+
 export default PosInventory;
