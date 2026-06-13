@@ -7,6 +7,71 @@ import FoodIcon from "@mui/icons-material/Flatware";
 import DotIcon from "@mui/icons-material/FiberManualRecord";
 import AddMenuPopUp from "../ClassComponent/AddMenupopup";
 import { useNoti } from "../Hooks/alert";
+import { Restaurant, MonetizationOn, CalendarToday } from "@mui/icons-material";
+
+const StatCard = ({ title, value, change, icon, iconColor, isCurrent }) => (
+  <div
+    style={{
+      background: "#fff",
+      border: "1px solid #e5e7eb",
+      borderRadius: "12px",
+      padding: "20px 24px",
+      flex: 1,
+      minWidth: 0,
+    }}
+  >
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        marginBottom: "8px",
+      }}
+    >
+      <span style={{ fontSize: "13px", color: "#6b7280", fontWeight: 500 }}>
+        {title}
+      </span>
+      {isCurrent ? (
+        <span
+          style={{
+            fontSize: "12px",
+            color: "#6b7280",
+            background: "#f3f4f6",
+            padding: "2px 8px",
+            borderRadius: "4px",
+          }}
+        >
+          Today
+        </span>
+      ) : (
+        <span style={{ fontSize: "20px", color: iconColor || "#3b82f6" }}>
+          {icon}
+        </span>
+      )}
+    </div>
+    <div
+      style={{
+        fontSize: "22px",
+        fontWeight: 700,
+        color: "#111827",
+        marginBottom: "6px",
+      }}
+    >
+      {value}
+    </div>
+    <div
+      style={{
+        fontSize: "12px",
+        color: change.includes("-") ? "#ef4444" : "#16a34a",
+        fontWeight: 500,
+      }}
+    >
+      {change.includes("vs") || change.includes("-") || change.includes("+")
+        ? `↗ ${change}`
+        : change}
+    </div>
+  </div>
+);
 
 function ClassMenu() {
   const [show, setshow] = useState(false);
@@ -79,22 +144,37 @@ function ClassMenu() {
         <MenuIcon />
         Menus
       </h2>
-      <div className="classmenuheading">
-        {orderheadingdata.map((item, index) => {
-          return (
-            <div className="classmenuheadchild" key={index}>
-              <p>{item.title}</p>
-              <span>
-                {
-                  <item.icon
-                    className={`classmenuheadchildicon classmenuheadchild${index}`}
-                  />
-                }
-                <h3>{item.amount}</h3>
-              </span>
-            </div>
-          );
-        })}
+      {/* Stat Cards Row */}
+      <div style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
+        <StatCard
+          title="TODAY ORDERS"
+          value="12 orders"
+          change="7"
+          icon={<CalendarToday sx={{ fontSize: "24px" }} />}
+          iconColor="#ef4444"
+          isCurrent={true}
+        />
+        <StatCard
+          title="TOTAL ORDERS"
+          value="250"
+          change="+12"
+          icon={<MonetizationOn sx={{ fontSize: "24px" }} />}
+          iconColor="#3b82f6"
+        />
+        <StatCard
+          title="TOP SELLING MENU"
+          value="Dinnerr"
+          change="45"
+          icon={<Restaurant sx={{ fontSize: "24px" }} />}
+          iconColor="#f59e0b"
+        />
+        <StatCard
+          title="TOTAL REVENUE"
+          value="250,000 Ks"
+          change="5"
+          icon={<MonetizationOn sx={{ fontSize: "24px" }} />}
+          iconColor="#10b981"
+        />
       </div>
       <div className="classmenubody">
         <div className="classmenubody1">
