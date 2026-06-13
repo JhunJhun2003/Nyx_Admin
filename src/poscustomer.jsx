@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 function PosCustomer() {
   const [text, settext] = useState("");
   const [filteredData, setfilteredData] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   const { backcolor, Token } = useContext(Context);
   const { GetCustomer, Customers } = useGetCustomer();
@@ -63,8 +64,10 @@ function PosCustomer() {
       });
 
       if (result.isConfirmed) {
-        let response = await fetch(
-          `${import.meta.env.VITE_DELETE_CUSTOMER}/${id}`,
+        setDeletingId(id);
+        
+        const response = await fetch(
+          `http://38.60.216.25:5000/api/customer/user/${id}`,
           {
             method: "DELETE",
             headers: {
@@ -74,12 +77,15 @@ function PosCustomer() {
           },
         );
         
-        if (response.ok) {
+        const data = await response.json();
+        console.log("Delete response:", data);
+        
+        if (response.ok && data.status === "success") {
           await GetCustomer();
           Swal.fire({
             icon: 'success',
             title: 'Deleted!',
-            text: 'Customer has been deleted successfully.',
+            text: data.message || 'Customer has been deleted successfully.',
             confirmButtonColor: '#3085d6',
             timer: 2000
           });
@@ -87,19 +93,21 @@ function PosCustomer() {
           Swal.fire({
             icon: 'error',
             title: 'Error!',
-            text: 'Failed to delete customer.',
+            text: data.message || 'Failed to delete customer.',
             confirmButtonColor: '#3085d6'
           });
         }
       }
     } catch (err) {
-      console.log(err);
+      console.error("Delete error:", err);
       Swal.fire({
         icon: 'error',
         title: 'Network Error!',
-        text: 'Unable to connect to the server.',
+        text: 'Unable to connect to the server. Please check your connection.',
         confirmButtonColor: '#3085d6'
       });
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -175,16 +183,18 @@ function PosCustomer() {
                           <button
                             className="deletebutton"
                             onClick={() => delete_customer(item.id)}
+                            disabled={deletingId === item.id}
                             style={{
                               backgroundColor: "#dc2626",
                               color: "white",
                               border: "none",
                               padding: "6px 12px",
                               borderRadius: "6px",
-                              cursor: "pointer",
+                              cursor: deletingId === item.id ? "not-allowed" : "pointer",
+                              opacity: deletingId === item.id ? 0.7 : 1,
                             }}
                           >
-                            Delete
+                            {deletingId === item.id ? "Deleting..." : "Delete"}
                           </button>
                         </td>
                       </tr>
