@@ -49,7 +49,7 @@ function PosLogin() {
             passwordref.current.style.color = "initial";
           }, 10000);
         } else if (data.token) {
-          navigate("/");
+          navigate("/", { replace: true });
           localStorage.setItem("islogin", "true");
           setislogin(true);
         }

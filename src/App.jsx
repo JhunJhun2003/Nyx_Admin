@@ -26,6 +26,7 @@ import Login from "./Account/login";
 import PosLogin from "./Account/poslogin";
 import AcademicLogin from "./Account/academiclogin";
 import PosProtectedRoute from "./Hooks/PosProtectedRoute";
+import GuestRoute from "./Hooks/GuestRoute";
 import ClassNav from "./Class/classnav";
 import ClassOverview from "./Class/classoverview";
 import ClassStudent from "./ClassComponent/classstudent";
@@ -220,8 +221,22 @@ function App() {
 
             <Route path="login" element={<Login />}>
               <Route index element={<Navigate to="poslogin" replace />} />
-              <Route path="poslogin" element={<PosLogin />} />
-              <Route path="academiclogin" element={<AcademicLogin />} />
+              <Route
+                path="poslogin"
+                element={
+                  <GuestRoute loginType="pos">
+                    <PosLogin />
+                  </GuestRoute>
+                }
+              />
+              <Route
+                path="academiclogin"
+                element={
+                  <GuestRoute loginType="class">
+                    <AcademicLogin />
+                  </GuestRoute>
+                }
+              />
             </Route>
           </Routes>
         </BrowserRouter>

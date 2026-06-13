@@ -54,7 +54,7 @@ function AcademicLogin() {
             passwordref.current.style.color = "initial";
           }, 10000);
         } else if (data.token) {
-          navigate("/class");
+          navigate("/class", { replace: true });
           localStorage.setItem("isClassLogin", "true");
           setisClassLogin(true);
         }
