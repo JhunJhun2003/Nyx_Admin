@@ -288,15 +288,51 @@ export default function Dashboard() {
   };
 
   const handleTriggerPrint = () => {
-    window.print();
+    // printable-receipt-content ID ကို ယူရပါမယ်
+    const printContent = document.getElementById("printable-receipt-content");
+    if (!printContent) return;
+
+    const iframe = document.createElement("iframe");
+    iframe.style.position = "absolute";
+    iframe.style.width = "0px";
+    iframe.style.height = "0px";
+    iframe.style.border = "none";
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+    doc.write(`
+      <html>
+        <head>
+          <title>Print Receipt</title>
+          <style>
+            body { font-family: 'Inter', sans-serif; margin: 20px; padding: 0; }
+            div { display: flex; }
+          </style>
+        </head>
+        <body>
+          <div style="flex-direction: column; width: 100%;">
+            ${printContent.innerHTML}
+          </div>
+        </body>
+      </html>
+    `);
+    doc.close();
+
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      document.body.removeChild(iframe);
+    }, 500);
   };
 
   const handleTriggerDownloadPNG = () => {
-    const modalElement = document.getElementById("invoice-modal-content");
+    // ၁။ invoice-modal-content နေရာတွင် printable-receipt-content ဟု ပြောင်းပါ
+    const modalElement = document.getElementById("printable-receipt-content");
     if (!modalElement) return;
 
     html2canvas(modalElement, { useCORS: true }).then((canvas) => {
       const link = document.createElement("a");
+      // ၂။ selectedTransaction နေရာတွင် previewImage ဟု ပြောင်းပါ
       link.download = `Invoice_${previewImage?.id || "receipt"}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
@@ -929,7 +965,15 @@ export default function Dashboard() {
 
             {/* Printable Section */}
             <div id="printable-receipt-content" style={{ padding: "10px" }}>
-              <div style={{ textAlign: "center", marginBottom: "20px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  textAlign: "center",
+                  marginBottom: "20px",
+                }}
+              >
                 <h1
                   style={{
                     fontSize: "20px",
@@ -1052,7 +1096,7 @@ export default function Dashboard() {
                   }}
                 ></div>
 
-                {/* Payment Proof Image Section */}
+                {/* Payment Proof Image Section 
                 <div
                   style={{
                     display: "flex",
@@ -1092,7 +1136,7 @@ export default function Dashboard() {
                   ) : (
                     <span style={{ color: "#9ca3af" }}>—</span>
                   )}
-                </div>
+                </div> */}
               </div>
             </div>
 
