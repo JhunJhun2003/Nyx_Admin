@@ -5,6 +5,8 @@ import { useContext, useEffect, useState } from "react";
 import { Context } from "./Hooks/context";
 import CustomerLoading from "./Components/loadingcustomer";
 import { useGetCustomer } from "./Api_Call";
+import Swal from "sweetalert2";
+
 function PosCustomer() {
   const [text, settext] = useState("");
   const [filteredData, setfilteredData] = useState(null);
@@ -49,24 +51,74 @@ function PosCustomer() {
 
   async function delete_customer(id) {
     try {
-      let response = await fetch(
-        `${import.meta.env.VITE_DELETE_CUSTOMER}/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Token}`,
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+      });
+
+      if (result.isConfirmed) {
+        let response = await fetch(
+          `${import.meta.env.VITE_DELETE_CUSTOMER}/${id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Token}`,
+            },
           },
-        },
-      );
-      if (response.ok) {
-        await GetCustomer();
-      } else {
+        );
+        
+        if (response.ok) {
+          await GetCustomer();
+          Swal.fire({
+            icon: 'success',
+            title: 'Deleted!',
+            text: 'Customer has been deleted successfully.',
+            confirmButtonColor: '#3085d6',
+            timer: 2000
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'Failed to delete customer.',
+            confirmButtonColor: '#3085d6'
+          });
+        }
       }
     } catch (err) {
       console.log(err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Network Error!',
+        text: 'Unable to connect to the server.',
+        confirmButtonColor: '#3085d6'
+      });
     }
   }
+
+  // Helper function to get warning status display
+  const getWarningStatusDisplay = (warningStatus) => {
+    const hasWarning = warningStatus === "true" || warningStatus === "1" || warningStatus === true;
+    return {
+      text: hasWarning ? "Warning Active" : "No Warning",
+      style: {
+        display: "inline-block",
+        padding: "4px 12px",
+        borderRadius: "20px",
+        fontSize: "12px",
+        fontWeight: "600",
+        backgroundColor: hasWarning ? "#fee2e2" : "#dcfce7",
+        color: hasWarning ? "#ef4444" : "#16a34a",
+      }
+    };
+  };
 
   return (
     <>
@@ -95,7 +147,7 @@ function PosCustomer() {
                 <th>Address</th>
                 <th>Phone</th>
                 <th>Email</th>
-                <th>Remark</th>
+                <th>Warning Status</th>
                 <th style={{ textAlign: "center" }}>Action</th>
               </tr>
             </thead>
@@ -103,19 +155,34 @@ function PosCustomer() {
               {Array.isArray(filteredData) ? (
                 filteredData.length > 0 ? (
                   filteredData.map((item, index) => {
+                    // Get warning status from the API response
+                    const warningStatus = item.warning || "false";
+                    const statusDisplay = getWarningStatusDisplay(warningStatus);
+                    
                     return (
                       <tr key={index}>
                         <td>{item.id}</td>
                         <td>{item.name}</td>
-                        <td>{item.address}</td>
-                        <td>{item.phone}</td>
-                        <td>{item.email}</td>
-                        <td>....</td>
+                        <td>{item.address || "-"}</td>
+                        <td>{item.phone || "-"}</td>
+                        <td>{item.email || "-"}</td>
+                        <td>
+                          <span style={statusDisplay.style}>
+                            {statusDisplay.text}
+                          </span>
+                        </td>
                         <td className="customerbuttoncontainer">
-                          <button className="editbutton">warning</button>
                           <button
                             className="deletebutton"
                             onClick={() => delete_customer(item.id)}
+                            style={{
+                              backgroundColor: "#dc2626",
+                              color: "white",
+                              border: "none",
+                              padding: "6px 12px",
+                              borderRadius: "6px",
+                              cursor: "pointer",
+                            }}
                           >
                             Delete
                           </button>
@@ -145,4 +212,5 @@ function PosCustomer() {
     </>
   );
 }
+
 export default PosCustomer;
