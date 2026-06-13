@@ -147,12 +147,12 @@ function PosOverview() {
       icon: <DollarIcon style={{ fontSize: "24px", color: "#10b981" }} />
     },
     {
-      title: "Total Order",
+      title: "Admin Total Orders",
       amount: overviewData.total_order?.toString() || "0",
       icon: <ShoppingBagIcon style={{ fontSize: "24px", color: "#3b82f6" }} />
     },
     {
-      title: "Total Product",
+      title: "Total stock Products",
       amount: overviewData.total_products?.toString() || "0",
       icon: <ProductIcon style={{ fontSize: "24px", color: "#ec4899" }} />
     },
