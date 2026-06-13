@@ -257,8 +257,53 @@ export default function ClassCanteenOverview() {
     }
   };
 
-  const handlePrint = () => {
-    window.print();
+  const handlePrintReceipt = () => {
+    const printContent = document.querySelector(".receipt-print-section");
+    if (!printContent) return;
+
+    // ယာယီ iframe တစ်ခု ဆောက်မယ်
+    const iframe = document.createElement("iframe");
+    iframe.style.position = "absolute";
+    iframe.style.width = "0px";
+    iframe.style.height = "0px";
+    iframe.style.border = "none";
+
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+
+    // Slip ရဲ့ HTML နဲ့ ပုံစံလှပစေဖို့ Font Style ကိုပါ ထည့်ပေးရမယ်
+    doc.write(`
+    <html>
+      <head>
+        <title>Print Receipt</title>
+        <style>
+          body { 
+            font-family: 'Inter', sans-serif; 
+            margin: 20px; 
+            padding: 0;
+          }
+          /* Flexbox တွေ သေချာအလုပ်လုပ်အောင် style ပြန်ထည့်ပေးခြင်း */
+          div { display: flex; }
+        </style>
+      </head>
+      <body>
+        <div style="flex-direction: column; width: 100%;">
+          ${printContent.innerHTML}
+        </div>
+      </body>
+    </html>
+  `);
+
+    doc.close();
+
+    // Font တွေ load တက်လာအောင် ခဏစောင့်ပြီး print ထုတ်မယ်
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      // Print ပြီးရင် ယာယီဆောက်ထားတဲ့ iframe ကို ပြန်ဖျက်မယ်
+      document.body.removeChild(iframe);
+    }, 500);
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -859,7 +904,15 @@ export default function ClassCanteenOverview() {
             </div>
 
             <div className="receipt-print-section" style={{ padding: "10px" }}>
-              <div style={{ textAlign: "center", marginBottom: "20px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  textAlign: "center",
+                  marginBottom: "20px",
+                }}
+              >
                 <h1
                   style={{
                     fontSize: "20px",
@@ -868,7 +921,7 @@ export default function ClassCanteenOverview() {
                     color: "#111827",
                   }}
                 >
-                  Registration Successfully!
+                  Order Placed Successfully!
                 </h1>
                 <p style={{ fontSize: "13px", color: "#6b7280", margin: 0 }}>
                   Thank you for shopping with us
@@ -998,45 +1051,6 @@ export default function ClassCanteenOverview() {
                     margin: "16px 0",
                   }}
                 ></div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "6px",
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "#6b7280",
-                      fontWeight: 500,
-                      fontSize: "12px",
-                    }}
-                  >
-                    PAYMENT PROOF IMAGE
-                  </span>
-                  {selectedOrder.payment_image ? (
-                    <div
-                      style={{
-                        border: "1px solid #e5e7eb",
-                        borderRadius: "6px",
-                        overflow: "hidden",
-                      }}
-                    >
-                      <img
-                        src={selectedOrder.payment_image}
-                        alt="View Modal Proof"
-                        style={{
-                          width: "100%",
-                          maxHeight: "200px",
-                          objectFit: "contain",
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <span style={{ color: "#9ca3af" }}>—</span>
-                  )}
-                </div>
               </div>
             </div>
 
@@ -1059,8 +1073,9 @@ export default function ClassCanteenOverview() {
                   <FileDownload fontSize="small" />
                 </button>
               )}
+              {/* Print Button */}
               <button
-                onClick={handlePrint}
+                onClick={handlePrintReceipt}
                 style={{
                   flex: 1,
                   background: "#2563eb",

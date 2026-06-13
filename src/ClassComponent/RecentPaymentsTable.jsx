@@ -14,9 +14,9 @@ const formatDateToDMY = (dateStr) => {
   return `${day}-${month}-${year}`;
 };
 
-export default function RecentPaymentsTable({ 
-  paymentMode, 
-  onPaymentModeChange 
+export default function RecentPaymentsTable({
+  paymentMode,
+  onPaymentModeChange,
 }) {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,13 +36,13 @@ export default function RecentPaymentsTable({
       setLoading(true);
       setError(null);
       const response = await fetch(
-        "http://38.60.216.25:5000/api/trainingoverview/training_overview"
+        "http://38.60.216.25:5000/api/trainingoverview/training_overview",
       );
       if (!response.ok) {
         throw new Error("Failed to fetch training overview data");
       }
       const jsonResult = await response.json();
-      
+
       if (jsonResult.success && jsonResult.data) {
         // Transform API data to match table structure
         const transformedData = jsonResult.data.map((item) => ({
@@ -55,7 +55,7 @@ export default function RecentPaymentsTable({
           paymentMethod: item.payment_method,
           proof: item.payment_image_url,
           mode: item.source || "mobile", // Use source from API (mobile/admin)
-          originalData: item // Keep original data if needed
+          originalData: item, // Keep original data if needed
         }));
         setTransactions(transformedData);
       } else {
@@ -114,7 +114,52 @@ export default function RecentPaymentsTable({
   };
 
   const handlePrintReceipt = () => {
-    window.print();
+    const printContent = document.getElementById("invoice-modal-content");
+    if (!printContent) return;
+
+    // ယာယီ iframe တစ်ခု ဆောက်မယ်
+    const iframe = document.createElement("iframe");
+    iframe.style.position = "absolute";
+    iframe.style.width = "0px";
+    iframe.style.height = "0px";
+    iframe.style.border = "none";
+
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+
+    // Slip ရဲ့ HTML နဲ့ ပုံစံလှပစေဖို့ Font Style ကိုပါ ထည့်ပေးရမယ်
+    doc.write(`
+    <html>
+      <head>
+        <title>Print Receipt</title>
+        <style>
+          body { 
+            font-family: 'Inter', sans-serif; 
+            margin: 20px; 
+            padding: 0;
+          }
+          /* Flexbox တွေ သေချာအလုပ်လုပ်အောင် style ပြန်ထည့်ပေးခြင်း */
+          div { display: flex; }
+        </style>
+      </head>
+      <body>
+        <div style="flex-direction: column; width: 100%;">
+          ${printContent.innerHTML}
+        </div>
+      </body>
+    </html>
+  `);
+
+    doc.close();
+
+    // Font တွေ load တက်လာအောင် ခဏစောင့်ပြီး print ထုတ်မယ်
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      // Print ပြီးရင် ယာယီဆောက်ထားတဲ့ iframe ကို ပြန်ဖျက်မယ်
+      document.body.removeChild(iframe);
+    }, 500);
   };
 
   const handleExportToExcel = () => {
@@ -564,7 +609,15 @@ export default function RecentPaymentsTable({
 
             {/* Printable Section */}
             <div id="invoice-modal-content" style={{ padding: "10px" }}>
-              <div style={{ textAlign: "center", marginBottom: "20px" }}>
+              <div
+                style={{
+                  textAlign: "center",
+                  marginBottom: "20px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
                 <h1
                   style={{
                     fontSize: "20px",
@@ -575,6 +628,7 @@ export default function RecentPaymentsTable({
                 >
                   Registration Successfully!
                 </h1>
+
                 <p style={{ fontSize: "13px", color: "#6b7280", margin: 0 }}>
                   Thank you for shopping with us
                 </p>
@@ -698,48 +752,6 @@ export default function RecentPaymentsTable({
                     margin: "16px 0",
                   }}
                 ></div>
-
-                {/* Payment Proof Image Section */}
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "6px",
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "#6b7280",
-                      fontWeight: 500,
-                      fontSize: "12px",
-                    }}
-                  >
-                    PAYMENT PROOF IMAGE
-                  </span>
-                  {selectedTransaction.proof ? (
-                    <div
-                      style={{
-                        border: "1px solid #e5e7eb",
-                        borderRadius: "6px",
-                        overflow: "hidden",
-                        background: "#f9fafb",
-                      }}
-                    >
-                      <img
-                        src={selectedTransaction.proof}
-                        alt="View Modal Proof"
-                        style={{
-                          width: "100%",
-                          maxHeight: "180px",
-                          objectFit: "contain",
-                          display: "block",
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <span style={{ color: "#9ca3af" }}>—</span>
-                  )}
-                </div>
               </div>
             </div>
 
@@ -816,9 +828,8 @@ export default function RecentPaymentsTable({
         }}
       >
         <span style={{ fontSize: "13px", color: "#6b7280" }}>
-          Showing{" "}
-          {filteredTransactions.length === 0 ? 0 : indexOfFirstItem + 1} to{" "}
-          {Math.min(indexOfLastItem, filteredTransactions.length)} of{" "}
+          Showing {filteredTransactions.length === 0 ? 0 : indexOfFirstItem + 1}{" "}
+          to {Math.min(indexOfLastItem, filteredTransactions.length)} of{" "}
           {filteredTransactions.length} transactions
         </span>
         <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
