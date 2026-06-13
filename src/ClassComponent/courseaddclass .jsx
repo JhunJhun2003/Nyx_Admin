@@ -25,6 +25,7 @@ const AddClassForm = () => {
   const [coachName, setCoachName] = useState("");
   const [startTime, setStartTime] = useState("");
   const [isOptionalEnabled, setIsOptionalEnabled] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -38,6 +39,29 @@ const AddClassForm = () => {
   const handleImageChange = (e, setImage) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        Swal.fire({
+          icon: "warning",
+          title: "Invalid File Type",
+          text: "Please upload a valid image file (JPEG, PNG, WEBP)",
+          confirmButtonColor: "#3085d6",
+        });
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        Swal.fire({
+          icon: "warning",
+          title: "File Too Large",
+          text: "File size should be less than 5MB",
+          confirmButtonColor: "#3085d6",
+        });
+        return;
+      }
+      
       setImage(file);
     }
   };
@@ -54,64 +78,133 @@ const AddClassForm = () => {
 
   const BASE_URL = "http://38.60.216.25:5000";
 
-  const handleCreate = async () => {
-    // Validation
-    if (!level) {
+  // Validate time format (HH:MM:SS)
+  const isValidTimeFormat = (time) => {
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
+    return timeRegex.test(time);
+  };
+
+  const validateForm = () => {
+    // Required field validations
+    if (!level || level.trim() === "") {
       Swal.fire({
         icon: "warning",
         title: "Missing Field",
         text: "Please enter Level Title",
+        confirmButtonColor: "#3085d6",
       });
-      return;
+      return false;
     }
-    if (!price) {
+    
+    if (!price || price.trim() === "") {
       Swal.fire({
         icon: "warning",
         title: "Missing Field",
         text: "Please enter Price",
+        confirmButtonColor: "#3085d6",
       });
-      return;
+      return false;
     }
+    
+    if (isNaN(price) || parseFloat(price) <= 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Invalid Price",
+        text: "Please enter a valid price greater than 0",
+        confirmButtonColor: "#3085d6",
+      });
+      return false;
+    }
+    
     if (!selectedDays) {
       Swal.fire({
         icon: "warning",
         title: "Missing Field",
         text: "Please select a training day",
+        confirmButtonColor: "#3085d6",
       });
-      return;
+      return false;
     }
-    if (!startTime) {
+    
+    if (!startTime || startTime.trim() === "") {
       Swal.fire({
         icon: "warning",
         title: "Missing Field",
-        text: "Please enter Start Time",
+        text: "Please enter Start Time (Format: 12:00:00)",
+        confirmButtonColor: "#3085d6",
       });
-      return;
+      return false;
     }
-    if (!endTime) {
+    
+    if (!isValidTimeFormat(startTime)) {
+      Swal.fire({
+        icon: "warning",
+        title: "Invalid Start Time",
+        text: "Please use correct format: HH:MM:SS (e.g., 12:00:00 or 14:30:00)",
+        confirmButtonColor: "#3085d6",
+      });
+      return false;
+    }
+    
+    if (!endTime || endTime.trim() === "") {
       Swal.fire({
         icon: "warning",
         title: "Missing Field",
-        text: "Please enter End Time",
+        text: "Please enter End Time (Format: 16:00:00)",
+        confirmButtonColor: "#3085d6",
       });
-      return;
+      return false;
     }
+    
+    if (!isValidTimeFormat(endTime)) {
+      Swal.fire({
+        icon: "warning",
+        title: "Invalid End Time",
+        text: "Please use correct format: HH:MM:SS (e.g., 16:00:00 or 18:30:00)",
+        confirmButtonColor: "#3085d6",
+      });
+      return false;
+    }
+    
     if (!classImage) {
       Swal.fire({
         icon: "warning",
         title: "Missing Field",
         text: "Please upload a Class Image",
+        confirmButtonColor: "#3085d6",
       });
-      return;
+      return false;
     }
+    
     if (!courseId) {
       Swal.fire({
         icon: "warning",
         title: "Missing Course",
         text: "Please select a course first",
+        confirmButtonColor: "#3085d6",
       });
+      return false;
+    }
+    
+    if (!description || description.trim() === "") {
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Field",
+        text: "Please enter Description",
+        confirmButtonColor: "#3085d6",
+      });
+      return false;
+    }
+    
+    return true;
+  };
+
+  const handleCreate = async () => {
+    if (!validateForm()) {
       return;
     }
+
+    setIsSubmitting(true);
 
     const formData = new FormData();
 
@@ -120,7 +213,7 @@ const AddClassForm = () => {
     if (learningImage) formData.append("learning_image", learningImage);
     if (coachImage) formData.append("coach_file", coachImage);
 
-    // Required text fields (ALWAYS sent, NOT controlled by toggle)
+    // Required text fields
     formData.append("learning_description", learningDescription || "");
     formData.append("title_level", level);
     formData.append("price", price);
@@ -130,17 +223,15 @@ const AddClassForm = () => {
     formData.append("biography", biography || "");
     formData.append("course_id", courseId);
     formData.append("day_id", days[selectedDays]);
-    formData.append("about_level", description || ""); // Description field - ALWAYS sent
+    formData.append("about_level", description || "");
 
-    // Optional Selection fields - ONLY these 4 are controlled by toggle
+    // Optional Selection fields
     if (isOptionalEnabled) {
-      // Toggle ON: Send actual values
       formData.append("main_title", mainTitle || "");
       formData.append("title", title || "");
       formData.append("details", details || "");
       formData.append("about_title", aboutTitle || "");
     } else {
-      // Toggle OFF: Send "-"
       formData.append("main_title", "-");
       formData.append("title", "-");
       formData.append("details", "-");
@@ -149,11 +240,10 @@ const AddClassForm = () => {
 
     console.log("=== SENDING FORM DATA ===");
     console.log("Toggle is:", isOptionalEnabled ? "ON" : "OFF");
-    console.log("about_level (Description):", description);
     for (let pair of formData.entries()) {
       console.log(
         pair[0] + ":",
-        pair[0].includes("image") ? "FILE" : `"${pair[1]}"`,
+        pair[0].includes("image") ? `FILE (${pair[1].name})` : `"${pair[1]}"`,
       );
     }
 
@@ -167,19 +257,20 @@ const AddClassForm = () => {
       console.log("Response status:", res.status);
       console.log("Response:", responseText);
 
-      if (res.status === 200 || res.status === 201) {
-        let responseData;
-        try {
-          responseData = JSON.parse(responseText);
-        } catch (e) {
-          responseData = { success: true };
-        }
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText);
+      } catch (e) {
+        responseData = { success: false, message: responseText };
+      }
 
+      if (res.status === 200 || res.status === 201) {
         if (responseData.success) {
           Swal.fire({
             icon: "success",
             title: "Success!",
-            text: "Training program created successfully!",
+            text: responseData.message || "Training program created successfully!",
+            confirmButtonColor: "#3085d6",
           }).then(() => {
             // Reset form
             setSelectedDays("");
@@ -199,36 +290,47 @@ const AddClassForm = () => {
             setCoachName("");
             setStartTime("");
             setIsOptionalEnabled(true);
+            setIsSubmitting(false);
           });
         } else {
           Swal.fire({
             icon: "error",
             title: "Error!",
             text: responseData.message || "Failed to create class",
+            confirmButtonColor: "#3085d6",
           });
+          setIsSubmitting(false);
         }
       } else {
-        if (responseText.includes("AppError")) {
-          Swal.fire({
-            icon: "error",
-            title: "Backend Error",
-            text: "Server configuration error. Please contact backend developer to fix AppError in course.controller.js line 37",
-          });
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Error!",
-            text: `Server error: ${res.status}`,
-          });
+        let errorMessage = "Failed to create training program";
+        
+        if (responseText.includes("duplicate key") || responseText.includes("already exists")) {
+          errorMessage = "This training program already exists for the selected day and level";
+        } else if (responseText.includes("foreign key constraint")) {
+          errorMessage = "Invalid course ID. Please select a valid course";
+        } else if (responseText.includes("AppError")) {
+          errorMessage = "Server configuration error. Please contact support";
+        } else if (responseData.message) {
+          errorMessage = responseData.message;
         }
+        
+        Swal.fire({
+          icon: "error",
+          title: "Error!",
+          text: `${errorMessage}\n\nStatus Code: ${res.status}`,
+          confirmButtonColor: "#3085d6",
+        });
+        setIsSubmitting(false);
       }
     } catch (err) {
       console.error("Network error:", err);
       Swal.fire({
         icon: "error",
         title: "Network Error!",
-        text: "Unable to connect to the server",
+        text: "Unable to connect to the server. Please check your internet connection and try again.",
+        confirmButtonColor: "#3085d6",
       });
+      setIsSubmitting(false);
     }
   };
 
@@ -252,7 +354,7 @@ const AddClassForm = () => {
         {/* Left Column */}
         <div className="custom-form-column">
           <section className="custom-form-card">
-            <div className="custom-section-title">Main Class Photo</div>
+            <div className="custom-section-title">Main Class Photo *</div>
             <label
               className="custom-upload-box main-photo-box"
               style={{
@@ -279,28 +381,34 @@ const AddClassForm = () => {
           </section>
 
           <section className="custom-form-card">
-            <div className="custom-section-title">Training Levels</div>
+            <div className="custom-section-title">Training Levels *</div>
             <div className="custom-input-row">
               <div className="custom-input-group">
-                <label>Level Title</label>
+                <label>Level Title *</label>
                 <input
                   type="text"
+                  placeholder="e.g., Beginner, Intermediate, Advanced"
                   value={level}
                   onChange={(e) => setLevel(e.target.value)}
                 />
               </div>
               <div className="custom-input-group">
-                <label>Price</label>
+                <label>Price (MMK) *</label>
                 <input
-                  type="text"
-                  placeholder="50,000 MMk"
+                  type="number"
+                  placeholder="50000"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
+                  min="0"
+                  step="1000"
                 />
+                <small style={{ fontSize: "11px", color: "#666", marginTop: "4px", display: "block" }}>
+                  Enter price in Myanmar Kyat (MMK)
+                </small>
               </div>
             </div>
             <div className="custom-input-group custom-mt-3">
-              <label>Description</label>
+              <label>Description *</label>
               <textarea
                 placeholder="Establish a strong foundation with core footwork, grip techniques, and basic stroke play designed for new players entering the competitive arena."
                 rows="4"
@@ -311,9 +419,9 @@ const AddClassForm = () => {
           </section>
 
           <section className="custom-form-card">
-            <div className="custom-section-title">Training Schedule</div>
+            <div className="custom-section-title">Training Schedule *</div>
             <div className="custom-schedule-row">
-              <span className="custom-days-label">Days:</span>
+              <span className="custom-days-label">Days *:</span>
               <div>
                 {["M", "TU", "W", "TH", "F", "SA", "SU"].map((day, idx) => {
                   const dayNames = [
@@ -345,26 +453,34 @@ const AddClassForm = () => {
             </div>
             <div className="custom-input-row custom-mt-3">
               <div className="custom-input-group">
-                <label>Start Time</label>
+                <label>Start Time *</label>
                 <div className="custom-icon--input-wrapper">
                   <input
                     type="text"
+                    placeholder="12:00:00"
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
                   />
                   <AccessTimeIcon className="custom-input-icon-mui" />
                 </div>
+                <small style={{ fontSize: "11px", color: "#666", marginTop: "4px", display: "block" }}>
+                  Format: HH:MM:SS (24-hour)
+                </small>
               </div>
               <div className="custom-input-group">
-                <label>End Time</label>
+                <label>End Time *</label>
                 <div className="custom-icon--input-wrapper">
                   <input
                     type="text"
+                    placeholder="16:00:00"
                     value={endTime}
                     onChange={(e) => setEndTime(e.target.value)}
                   />
                   <AccessTimeIcon className="custom-input-icon-mui" />
                 </div>
+                <small style={{ fontSize: "11px", color: "#666", marginTop: "4px", display: "block" }}>
+                  Format: HH:MM:SS (24-hour)
+                </small>
               </div>
             </div>
           </section>
@@ -445,6 +561,7 @@ const AddClassForm = () => {
                   <label>Coach Name</label>
                   <input
                     type="text"
+                    placeholder="e.g., Coach John Doe"
                     value={coachName}
                     onChange={(e) => setCoachName(e.target.value)}
                   />
@@ -500,7 +617,7 @@ const AddClassForm = () => {
               <div className="custom-input-group">
                 <label>Details</label>
                 <textarea
-                  placeholder="Get a massive 50% discount on your first month's registration!&#10;&#10;Limited to the first 20 applicants this season. Don't miss out on this opportunity."
+                  placeholder="Get a massive 50% discount on your first month's registration! Limited to the first 20 applicants this season. Don't miss out on this opportunity."
                   rows="3"
                   value={details}
                   onChange={(e) => setDetails(e.target.value)}
@@ -525,12 +642,20 @@ const AddClassForm = () => {
       </main>
 
       <footer className="custom-form-footer">
-        {/* 💡 ပြင်ဆင်ရန်: onBack condition ကို ဖြုတ်ပြီး navigate(-1) ကို တိုက်ရိုက်သုံးပါ */}
-        <button className="custom-btn-cancel" onClick={() => navigate(-1)}>
+        <button 
+          className="custom-btn-cancel" 
+          onClick={() => navigate(-1)}
+          disabled={isSubmitting}
+        >
           Cancel
         </button>
-        <button className="custom-btn-create" onClick={handleCreate}>
-          Create
+        <button 
+          className="custom-btn-create" 
+          onClick={handleCreate}
+          disabled={isSubmitting}
+          style={{ opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "not-allowed" : "pointer" }}
+        >
+          {isSubmitting ? "Creating..." : "Create"}
         </button>
       </footer>
     </div>
