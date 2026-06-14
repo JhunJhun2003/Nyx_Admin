@@ -50,29 +50,65 @@ body {
   cursor: pointer;
 }
 
-/* Column Banner Card Grid Alignment */
+/* ၁။ ကတ်တွေစီမယ့် Grid စနစ် */
 .courses-grid {
-  display: flex;
-  gap: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  padding: 16px;
 }
 
+/* ၂။ Course Card Layout */
 .course-card {
   background: #ffffff;
-  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* ကတ်တွေ အမြင့်ချင်း တူနေစေရန် */
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .course-card:hover {
   transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
+/* ၃။ ပုံတွေကို အချိုးအစား ညီညာအောင် ထိန်းချုပ်ခြင်း */
 .course-banner-img {
   width: 100%;
-  height: auto;
+  height: 160px; /* ပုံတွေအားလုံးကို အမြင့် ပုံသေ သတ်မှတ်ခြင်း */
+  object-fit: cover; /* ပုံမပိန်မလိမ်ဘဲ ကွက်တိ ဖြတ်ယူခြင်း */
+  background-color: #f3f4f6;
   display: block;
-  object-fit: cover;
+}
+
+/* ၄။ သီးသန့် Title Wrapper အတွက်သာ CSS ပေးခြင်း (ဒါကြောင့် တခြား icons/buttons တွေ မပျက်တော့ပါ) */
+.course-card .course-title-wrapper {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  flex-grow: 1; /* စာတိုစာရှည်ဖြစ်ပါက နေရာလွတ်ကို မျှယူပြီး အောက်ခြေကို ညီစေခြင်း */
+}
+
+.course-card .course-title-wrapper h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.4;
+  font-family: "Inter", sans-serif;
+
+  /* စာသား အရမ်းရှည်ရင် ကတ်ကြီး ပျက်မသွားဘဲ စာလုံးအစက်လေးတွေ (...) ပြောင်းရန် */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* ================= MODAL OVERLAYS & POPUPS ================= */

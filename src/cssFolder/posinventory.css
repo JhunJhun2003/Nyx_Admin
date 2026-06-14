@@ -1,136 +1,432 @@
+/* Layout block - Sidebar အပြည့် ကပ်သွားအောင် Flex ချိန်ညှိထားပါတယ် */
 .posinventorymain {
   display: flex;
   flex-direction: column;
-  padding: 1em 2em;
-  gap: 1em;
-  color: #0d1b2a;
+  padding: 24px;
+  gap: 20px;
   height: 100vh;
+  left: 250px;
+  top: 0;
+  font-family: "Inter", sans-serif;
+  box-sizing: border-box;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+  flex: 1;
+  width: 100%;
 }
+
+/* 🌓 Theme configuration */
+.posinventorymain.light-theme {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+.posinventorymain.dark-theme {
+  background-color: #1a1c1e;
+  color: #e1e1e1;
+}
+
 .Inventorytitle {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-family: Inter;
+  gap: 10px;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
 }
+
 .inventoryIcon {
-  font-size: 35px;
-  border-radius: 5px;
-  padding: 2px;
-  font-weight: 100;
-  border: 1px solid black;
+  font-size: 24px;
+  color: #4f46e5;
 }
+
+/* ==========================================================================
+   📊 4 Cards Style Grid System (🌓 Light / Dark Mode Support)
+   ========================================================================== */
 .inventoryCondition {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 5px;
+  gap: 16px;
 }
-.inventoryCondition div {
-  font-family: Inter;
+
+/* Base Card Styling */
+.condition-card {
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  height: 100px;
-  border-radius: 6px;
+  padding: 16px 20px;
+  height: auto;
+  min-height: 110px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.3s ease;
+  cursor: default;
 }
-.inventoryCondition * {
-  padding: 5px;
+
+/* ☀️ Light Mode Theme Card အရောင် */
+.light-theme .condition-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
-.condition0 {
-  background-color: #becefd;
+
+/* 🌙 Dark Mode Theme Card အရောင် (Screenshot ထဲက ပုံစံအတိုင်း ကွက်တိဖြစ်စေရန်) */
+.dark-theme .condition-card {
+  background-color: #222528; /* Table wrapper ရဲ့ အရောင်အတိုင်း တစ်သားတည်းဖြစ်အောင် ချိန်ညှိထားပါသည် */
+  border: 1px solid #383c41;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
-.condition1 {
-  background-color: #16f90e96;
+
+.condition-card:hover {
+  transform: translateY(-2px);
 }
-.condition2 {
-  background-color: #ddc2ff;
+.light-theme .condition-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
 }
-.condition3 {
-  background-color: #fa6767c0;
+.dark-theme .condition-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
 }
+
+/* Card Internal layout for Title and Icon */
+.card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+/* Card Title (Light / Dark စာသားအရောင် ခွဲခြားခြင်း) */
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+.light-theme .card-title {
+  color: #64748b; /* Soft gray text */
+}
+.dark-theme .card-title {
+  color: #94a3b8; /* Light gray text */
+}
+
+/* Icon placement and background tint wrapper */
+.icon-wrapper {
+  padding: 8px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+/* Icon wrapper ရဲ့ နောက်ခံအမှောင်ကို Light/Dark mode အလိုက် Tint ချိန်ညှိခြင်း */
+.light-theme .icon-wrapper {
+  background-color: rgba(79, 70, 229, 0.08);
+}
+.dark-theme .icon-wrapper {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.card-icon {
+  font-size: 20px !important;
+}
+
+/* Card Main Data Number (Light / Dark စာသားအရောင် ခွဲခြားခြင်း) */
+.card-data {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+}
+.light-theme .card-data {
+  color: #0f172a;
+}
+.dark-theme .card-data {
+  color: #ffffff;
+}
+
+/* Out of Stock column data color tuning */
+.inventory-data-row .stock-count.stock-out {
+  color: #ef4444 !important; /* Data Row ထဲက 'Out of Stock' အရေအတွက်ကို အနီရောင်ပြခြင်း */
+  font-weight: 700;
+}
+/* Light / Dark Mode မခွဲခြားဘဲ ကတ်တွေကို အရောင်အေးအေးလေးတွေ ပြောင်းထားပါတယ် */
+.card-style-0 {
+  background-color: #eff6ff;
+  color: #1e40af;
+} /* Soft Blue */
+.card-style-1 {
+  background-color: #fef2f2;
+  color: #991b1b;
+} /* Soft Red */
+.card-style-2 {
+  background-color: #f5f3ff;
+  color: #5b21b6;
+} /* Soft Purple */
+.card-style-3 {
+  background-color: #ecfdf5;
+  color: #065f46;
+} /* Soft Emerald */
+
+/* Action Bar area layout */
 .inventoryheader {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  margin-top: 8px;
 }
+
 .inventoryheader h2 {
-  font-family: Inter;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
 }
-.inventoryheader select {
-  margin-left: auto;
-  background-color: #ffffff;
-  width: 180px;
-  outline: none;
-  height: 30px;
-  padding: 1px 5px;
-  border-radius: 10px;
-  font-family: Belanosima;
-}
-.inventoryheader div {
+
+.header-controls-right {
   display: flex;
   align-items: center;
-  width: 200px;
-  height: 30px;
-  padding: 1px 5px;
-  border-radius: 10px;
-  border: 1px solid #0d1b2a;
-  background-color: #0d1b2a;
-  justify-content: space-between;
+  gap: 12px;
 }
-.inventoryheader div input {
+
+.inventory-select {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  width: 160px;
+  height: 38px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #334155;
+  outline: none;
+  cursor: pointer;
+}
+
+.dark-theme .inventory-select {
+  background-color: #2a2d30;
+  border-color: #45494e;
+  color: #e1e1e1;
+}
+
+.inventory-search-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  width: 240px;
+  height: 38px;
+  border-radius: 8px;
+  padding: 0 12px;
+}
+
+.dark-theme .inventory-search-wrapper {
+  background-color: #2a2d30;
+  border-color: #45494e;
+}
+
+.inventory-search-wrapper input {
   border: none;
   outline: none;
-  background-color: initial;
-  color: white;
-  padding-left: 5px;
+  background: transparent;
+  width: 100%;
+  font-size: 14px;
+  color: inherit;
 }
+
+.search-icon-inventory {
+  color: #94a3b8;
+  font-size: 20px;
+}
+
+/* 📦 Core Table Layout Styles */
 .inventorytablecontainer {
   width: 100%;
   background-color: #ffffff;
-  height: 70vh;
-  overflow-y: scroll;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+  flex: 1;
 }
+
+.dark-theme .inventorytablecontainer {
+  background-color: #222528;
+  border-color: #383c41;
+}
+
 .inventorytable {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 20px;
+  border-collapse: collapse;
+  table-layout: fixed;
 }
+
 .inventorytable thead {
   position: sticky;
   top: 0;
-  z-index: 2;
-}
-.inventorytable thead,
-.inventorytable tbody {
-  padding: 1px 5px;
-}
-.inventorytable th {
-  background-color: #a6c4ff;
-  font-family: Inter;
-  font-size: small;
-  color: #000000;
-  font-weight: 500;
-  font-size: small;
-  padding: 10px 5px;
-  padding-left: 10px;
+  z-index: 10;
 }
 
-.inventorytable .test td {
-  border-top: 1px solid #dee2e6;
-  border-bottom: 1px solid #dee2e6;
-  font-family: Inter;
-  font-size: x-small !important;
-  text-align: left !important;
-  padding: 5px 5px;
-  padding-left: 10px;
-  color: #0f0e0e;
-  background-color: rgba(43, 243, 43, 0.205);
+.light-theme .inventorytable th {
+  background-color: #f1f5f9;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
 }
-.inventorytable tr {
+
+.dark-theme .inventorytable th {
+  background-color: #2a2d30;
+  color: #94a3b8;
+  border-bottom: 1px solid #45494e;
+}
+
+.inventorytable th {
+  padding: 14px 16px;
   text-align: left;
+  font-size: 13px;
+  font-weight: 600;
 }
-.productname {
-  width: 150px;
-  text-overflow: ellipsis;
+
+/* Data Row height matching strictly */
+.inventorytable tr {
+  height: 48px;
+}
+
+.inventorytable td {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid #f1f5f9;
   white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
+  color: inherit;
+}
+
+.light-theme .inventorytable td {
+  border-bottom-color: #f1f5f9;
+}
+.dark-theme .inventorytable td {
+  border-bottom-color: #2a2d30;
+}
+
+.id-cell {
+  font-weight: 600;
+  color: #64748b;
+}
+
+.productname {
+  font-weight: 500;
+}
+
+.tag-badge {
+  background-color: #f1f5f9;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #475569;
+}
+
+.dark-theme .tag-badge {
+  background-color: #2a2d30;
+  color: #94a3b8;
+}
+
+.stock-count {
+  font-weight: 600;
+}
+.stock-count.stock-out {
+  color: #ef4444 !important;
+}
+
+/* 🟢 Status Badges Setup */
+.status-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-in {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.badge-out {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.row-empty {
+  background-color: transparent !important;
+}
+
+/* 🏁 Pagination Controls Elements Layout */
+.pos-pagination-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 12px 20px;
+  border: 1px solid #e2e8f0;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.dark-theme .pos-pagination-footer {
+  background-color: #222528;
+  border-color: #383c41;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.pagination-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.dark-theme .pagination-btn {
+  background-color: #2a2d30;
+  border-color: #45494e;
+  color: #94a3b8;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.dark-theme .pagination-btn:hover:not(:disabled) {
+  background-color: #383c41;
+  color: #ffffff;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.page-number-display {
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 80px;
+  text-align: center;
 }

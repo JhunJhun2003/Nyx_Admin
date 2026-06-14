@@ -254,6 +254,7 @@ export default function RecentPaymentsTable({
         <h2 style={{ fontSize: "20px", fontWeight: 700, margin: 0 }}>
           Recent Training Payments
         </h2>
+
         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
           <div style={{ position: "relative" }}>
             <input
@@ -289,45 +290,6 @@ export default function RecentPaymentsTable({
             </span>
           </div>
 
-          <div style={{ display: "flex", gap: "8px" }}>
-            <button
-              onClick={() => {
-                onPaymentModeChange("mobile");
-                setCurrentPage(1);
-              }}
-              style={{
-                background: paymentMode === "mobile" ? "#1e293b" : "#fff",
-                color: paymentMode === "mobile" ? "#fff" : "#374151",
-                border: "1px solid #e5e7eb",
-                borderRadius: "6px",
-                padding: "8px 16px",
-                fontWeight: 600,
-                fontSize: "14px",
-                cursor: "pointer",
-              }}
-            >
-              Mobile
-            </button>
-            <button
-              onClick={() => {
-                onPaymentModeChange("admin");
-                setCurrentPage(1);
-              }}
-              style={{
-                background: paymentMode === "admin" ? "#1e293b" : "#fff",
-                color: paymentMode === "admin" ? "#fff" : "#374151",
-                border: "1px solid #e5e7eb",
-                borderRadius: "6px",
-                padding: "8px 16px",
-                fontWeight: 600,
-                fontSize: "14px",
-                cursor: "pointer",
-              }}
-            >
-              Admin
-            </button>
-          </div>
-
           <button
             onClick={handleExportToExcel}
             style={{
@@ -354,39 +316,80 @@ export default function RecentPaymentsTable({
       <div
         style={{
           display: "flex",
-          justifyContent: "flex-end",
+          justifyContent: "space-between",
           gap: "8px",
           marginBottom: "16px",
         }}
       >
-        <input
-          type="date"
-          value={startDate}
-          onChange={(e) => {
-            setStartDate(e.target.value);
-            setCurrentPage(1);
-          }}
-          style={{
-            padding: "6px 12px",
-            border: "1px solid #e5e7eb",
-            borderRadius: "6px",
-            fontSize: "14px",
-          }}
-        />
-        <input
-          type="date"
-          value={endDate}
-          onChange={(e) => {
-            setEndDate(e.target.value);
-            setCurrentPage(1);
-          }}
-          style={{
-            padding: "6px 12px",
-            border: "1px solid #e5e7eb",
-            borderRadius: "6px",
-            fontSize: "14px",
-          }}
-        />
+        <div style={{ display: "flex", gap: "5px" }}>
+          <button
+            onClick={() => {
+              onPaymentModeChange("mobile");
+              setCurrentPage(1);
+            }}
+            style={{
+              background: paymentMode === "mobile" ? "#1e293b" : "#fff",
+              color: paymentMode === "mobile" ? "#fff" : "#374151",
+              border: "1px solid #e5e7eb",
+              borderRadius: "6px",
+              padding: "8px 20px",
+              fontWeight: 600,
+              fontSize: "14px",
+              cursor: "pointer",
+            }}
+          >
+            Mobile
+          </button>
+          <button
+            onClick={() => {
+              onPaymentModeChange("admin");
+              setCurrentPage(1);
+            }}
+            style={{
+              background: paymentMode === "admin" ? "#1e293b" : "#fff",
+              color: paymentMode === "admin" ? "#fff" : "#374151",
+              border: "1px solid #e5e7eb",
+              borderRadius: "6px",
+              padding: "8px 20px",
+              fontWeight: 600,
+              fontSize: "14px",
+              cursor: "pointer",
+            }}
+          >
+            Admin
+          </button>
+        </div>
+        <div>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => {
+              setStartDate(e.target.value);
+              setCurrentPage(1);
+            }}
+            style={{
+              padding: "6px 12px",
+              border: "1px solid #e5e7eb",
+              borderRadius: "6px",
+              fontSize: "14px",
+              marginRight: "7px",
+            }}
+          />
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => {
+              setEndDate(e.target.value);
+              setCurrentPage(1);
+            }}
+            style={{
+              padding: "6px 12px",
+              border: "1px solid #e5e7eb",
+              borderRadius: "6px",
+              fontSize: "14px",
+            }}
+          />
+        </div>
       </div>
 
       {/* Table Section */}

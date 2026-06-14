@@ -1,16 +1,24 @@
 import InventoryIcon from "@mui/icons-material/DensityMediumOutlined";
 import SearchIcon from "@mui/icons-material/SearchOutlined";
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import AllItemsIcon from "@mui/icons-material/LayersOutlined";
+import StockOutIcon from "@mui/icons-material/CancelOutlined";
+import AlertIcon from "@mui/icons-material/ErrorOutlineOutlined";
+import CategoryIcon from "@mui/icons-material/ClassOutlined";
 import "./cssFolder/posinventory.css";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "./Hooks/context";
-import TableLoading from "./Components/tableloading";
 import CustomerLoading from "./Components/loadingcustomer";
 import { useGetCategory, useGetInventroy } from "./Api_Call";
 
 function PosInventory() {
   const [text, settext] = useState("");
   const [value, setvalue] = useState("All");
-  const [filteredData, setfiltered] = useState(null);
+  const [filteredData, setfiltered] = useState([]);
+
+  // 📄 Pagination States
+  const [currentPage, setCurrentPage] = useState(1);
   const [inventoryStats, setInventoryStats] = useState({
     totalInventory: "0",
     outOfStock: "0",
@@ -18,6 +26,7 @@ function PosInventory() {
     topCategory: "N/A"
   });
   const [statsLoading, setStatsLoading] = useState(true);
+  const rowsPerPage = 10;
 
   const { Categories, GetCategories } = useGetCategory();
   const { Inventory, GetInventory } = useGetInventroy();
@@ -72,179 +81,219 @@ function PosInventory() {
   //for option
   function changevalue(event) {
     setvalue(event.target.value);
+    setCurrentPage(1);
   }
 
-  // for search box
   function changetext(event) {
     settext(event.target.value);
+    setCurrentPage(1);
   }
 
   useEffect(() => {
     if (!Array.isArray(Inventory.data)) return;
-    setfiltered(Inventory.data);
-    if (!Inventory.data.length > 0) return;
+
     let result = Inventory.data;
-    if (value != "All") {
-      result = result.filter((item) => {
-        return item.category?.toLowerCase().includes(value.toLowerCase());
-      });
+    if (value !== "All") {
+      result = result.filter((item) =>
+        item.category?.toLowerCase().includes(value.toLowerCase()),
+      );
     }
     if (text.trim() !== "") {
-      result = result.filter((item) => {
-        return (
+      result = result.filter(
+        (item) =>
           item.productName?.toLowerCase().includes(text.trim().toLowerCase()) ||
-          item.tags?.toLowerCase().includes(text.trim().toLowerCase())
-        );
-      });
+          item.tags??.toLowerCase().includes(text.trim().toLowerCase()),
+      );
     }
     setfiltered(result);
   }, [text, value, Inventory.data]);
 
-  async function DeleteInventoryData(item) {
-    try {
-      let reponse = await fetch(
-        `${import.meta.env.VITE_DELETE_INVENTORY}/${item}`,
-        {
-          method: "DELETE",
-        },
-      );
-      if (reponse.ok) {
-        await GetInventory();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // 🧮 Pagination Calculation
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
+
+  // Row ၁၀ ခု ပြည့်အောင် ကွက်လပ်ဖြည့်ဖို့ တွက်ချက်ခြင်း
+  const emptyRowsCount = rowsPerPage - currentRows.length;
+
 
   return (
-    <>
-      <div className="posinventorymain">
-        <h1 className="Inventorytitle" style={FontStyle}>
-          <InventoryIcon
-            className="inventoryIcon"
-            sx={{ border: !Font_color ? "1px solid white" : "1px solid black" }}
-          />
-          Inventory
-        </h1>
+    <div
+      className={`posinventorymain ${Font_color ? "dark-theme" : "light-theme"}`}
+    >
+      {/* Title block */}
+      <h1 className="Inventorytitle" style={FontStyle}>
+        <InventoryIcon className="inventoryIcon" />
+        Inventory
+      </h1>
         
-        <div className="inventoryCondition">
-          {Condition.map((item, index) => {
-            return (
-              <div
-                key={index}
-                className={`condition${index}`}
-                style={{ border: "1px solid #0d1b2a3a" }}
-              >
-                <p>{item.title}</p>
-                <h4>
+
+      {/* 📊 Top 4 Cards Row (🌓 Light/Dark Mode ကိုက်ညီအောင် ပြင်ဆင်ပြီး) */}
+      <div className="inventoryCondition">
+        {Condition.map((item, index) => {
+          // Icon dynamically ပြောင်းလဲခြင်း
+          const cardIcons = [
+            <AllItemsIcon className="card-icon" style={{ color: "#4f46e5" }} />, // Total
+            <StockOutIcon className="card-icon" style={{ color: "#ef4444" }} />, // Out
+            <AlertIcon className="card-icon" style={{ color: "#f59e0b" }} />, // Alert
+            <CategoryIcon className="card-icon" style={{ color: "#10b981" }} />, // Category
+          ];
+
+          return (
+            // 🛠️ white-card ကို ဖြုတ်ပြီး condition-card အဖြစ်ပဲ ထားရှိပါသည်
+            <div key={index} className="condition-card">
+              <div className="card-top-row">
+                <p className="card-title">{item.title}</p>
+                {/* 🛠️ Icon ထည့်ထားတဲ့နေရာ */}
+                <div className="icon-wrapper">{cardIcons[index]}</div>
+              </div>
+              <h4 className="card-data">
                   {statsLoading ? (
                     <span className="loading-text">...</span>
                   ) : (
                     item.data
                   )}
                 </h4>
-              </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
+      </div>
         
-        <div className="inventoryheader">
-          <h2 style={FontStyle}>Product Stocks Overview</h2>
-          <select onChange={changevalue}>
-            <option value="All">All</option>
+
+      {/* Table Action Header Area */}
+      <div className="inventoryheader">
+        <h2 style={FontStyle}>Product Stocks Overview</h2>
+
+        <div className="header-controls-right">
+          <select onChange={changevalue} className="inventory-select">
+            <option value="All">All Categories</option>
             {Array.isArray(Categories.data) && Categories.data.length > 0 ? (
-              Categories.data.map((item, index) => {
-                return (
-                  <option key={index} value={item.name}>
-                    {item.name}
-                  </option>
-                );
-              })
+              Categories.data.map((item, index) => (
+                <option key={index} value={item.name}>
+                  {item.name}
+                </option>
+              ))
             ) : (
               <option>Loading...</option>
             )}
           </select>
-          <div style={InputStyle}>
+
+          <div className="inventory-search-wrapper">
             <input
               type="search"
-              placeholder="Search.."
-              style={{ color: !Font_color ? "white" : "#0D1B2A" }}
+              placeholder="Search products..."
               onChange={changetext}
             />
-            <SearchIcon style={{ color: !backcolor ? "white" : "#0D1B2A" }} />
+            <SearchIcon className="search-icon-inventory" />
           </div>
         </div>
         
-        <div className="inventorytablecontainer">
-          <table className="inventorytable" id="inventorytable">
-            <thead>
-              <tr>
-                <th>Product Id</th>
-                <th>Product Name</th>
-                <th>Category</th>
-                <th>Tags</th>
-                <th>Date</th>
-                <th>Stocks</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Array.isArray(filteredData) ? (
-                filteredData.length > 0 ? (
-                  filteredData.map((item, index) => {
-                    return (
-                      <tr key={index} className="test">
-                        <td
-                          style={{
-                            borderLeft: "1px solid #dee2e6",
-                            width: "90px",
-                          }}
-                        >
-                          {item.ProductID}
-                        </td>
-                        <td className="productname">{item.productName}</td>
-                        <td>{item.category}</td>
-                        <td>{item.tags}</td>
-                        <td>{item.Date}</td>
-                        <td>{item.current_stock}</td>
-                        <td
-                          style={{
-                            color: item.current_stock > 0 ? "#0f0e0e" : "red",
+      </div>
+
+      {/* 📦 Modern Data Table Container */}
+      <div className="inventorytablecontainer">
+        <table className="inventorytable">
+          <thead>
+            <tr>
+              <th>Product Id</th>
+              <th>Product Name</th>
+              <th>Category</th>
+              <th>Tags</th>
+              <th>Date</th>
+              <th>Stocks</th>
+              <th style={{ textAlign: "center" }}>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.isArray(Inventory.data) ? (
+              <>
+                {/* 1. Show dynamic table rows */}
+                {currentRows.map((item, index) => {
+                  const isOutOfStock = item.current_stock <= 0;
+                  return (
+                    <tr key={index} className="inventory-data-row">
+                      <td className="id-cell">#{item.ProductID}</td>
+                      <td className="productname">{item.productName}</td>
+                      <td>{item.category}</td>
+                      <td>
+                        <span className="tag-badge">{item.tags || "-"}</span>
+                      </td>
+                      <td>{item.Date || "-"}</td>
+                      <td
+                        className={`stock-count ${isOutOfStock ? "stock-out" : ""}`}
+                      >
+                        {item.current_stock}
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        <span
+                          className={`status-badge ${isOutOfStock ? "badge-out" : "badge-in"}`}
                             fontWeight: item.current_stock === 0 ? "bold" : "normal"
-                          }}
                         >
-                          {item.status}
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <td
-                      colSpan="7"
-                      style={{
-                        textAlign: "center",
-                        padding: "20px",
-                        borderTop: "1px solid #0f0e0e4f",
-                        borderBottom: "1px solid #0f0e0e4f",
-                        margin: 0,
-                      }}
-                    >
-                      No data
-                    </td>
-                  </tr>
-                )
-              ) : (
-                [...Array(8)].map((_, index) => (
-                  <CustomerLoading key={index} times={7} />
-                ))
-              )}
-            </tbody>
-          </table>
+                          {isOutOfStock ? "Out of Stock" : "Available"}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+
+                {/* 2. Fill empty rows to make strictly 10 items rows */}
+                {emptyRowsCount > 0 &&
+                  Array.from({ length: emptyRowsCount }).map((_, index) => (
+                    <tr key={`empty-${index}`} className="row-empty">
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                    </tr>
+                  ))}
+              </>
+            ) : (
+              [...Array(10)].map((_, index) => (
+                <CustomerLoading key={index} times={7} />
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* 🏁 Pagination Controls Footer */}
+      <div className="pos-pagination-footer">
+        <span className="pagination-info">
+          Showing {filteredData.length > 0 ? indexOfFirstRow + 1 : 0} to{" "}
+          {Math.min(indexOfLastRow, filteredData.length)} of{" "}
+          {filteredData.length} stocks
+        </span>
+        <div className="pagination-btn-group">
+          <button
+            type="button"
+            className="pagination-btn"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+          >
+            <NavigateBeforeIcon style={{ fontSize: "20px" }} />
+          </button>
+
+          <span className="page-number-display">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <button
+            type="button"
+            className="pagination-btn"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+          >
+            <NavigateNextIcon style={{ fontSize: "20px" }} />
+          </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
+
 
 export default PosInventory;
