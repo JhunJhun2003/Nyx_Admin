@@ -147,29 +147,29 @@ function PosOverview() {
     {
       title: "Total Revenue",
       amount: `${overviewData?.total_revenue?.toLocaleString() || 0} ks`,
-      increasement: "+11%",
-      compare: "from yesterday",
+      // increasement: "+11%",
+      // compare: "from yesterday",
       iconBg: isDarkMode ? "#1E3A8A" : "#EFF6FF",
     },
     {
-      title: "Total Order",
+      title: "Total Admin Orders",
       amount: overviewData?.total_order?.toLocaleString() || "0",
-      increasement: "-3%",
-      compare: "from yesterday",
+      // increasement: "-3%",
+      // compare: "from yesterday",
       iconBg: isDarkMode ? "#581C87" : "#F3E8FF",
     },
     {
-      title: "Total Product",
+      title: "Total Products",
       amount: overviewData?.total_products?.toLocaleString() || "0",
-      increasement: "+5",
-      compare: "New Products",
+      // increasement: "+5",
+      // compare: "New Products",
       iconBg: isDarkMode ? "#7C2D12" : "#FFEDD5",
     },
     {
       title: "Total Customers",
       amount: overviewData?.total_customer?.toLocaleString() || "0",
-      increasement: "+12",
-      compare: "New Customers",
+      // increasement: "+12",
+      // compare: "New Customers",
       iconBg: isDarkMode ? "#701A75" : "#FCE7F3",
     },
   ];
@@ -639,7 +639,7 @@ function PosOverview() {
             color: themeStyles.color,
           }}
         >
-          Recent Order
+          Recent Mobile Orders
         </h2>
 
         <div style={{ overflowX: "auto" }}>
