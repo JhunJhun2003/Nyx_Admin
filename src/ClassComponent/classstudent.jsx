@@ -12,6 +12,7 @@ import ImageIcon from "@mui/icons-material/Image";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
+import deleteIcon from "../images/deleteicon.png";
 
 const StudentsTable = () => {
   const [activeTab, setActiveTab] = useState("All");
@@ -40,6 +41,9 @@ const StudentsTable = () => {
 
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [activeReceiptUrl, setActiveReceiptUrl] = useState("");
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletingStudentId, setDeletingStudentId] = useState(null);
 
   const fetchAllStudentsData = async () => {
     try {
@@ -130,48 +134,41 @@ const StudentsTable = () => {
     setCurrentPage(1);
   }, [activeTab, searchQuery, coursesData]);
 
-  const handleDeleteStudent = async (studentId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this student from the database permanently?",
-    );
+  const confirmDeleteStudent = async () => {
+    setIsDeleteModalOpen(false); // အရင်ဆုံး Modal ဘောက်စ်ကို ပိတ်လိုက်မယ်
 
-    if (confirmDelete) {
-      try {
-        setIsActionProcessing(true);
+    try {
+      setIsActionProcessing(true);
 
-        // Get the student's source from the filteredStudents data
-        const studentToDelete = filteredStudents.find(
-          (student) => student.id === studentId,
-        );
-        const studentSource = studentToDelete?.source ; // Default to "admin" if source not found
+      // သိမ်းထားတဲ့ deletingStudentId ကို သုံးပြီး student detail ကို ရှာမယ်
+      const studentToDelete = filteredStudents.find(
+        (student) => student.id === deletingStudentId,
+      );
+      const studentSource = studentToDelete?.source;
 
-        const response = await fetch(
-          `http://38.60.216.25:5000/api/course/deletetrainingstudent/${studentId}/${studentSource}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
+      const response = await fetch(
+        `http://38.60.216.25:5000/api/course/deletetrainingstudent/${deletingStudentId}/${studentSource}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+        },
+      );
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (response.ok && result.success) {
-          alert("Student deleted successfully from database!");
-          await fetchAllStudentsData(); // Refresh the data after deletion
-        } else {
-          alert(
-            `Failed to delete student: ${result.message || "Server Error"}`,
-          );
-        }
-      } catch (err) {
-        alert(
-          `Network Error: Please check your internet connection. (${err.message})`,
-        );
-      } finally {
-        setIsActionProcessing(false);
+      if (response.ok && result.success) {
+        alert("Student deleted successfully!");
+        await fetchAllStudentsData(); // Table ထဲက data တွေ refresh ပြန်လုပ်မယ်
+      } else {
+        alert(`Failed to delete student: ${result.message || "Server Error"}`);
       }
+    } catch (err) {
+      alert(`Network Error: ${err.message}`);
+    } finally {
+      setIsActionProcessing(false);
+      setDeletingStudentId(null); // အလုပ်ပြီးသွားရင် id ကို null ပြန်ပြောင်းမယ်
     }
   };
 
@@ -294,6 +291,7 @@ const StudentsTable = () => {
               className="st-search-input"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ backgroundColor: "#0b1528", color: "#ffffff" }}
             />
             <SearchIcon className="st-search-icon" />
           </div>
@@ -360,9 +358,10 @@ const StudentsTable = () => {
                         </button>
                         <button
                           className="st-action-btn st-delete-btn"
-                          onClick={() =>
-                            handleDeleteStudent(student.id, student.source)
-                          }
+                          onClick={() => {
+                            setDeletingStudentId(student.id); // ဖျက်မယ့် student ရဲ့ id ကို သိမ်းထားမယ်
+                            setIsDeleteModalOpen(true); // Modal ကို ဖွင့်မယ်
+                          }}
                           disabled={isActionProcessing}
                         >
                           <DeleteIcon style={{ fontSize: 16 }} />
@@ -373,6 +372,119 @@ const StudentsTable = () => {
                 </tbody>
               </table>
 
+              {isDeleteModalOpen && (
+                <div
+                  style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: "rgba(0, 0, 0, 0.4)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 9999,
+                  }}
+                >
+                  <div
+                    style={{
+                      backgroundColor: "white",
+                      padding: "28px",
+                      borderRadius: "16px",
+                      boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+                      maxWidth: "380px",
+                      width: "90%",
+                      textAlign: "center",
+                      fontFamily: "sans-serif",
+                    }}
+                  >
+                    {/* အမှိုက်ပုံး Icon ပုံစံ */}
+                    <div
+                      style={{
+                        width: "60px",
+                        height: "60px",
+                        backgroundColor: "#fce8e6",
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        margin: "0 auto 16px auto",
+                      }}
+                    >
+                      <span className="alretconfirmicon">
+                        <img src={deleteIcon} />
+                      </span>
+                    </div>
+
+                    <h3
+                      style={{
+                        margin: "0 0 8px 0",
+                        fontSize: "20px",
+                        fontWeight: "700",
+                        color: "#1a1a1a",
+                      }}
+                    >
+                      Deleting Student?
+                    </h3>
+                    <p
+                      style={{
+                        margin: "0 0 24px 0",
+                        color: "#5f6368",
+                        fontSize: "14px",
+                        lineHeight: "1.5",
+                      }}
+                    >
+                      Are you sure you want to delete this student?
+                    </p>
+
+                    {/* Buttons Component */}
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        gap: "12px",
+                      }}
+                    >
+                      <button
+                        onClick={() => {
+                          setIsDeleteModalOpen(false);
+                          setDeletingStudentId(null);
+                        }}
+                        style={{
+                          flex: 1,
+                          padding: "10px 0",
+                          backgroundColor: "#f1f3f4",
+                          color: "#3c4043",
+                          border: "1px solid #dadce0",
+                          borderRadius: "8px",
+                          cursor: "pointer",
+                          fontWeight: "600",
+                          fontSize: "14px",
+                        }}
+                      >
+                        cancel
+                      </button>
+                      <button
+                        onClick={confirmDeleteStudent}
+                        style={{
+                          flex: 1,
+                          padding: "10px 0",
+                          backgroundColor: "#dc3545",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "8px",
+                          cursor: "pointer",
+                          fontWeight: "600",
+                          fontSize: "14px",
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
               {/* Pagination Section */}
               {totalPages > 1 && (
                 <div className="st-footer">

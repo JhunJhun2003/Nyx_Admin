@@ -5,6 +5,7 @@ import { useGetClassCustomer } from "../ClassApi";
 import { useEffect, useState } from "react";
 import { useNoti } from "../Hooks/alert";
 import { useTableFooter } from "../Hooks/tablefooter";
+
 function ClassCustomer() {
   const [Index, setIndex] = useState(0);
   const [filtered, setfiletered] = useState(null);
