@@ -102,7 +102,7 @@ function PosInventory() {
       result = result.filter(
         (item) =>
           item.productName?.toLowerCase().includes(text.trim().toLowerCase()) ||
-          item.tags??.toLowerCase().includes(text.trim().toLowerCase()),
+          item.tags?.toLowerCase().includes(text.trim().toLowerCase()),
       );
     }
     setfiltered(result);
@@ -117,7 +117,6 @@ function PosInventory() {
   // Row ၁၀ ခု ပြည့်အောင် ကွက်လပ်ဖြည့်ဖို့ တွက်ချက်ခြင်း
   const emptyRowsCount = rowsPerPage - currentRows.length;
 
-
   return (
     <div
       className={`posinventorymain ${Font_color ? "dark-theme" : "light-theme"}`}
@@ -127,46 +126,41 @@ function PosInventory() {
         <InventoryIcon className="inventoryIcon" />
         Inventory
       </h1>
-        
 
-      {/* 📊 Top 4 Cards Row (🌓 Light/Dark Mode ကိုက်ညီအောင် ပြင်ဆင်ပြီး) */}
+      {/* 📊 Top 4 Cards Row */}
       <div className="inventoryCondition">
         {Condition.map((item, index) => {
-          // Icon dynamically ပြောင်းလဲခြင်း
           const cardIcons = [
-            <AllItemsIcon className="card-icon" style={{ color: "#4f46e5" }} />, // Total
-            <StockOutIcon className="card-icon" style={{ color: "#ef4444" }} />, // Out
-            <AlertIcon className="card-icon" style={{ color: "#f59e0b" }} />, // Alert
-            <CategoryIcon className="card-icon" style={{ color: "#10b981" }} />, // Category
+            <AllItemsIcon className="card-icon" style={{ color: "#4f46e5" }} />,
+            <StockOutIcon className="card-icon" style={{ color: "#ef4444" }} />,
+            <AlertIcon className="card-icon" style={{ color: "#f59e0b" }} />,
+            <CategoryIcon className="card-icon" style={{ color: "#10b981" }} />,
           ];
 
           return (
-            // 🛠️ white-card ကို ဖြုတ်ပြီး condition-card အဖြစ်ပဲ ထားရှိပါသည်
             <div key={index} className="condition-card">
               <div className="card-top-row">
                 <p className="card-title">{item.title}</p>
-                {/* 🛠️ Icon ထည့်ထားတဲ့နေရာ */}
                 <div className="icon-wrapper">{cardIcons[index]}</div>
               </div>
               <h4 className="card-data">
-                  {statsLoading ? (
-                    <span className="loading-text">...</span>
-                  ) : (
-                    item.data
-                  )}
-                </h4>
+                {statsLoading ? (
+                  <span className="loading-text">...</span>
+                ) : (
+                  item.data
+                )}
+              </h4>
             </div>
           );
         })}
       </div>
-        
 
       {/* Table Action Header Area */}
       <div className="inventoryheader">
         <h2 style={FontStyle}>Product Stocks Overview</h2>
 
         <div className="header-controls-right">
-          <select onChange={changevalue} className="inventory-select">
+          <select onChange={changevalue} className="inventory-select" value={value}>
             <option value="All">All Categories</option>
             {Array.isArray(Categories.data) && Categories.data.length > 0 ? (
               Categories.data.map((item, index) => (
@@ -188,7 +182,6 @@ function PosInventory() {
             <SearchIcon className="search-icon-inventory" />
           </div>
         </div>
-        
       </div>
 
       {/* 📦 Modern Data Table Container */}
@@ -206,7 +199,7 @@ function PosInventory() {
             </tr>
           </thead>
           <tbody>
-            {Array.isArray(Inventory.data) ? (
+            {Array.isArray(Inventory.data) && Inventory.data.length > 0 ? (
               <>
                 {/* 1. Show dynamic table rows */}
                 {currentRows.map((item, index) => {
@@ -228,7 +221,6 @@ function PosInventory() {
                       <td style={{ textAlign: "center" }}>
                         <span
                           className={`status-badge ${isOutOfStock ? "badge-out" : "badge-in"}`}
-                            fontWeight: item.current_stock === 0 ? "bold" : "normal"
                         >
                           {isOutOfStock ? "Out of Stock" : "Available"}
                         </span>
@@ -261,39 +253,40 @@ function PosInventory() {
       </div>
 
       {/* 🏁 Pagination Controls Footer */}
-      <div className="pos-pagination-footer">
-        <span className="pagination-info">
-          Showing {filteredData.length > 0 ? indexOfFirstRow + 1 : 0} to{" "}
-          {Math.min(indexOfLastRow, filteredData.length)} of{" "}
-          {filteredData.length} stocks
-        </span>
-        <div className="pagination-btn-group">
-          <button
-            type="button"
-            className="pagination-btn"
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((prev) => prev - 1)}
-          >
-            <NavigateBeforeIcon style={{ fontSize: "20px" }} />
-          </button>
-
-          <span className="page-number-display">
-            Page {currentPage} of {totalPages}
+      {filteredData.length > 0 && (
+        <div className="pos-pagination-footer">
+          <span className="pagination-info">
+            Showing {filteredData.length > 0 ? indexOfFirstRow + 1 : 0} to{" "}
+            {Math.min(indexOfLastRow, filteredData.length)} of{" "}
+            {filteredData.length} stocks
           </span>
+          <div className="pagination-btn-group">
+            <button
+              type="button"
+              className="pagination-btn"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+            >
+              <NavigateBeforeIcon style={{ fontSize: "20px" }} />
+            </button>
 
-          <button
-            type="button"
-            className="pagination-btn"
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((prev) => prev + 1)}
-          >
-            <NavigateNextIcon style={{ fontSize: "20px" }} />
-          </button>
+            <span className="page-number-display">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              type="button"
+              className="pagination-btn"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+            >
+              <NavigateNextIcon style={{ fontSize: "20px" }} />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
-
 
 export default PosInventory;

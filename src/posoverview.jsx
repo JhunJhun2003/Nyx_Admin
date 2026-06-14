@@ -17,7 +17,6 @@ import { Context } from "./Hooks/context";
 import CustomerLoading from "./Components/loadingcustomer";
 import Swal from "sweetalert2";
 import { useGetOrder } from "./Api_Call";
-import { useTableFooter } from "./Hooks/tablefooter";
 
 function PosOverview() {
   const { backcolor } = useContext(Context);
@@ -63,7 +62,7 @@ function PosOverview() {
       setLoading(true);
       setError(null);
       const response = await fetch(
-        "http://38.60.216.25:5000/api/posoverview/showposoverview",
+        "http://38.60.216.25:5000/api/posoverview/showposoverview"
       );
       if (!response.ok) {
         throw new Error("Failed to fetch POS overview data");
@@ -135,10 +134,6 @@ function PosOverview() {
     fetchPosOverview();
   }, []);
 
-  const { TableFooterJsx, startnumber, endnumber } = useTableFooter(
-    MOrders?.data,
-  );
-
   // Dynamic Color Icons
   const icons = [
     <DollarIcon style={{ color: "#3B82F6" }} />,
@@ -147,7 +142,7 @@ function PosOverview() {
     <CustomerIcon style={{ color: "#EC4899" }} />,
   ];
 
-  // Map API values to your beautiful Cards Layout
+  // Map API values to Cards Layout
   const headerdata = [
     {
       title: "Total Revenue",
@@ -157,14 +152,18 @@ function PosOverview() {
       iconBg: isDarkMode ? "#1E3A8A" : "#EFF6FF",
     },
     {
-      title: "Admin Total Orders",
-      amount: overviewData.total_order?.toString() || "0",
-      icon: <ShoppingBagIcon style={{ fontSize: "24px", color: "#3b82f6" }} />
+      title: "Total Order",
+      amount: overviewData?.total_order?.toLocaleString() || "0",
+      increasement: "-3%",
+      compare: "from yesterday",
+      iconBg: isDarkMode ? "#581C87" : "#F3E8FF",
     },
     {
-      title: "Total stock Products",
-      amount: overviewData.total_products?.toString() || "0",
-      icon: <ProductIcon style={{ fontSize: "24px", color: "#ec4899" }} />
+      title: "Total Product",
+      amount: overviewData?.total_products?.toLocaleString() || "0",
+      increasement: "+5",
+      compare: "New Products",
+      iconBg: isDarkMode ? "#7C2D12" : "#FFEDD5",
     },
     {
       title: "Total Customers",
@@ -274,9 +273,7 @@ function PosOverview() {
         }}
       >
         {headerdata.map((item, index) => {
-          const isPositive =
-            item.increasement.startsWith("+") ||
-            item.increasement.startsWith("11%");
+          const isPositive = item.increasement?.startsWith("+") || item.increasement === "+11%";
           return (
             <div
               key={index}
@@ -703,199 +700,149 @@ function PosOverview() {
               </tr>
             </thead>
             <tbody style={{ fontSize: "14px", color: themeStyles.color }}>
-              {Array.isArray(MOrders?.data) ? (
-                MOrders.data.length > 0 ? (
-                  <>
-                    {MOrders.data
-                      .slice((currentPage - 1) * 5, currentPage * 5)
-                      .map((item, index) => {
-                        const status = item.order_status
-                          ? item.order_status.toLowerCase()
-                          : "";
-                        return (
-                          <tr
-                            key={index}
-                            style={{
-                              borderBottom: `1px solid ${themeStyles.borderColor}`,
-                              transition: "background-color 0.2s",
-                              height: "69px",
-                            }}
-                            className="table-row-hover"
-                          >
-                            <td
-                              style={{
-                                padding: "16px 12px",
-                                fontWeight: "600",
-                                color: "#4F46E5",
-                              }}
-                            >
-                              #{item.order_id}
-                            </td>
-                            <td
-                              style={{
-                                padding: "16px 12px",
-                                fontWeight: "600",
-                              }}
-                            >
-                              {item.customer_name}
-                            </td>
-                            <td
-                              style={{
-                                padding: "16px 12px",
-                                fontWeight: "600",
-                              }}
-                            >
-                              {item.Total?.toLocaleString()} ks
-                            </td>
-                            <td
-                              style={{ padding: "16px 12px", color: "#94A3B8" }}
-                            >
-                              {item.Date}
-                            </td>
-                            <td
-                              style={{ padding: "16px 12px", color: "#94A3B8" }}
-                            >
-                              {item.Time}
-                            </td>
-                            <td style={{ padding: "16px 12px" }}>
-                              <span
-                                style={{
-                                  fontSize: "12px",
-                                  backgroundColor: isDarkMode
-                                    ? "#334155"
-                                    : "#F1F5F9",
-                                  color: isDarkMode ? "#E1E1E1" : "#475569",
-                                  padding: "4px 8px",
-                                  borderRadius: "6px",
-                                  fontWeight: "500",
-                                }}
-                              >
-                                {item.payment_method}
-                              </span>
-                            </td>
-                            <td style={{ padding: "16px 12px" }}>
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyBox: "center",
-                                  justifyContent: "center",
-                                }}
-                              >
-                                <img
-                                  src={item.payment_proof}
-                                  style={{
-                                    width: "44px",
-                                    height: "28px",
-                                    borderRadius: "4px",
-                                    objectFit: "cover",
-                                    cursor: "pointer",
-                                    border: `1px solid ${themeStyles.borderColor}`,
-                                  }}
-                                  onClick={() =>
-                                    showImagePreview(item.payment_proof)
-                                  }
-                                  alt="Proof"
-                                />
-                              </div>
-                            </td>
-                            <td
-                              style={{
-                                padding: "16px 12px",
-                                textAlign: "center",
-                              }}
-                            >
-                              <span
-                                style={{
-                                  display: "inline-block",
-                                  padding: "5px 12px",
-                                  borderRadius: "10px",
-                                  fontSize: "12px",
-                                  fontWeight: "600",
-                                  minWidth: "80px",
-                                  textAlign: "center",
-                                  backgroundColor:
-                                    status === "completed"
-                                      ? "#D1FAE5"
-                                      : status === "pending"
-                                        ? "#FEF3C7"
-                                        : "#FEE2E2",
-                                  color:
-                                    status === "completed"
-                                      ? "#065F46"
-                                      : status === "pending"
-                                        ? "#D97706"
-                                        : "#991B1B",
-                                }}
-                              >
-                                {item.order_status}
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-
-                    {/* Row ၅ ခုပြည့်အောင် ကွက်လပ်ဖြည့်ပေးခြင်း */}
-                    {MOrders.data.slice((currentPage - 1) * 5, currentPage * 5)
-                      .length < 5 &&
-                      [
-                        ...Array(
-                          5 -
-                            MOrders.data.slice(
-                              (currentPage - 1) * 5,
-                              currentPage * 5,
-                            ).length,
-                        ),
-                      ].map((_, index) => (
-                        <tr
-                          key={`empty-${index}`}
+              {Array.isArray(MOrders?.data) && MOrders.data.length > 0 ? (
+                MOrders.data
+                  .slice((currentPage - 1) * 5, currentPage * 5)
+                  .map((item, index) => {
+                    const status = item.order_status
+                      ? item.order_status.toLowerCase()
+                      : "";
+                    return (
+                      <tr
+                        key={index}
+                        style={{
+                          borderBottom: `1px solid ${themeStyles.borderColor}`,
+                          transition: "background-color 0.2s",
+                          height: "69px",
+                        }}
+                        className="table-row-hover"
+                      >
+                        <td
                           style={{
-                            borderBottom: `1px solid ${themeStyles.borderColor}`,
-                            height: "69px",
+                            padding: "16px 12px",
+                            fontWeight: "600",
+                            color: "#4F46E5",
                           }}
                         >
-                          <td colSpan="8" style={{ padding: "16px 12px" }}>
-                            &nbsp;
-                          </td>
-                        </tr>
-                      ))}
-                  </>
-                ) : (
-                  [...Array(5)].map((_, index) => (
-                    <tr
-                      key={`nodata-${index}`}
-                      style={{
-                        borderBottom: `1px solid ${themeStyles.borderColor}`,
-                        height: "69px",
-                      }}
-                    >
-                      {index === 2 ? (
-                        <td
-                          colSpan="8"
-                          style={{ textAlign: "center", color: "#94A3B8" }}
-                        >
-                          No orders found
+                          #{item.order_id}
                         </td>
-                      ) : (
-                        <td colSpan="8">&nbsp;</td>
-                      )}
-                    </tr>
-                  ))
-                )
+                        <td
+                          style={{
+                            padding: "16px 12px",
+                            fontWeight: "600",
+                          }}
+                        >
+                          {item.customer_name}
+                        </td>
+                        <td
+                          style={{
+                            padding: "16px 12px",
+                            fontWeight: "600",
+                          }}
+                        >
+                          {item.Total?.toLocaleString()} ks
+                        </td>
+                        <td
+                          style={{ padding: "16px 12px", color: "#94A3B8" }}
+                        >
+                          {item.Date}
+                        </td>
+                        <td
+                          style={{ padding: "16px 12px", color: "#94A3B8" }}
+                        >
+                          {item.Time}
+                        </td>
+                        <td style={{ padding: "16px 12px" }}>
+                          <span
+                            style={{
+                              fontSize: "12px",
+                              backgroundColor: isDarkMode
+                                ? "#334155"
+                                : "#F1F5F9",
+                              color: isDarkMode ? "#E1E1E1" : "#475569",
+                              padding: "4px 8px",
+                              borderRadius: "6px",
+                              fontWeight: "500",
+                            }}
+                          >
+                            {item.payment_method}
+                          </span>
+                        </td>
+                        <td style={{ padding: "16px 12px" }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <img
+                              src={item.payment_proof}
+                              style={{
+                                width: "44px",
+                                height: "28px",
+                                borderRadius: "4px",
+                                objectFit: "cover",
+                                cursor: "pointer",
+                                border: `1px solid ${themeStyles.borderColor}`,
+                              }}
+                              onClick={() =>
+                                showImagePreview(item.payment_proof)
+                              }
+                              alt="Proof"
+                            />
+                          </div>
+                        </td>
+                        <td
+                          style={{
+                            padding: "16px 12px",
+                            textAlign: "center",
+                          }}
+                        >
+                          <span
+                            style={{
+                              display: "inline-block",
+                              padding: "5px 12px",
+                              borderRadius: "10px",
+                              fontSize: "12px",
+                              fontWeight: "600",
+                              minWidth: "80px",
+                              textAlign: "center",
+                              backgroundColor:
+                                status === "completed"
+                                  ? "#D1FAE5"
+                                  : status === "pending"
+                                  ? "#FEF3C7"
+                                  : "#FEE2E2",
+                              color:
+                                status === "completed"
+                                  ? "#065F46"
+                                  : status === "pending"
+                                  ? "#D97706"
+                                  : "#991B1B",
+                            }}
+                          >
+                            {item.order_status}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })
               ) : (
-                [...Array(5)].map((_, index) => (
-                  <tr key={index}>
-                    <td colSpan="8" style={{ padding: "16px 0" }}>
-                      <CustomerLoading times={8} />
-                    </td>
-                  </tr>
-                ))
+                <tr>
+                  <td
+                    colSpan="8"
+                    style={{ textAlign: "center", padding: "40px", color: "#94A3B8" }}
+                  >
+                    No orders found
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
         </div>
 
-        {/* 🏁 Report Style အတိုင်း အသစ်ပြင်ဆင်ထားသော Pagination Footer Section */}
-        {Array.isArray(MOrders?.data) && (
+        {/* Pagination Footer */}
+        {Array.isArray(MOrders?.data) && MOrders.data.length > 0 && (
           <div
             style={{
               marginTop: "16px",
@@ -906,18 +853,15 @@ function PosOverview() {
               alignItems: "center",
             }}
           >
-            {/* ဘယ်ဘက်ခြမ်း Information ပြသမှု */}
             <span
               style={{ fontSize: "13px", color: "#64748B", fontWeight: "500" }}
             >
-              Showing {MOrders.data.length > 0 ? (currentPage - 1) * 5 + 1 : 0}{" "}
-              to {Math.min(currentPage * 5, MOrders.data.length)} of{" "}
+              Showing {(currentPage - 1) * 5 + 1} to{" "}
+              {Math.min(currentPage * 5, MOrders.data.length)} of{" "}
               {MOrders.data.length} entries
             </span>
 
-            {/* ညာဘက်ခြမ်း ခလုတ်များစုစည်းမှု */}
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              {/* Previous Button */}
               <button
                 type="button"
                 disabled={currentPage === 1}
@@ -934,16 +878,11 @@ function PosOverview() {
                   color: themeStyles.color,
                   cursor: currentPage === 1 ? "not-allowed" : "pointer",
                   opacity: currentPage === 1 ? 0.4 : 1,
-                  transition: "all 0.15s",
                 }}
               >
-                {/* Material UI Icon မရှိလျှင် standard text သို့မဟုတ် Icon သုံးနိုင်သည် */}
-                <span style={{ fontSize: "18px", fontWeight: "600" }}>
-                  &lt;
-                </span>
+                <span style={{ fontSize: "18px", fontWeight: "600" }}>&lt;</span>
               </button>
 
-              {/* Page Display */}
               <span
                 style={{
                   fontSize: "13px",
@@ -953,20 +892,15 @@ function PosOverview() {
                   textAlign: "center",
                 }}
               >
-                Page {currentPage} of{" "}
-                {Math.ceil((MOrders.data.length || 0) / 5) || 1}
+                Page {currentPage} of {Math.ceil(MOrders.data.length / 5)}
               </span>
 
-              {/* Next Button */}
               <button
                 type="button"
-                disabled={
-                  currentPage === Math.ceil((MOrders.data.length || 0) / 5) ||
-                  MOrders.data.length === 0
-                }
+                disabled={currentPage === Math.ceil(MOrders.data.length / 5)}
                 onClick={() =>
                   setCurrentPage((prev) =>
-                    Math.min(prev + 1, Math.ceil(MOrders.data.length / 5)),
+                    Math.min(prev + 1, Math.ceil(MOrders.data.length / 5))
                   )
                 }
                 style={{
@@ -980,21 +914,14 @@ function PosOverview() {
                   backgroundColor: themeStyles.cardBg,
                   color: themeStyles.color,
                   cursor:
-                    currentPage === Math.ceil((MOrders.data.length || 0) / 5) ||
-                    MOrders.data.length === 0
+                    currentPage === Math.ceil(MOrders.data.length / 5)
                       ? "not-allowed"
                       : "pointer",
                   opacity:
-                    currentPage === Math.ceil((MOrders.data.length || 0) / 5) ||
-                    MOrders.data.length === 0
-                      ? 0.4
-                      : 1,
-                  transition: "all 0.15s",
+                    currentPage === Math.ceil(MOrders.data.length / 5) ? 0.4 : 1,
                 }}
               >
-                <span style={{ fontSize: "18px", fontWeight: "600" }}>
-                  &gt;
-                </span>
+                <span style={{ fontSize: "18px", fontWeight: "600" }}>&gt;</span>
               </button>
             </div>
           </div>
