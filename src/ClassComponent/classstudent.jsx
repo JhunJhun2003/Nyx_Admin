@@ -9,6 +9,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import BadgeIcon from "@mui/icons-material/Badge";
 import SchoolIcon from "@mui/icons-material/School";
 import ImageIcon from "@mui/icons-material/Image";
+import Swal from 'sweetalert2';
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
@@ -158,12 +159,30 @@ const StudentsTable = () => {
 
       const result = await response.json();
 
+      // if (response.ok && result.success) {
+      //   alert("Student deleted successfully!");
+      //   await fetchAllStudentsData(); // Table ထဲက data တွေ refresh ပြန်လုပ်မယ်
+      // } else {
+      //   alert(`Failed to delete student: ${result.message || "Server Error"}`);
+      // }
       if (response.ok && result.success) {
-        alert("Student deleted successfully!");
-        await fetchAllStudentsData(); // Table ထဲက data တွေ refresh ပြန်လုပ်မယ်
-      } else {
-        alert(`Failed to delete student: ${result.message || "Server Error"}`);
-      }
+  await Swal.fire({
+    icon: 'success',
+    title: 'Deleted!',
+    text: 'Student deleted successfully!',
+    confirmButtonColor: '#3085d6',
+    timer: 2000,
+    showConfirmButton: true
+  });
+  await fetchAllStudentsData(); // Refresh data
+} else {
+  await Swal.fire({
+    icon: 'error',
+    title: 'Failed!',
+    text: result.message || 'Failed to delete student',
+    confirmButtonColor: '#3085d6'
+  });
+}
     } catch (err) {
       alert(`Network Error: ${err.message}`);
     } finally {
@@ -237,7 +256,7 @@ const StudentsTable = () => {
       {/* ==========================================================================
          [INTERNET/ACTION LOSS LOADING EFFECT OVERLAY]
          ========================================================================== */}
-      {isActionProcessing && (
+      {/* {isActionProcessing && (
         <div
           className="st-modal-overlay"
           style={{ backgroundColor: "rgba(255, 255, 255, 0.7)", zIndex: 2000 }}
@@ -252,7 +271,7 @@ const StudentsTable = () => {
             </p>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Header */}
       <div className="st-header">
