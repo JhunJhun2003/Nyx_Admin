@@ -1,210 +1,368 @@
-.recharts-wrapper,
-.recharts-surface {
-  outline: none !important;
-  border: none !important;
+/* 🌓 Theme Variables Configuration */
+.light-theme {
+  --bg-main: #f8fafc;
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --table-header-bg: #f1f5f9;
+  --table-row-hover: #f8fafc;
+  --input-bg: #f8fafc;
+  --btn-bg: #0f172a;
+  --btn-hover: #1e293b;
+  --btn-text: #ffffff;
 }
 
+.dark-theme {
+  --bg-main: #141517;
+  --card-bg: #1a1c1e;
+  --border-color: #2d3139;
+  --text-main: #e1e1e1;
+  --text-muted: #94a3b8;
+  --table-header-bg: #22252a;
+  --table-row-hover: #23262c;
+  --input-bg: #22252a;
+  --btn-bg: #3b82f6;
+  --btn-hover: #2563eb;
+  --btn-text: #ffffff;
+}
+
+/* 📐 Core Layout CSS with dynamic theme variables */
 .posreportcontainer {
   display: flex;
   flex-direction: column;
-  margin: 1em 2em;
-  gap: 1em;
-  color: #0d1b2a;
+  padding: 24px;
+  gap: 20px;
+  background-color: var(--bg-main);
+  min-height: 100vh;
+  width: 100%;
+  flex: 1;
+  left: 250px;
+  top: 0;
+  font-family: "Inter", sans-serif;
+  box-sizing: border-box;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
 }
 
 .reporttitle {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: x-large;
-}
-.reporttitle .titleicon {
-  font-size: 25px;
+  gap: 10px;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
 }
 
+/* 📊 Top 4 Card Rows Layout Grid */
 .posreportbody {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
 }
 
-.posreportbody .posreporttitle {
-  background-color: #f0f0f0;
-  padding: 5px 1em;
-  width: 250px;
-  height: 100px;
-  box-shadow: 0px 1px 2px 1px gray;
-  border-radius: 5px;
+.posreportbody .posreporttitle.white-card {
+  background-color: var(--card-bg);
+  padding: 16px 20px;
+  width: 100%;
+  height: 110px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 7px;
-  align-items: flex-start;
 }
-.posreportbody .posreporttitle p {
-  width: 100%;
+
+.card-top-row {
   display: flex;
   justify-content: space-between;
-  gap: 4px;
-  color: #898484;
-  padding: 2px 1px 3px 1px !important;
-}
-.posreportbody .posreporttitle h3 {
-  color: #1b263b;
-  font-weight: lighter;
-}
-.posreportbody .posreporttitle h5 {
-  color: #898484;
-  font-size: large;
-  font-weight: lighter;
-  display: flex;
-  gap: 1px;
   align-items: center;
+  width: 100%;
 }
-.posreportbody .posreporttitle h5 span {
-  width: 35px;
-  height: auto;
-  padding: 1px 5px 1px 5px;
-  background-color: #16f90e;
-  border-radius: 10px;
+
+.posreportbody .posreporttitle p {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin: 0;
 }
+
+.icon-wrapper {
+  background-color: var(--bg-main);
+  border: 1px solid var(--border-color);
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.posreportbody .posreporttitle h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+/* 📦 Containers section (Charts, Tables) */
 .posreportbody2 {
   display: flex;
   flex-direction: column;
-  border: 1px solid black;
-  border-radius: 10px;
-  background-color: #e1e1e1;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background-color: var(--card-bg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  gap: 14px;
 }
 
-.posreportbody2 .posreportbody2header {
+.posreportbody2header {
   display: flex;
   justify-content: space-between;
-  padding: 10px 10px;
-  gap: 10px;
-}
-
-.posreportbody2header button {
-  display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 1px 15px;
-  border-radius: 10px;
-  background-color: #0d1b2a;
-  color: white;
-  outline: none;
-  border: 1px solid #0d1b2a;
 }
 
 .posreportbody2header h2 {
-  font-family: Inter;
-  padding: 5px;
-  font-size: large;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
 }
 
-.posreportbody2 .posreportbody2header div {
+/* Custom Input Search styling */
+.chart-search-box {
   display: flex;
   align-items: center;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  height: 38px;
+  padding: 0 10px;
+  width: 220px;
   margin-left: auto;
-  border: 1px solid black;
-  border-radius: 10px;
-  background-color: #0d1b2a;
+  margin-right: 12px;
 }
 
-.posreportbody2 .posreportbody2header div input {
-  padding: 0;
-  padding-left: 10px;
+.chart-search-box input {
   border: none;
   outline: none;
-  background-color: initial;
-  color: white;
+  width: 100%;
+  font-size: 13px;
+  color: var(--text-main);
+  background-color: transparent;
 }
 
+.search-icon-inside {
+  color: var(--text-muted);
+  font-size: 20px;
+}
+
+/* Export Excel Buttons Layout */
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 25px;
+  border-radius: 8px;
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.15s;
+}
+
+.export-btn:hover {
+  background-color: var(--btn-hover);
+}
+
+/* 📅 Date/Month Fields input setup ညာဘက်သို့ကပ်ခြင်း */
 .posreportbody2secheader {
   display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  padding-right: 10px;
   gap: 10px;
+  justify-content: flex-end; /* 👈 ညာဘက်အခြမ်း Export အောက်တည့်တည့်သို့ ရွှေ့လိုက်သည် */
 }
 
 .posreportbody2secheader input {
-  border-radius: 10px;
-  padding: 3px 1px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--text-main);
+  outline: none;
+  background-color: var(--input-bg);
 }
 
+/* 🏁 Orders History Table Area Block */
 .posreporttablecontainer {
-  padding: 10px;
-  padding-top: 0;
-  background-color: #f0f0f0;
-  height: 70vh;
-  overflow-y: scroll;
+  width: 100%;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  max-height: 420px;
+  overflow-y: auto;
 }
 
 .posreporttable {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .posreporttable thead {
-  background-color: #f0f0f0;
-  font-weight: 700;
   position: sticky;
   top: 0;
+  z-index: 10;
+  background-color: var(--table-header-bg);
 }
+
 .posreporttable th {
-  padding: 10px;
-}
-.posreporttable th,
-.posreporttable td {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.329);
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
   text-align: left;
-  margin: 3px;
-  font-size: smaller;
-  font-family: Inter;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--table-header-bg);
 }
+
+.posreporttable tr {
+  height: 48px;
+}
+
 .posreporttable td {
-  font-size: 12px !important;
-  padding-left: 10px !important;
+  padding: 8px 16px;
+  font-size: 14px;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
 }
-.posreporttable .posreporttablecancel {
-  background-color: rgba(255, 0, 0, 0.986);
-  border-radius: 10px;
-  padding: 5px 10px;
-  font-size: smaller;
+
+.table-data-row:hover {
+  background-color: var(--table-row-hover);
+}
+
+.id-cell {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.customer-name-cell {
   font-weight: 500;
-  display: inline-block;
-  text-align: center;
-  min-width: 70px;
-  color: white;
+  color: var(--text-main);
 }
-.posreporttable .posreporttablecompleted {
-  background-color: #ddc2ff;
-  border-radius: 10px;
-  padding: 5px 10px;
-  font-size: smaller;
+.amount-cell {
+  font-weight: 600;
+  color: #10b981;
+}
+.payment-badge {
+  color: var(--text-muted);
   font-weight: 500;
-  display: inline-block;
-  text-align: center;
-  min-width: 70px;
 }
-.posreporttable .posreporttablepending {
-  background-color: #16f90e;
-  border-radius: 10px;
-  padding: 5px 10px;
-  font-size: smaller;
-  font-weight: 500;
-  display: inline-block;
-  text-align: center;
-  min-width: 70px;
+
+/* Image frame screenshot */
+.reportimg .img-frame {
+  width: 44px;
+  height: 28px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0 auto;
 }
-.reportimg div {
-  width: 50px;
-  height: 30px;
-  border: 1px solid #0d1b2a4f;
-  border-radius: 3px;
-}
-.reportimg div img {
+
+.reportimg .img-frame img {
   width: 100%;
   height: 100%;
-  border-radius: 3px;
   object-fit: cover;
+  cursor: pointer;
+}
+
+/* Status Badges setup */
+.status-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 80px;
+  text-align: center;
+}
+
+.badge-completed {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+.badge-pending {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+.badge-cancel {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.row-empty {
+  background-color: transparent !important;
+  cursor: default;
+}
+
+/* 🏁 Pagination Elements Footer Block Layout */
+.pos-pagination-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-color);
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.pagination-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: var(--table-row-hover);
+}
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.page-number-display {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  min-width: 85px;
+  text-align: center;
+}
+
+/* Recharts library global resets overrides */
+.recharts-wrapper,
+.recharts-surface {
+  outline: none !important;
+  border: none !important;
 }

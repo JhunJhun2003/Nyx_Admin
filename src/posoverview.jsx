@@ -5,13 +5,12 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
 import DollarIcon from "@mui/icons-material/Paid";
+import OrderIcon from "@mui/icons-material/ShoppingBag";
 import ProductIcon from "@mui/icons-material/Widgets";
 import CustomerIcon from "@mui/icons-material/Groups";
-import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import Shoe from "./images/shoe.png";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "./Hooks/context";
@@ -29,13 +28,21 @@ function PosOverview() {
   const [topCustomer, setTopCustomer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  const Font_color = Boolean(backcolor == "#1A1C1E");
-  const FontStyle = {
-    color: Font_color ? "#E1E1E1" : "#0D1B2A",
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const isDarkMode = backcolor === "#1A1C1E";
+
+  // Light & Dark Mode Dynamic Styles
+  const themeStyles = {
+    backgroundColor: isDarkMode ? "#1A1C1E" : "#F8FAFC",
+    color: isDarkMode ? "#E1E1E1" : "#0F172A",
+    cardBg: isDarkMode ? "#242629" : "#FFFFFF",
+    borderColor: isDarkMode ? "#334155" : "#E2E8F0",
+    subText: isDarkMode ? "#94A3B8" : "#64748B",
+    chartGrid: isDarkMode ? "#334155" : "#F1F5F9",
+    subCardBg: isDarkMode ? "#1E2022" : "#F8FAFC",
   };
 
-  // All months template
   const allMonths = [
     { name: "Jan", month_num: 1, sales: 0, year: new Date().getFullYear() },
     { name: "Feb", month_num: 2, sales: 0, year: new Date().getFullYear() },
@@ -51,55 +58,50 @@ function PosOverview() {
     { name: "Dec", month_num: 12, sales: 0, year: new Date().getFullYear() },
   ];
 
-  // Fetch POS Overview Data
   const fetchPosOverview = async () => {
     try {
       setLoading(true);
       setError(null);
       const response = await fetch(
-        "http://38.60.216.25:5000/api/posoverview/showposoverview"
+        "http://38.60.216.25:5000/api/posoverview/showposoverview",
       );
       if (!response.ok) {
         throw new Error("Failed to fetch POS overview data");
       }
       const jsonResult = await response.json();
-      
+
       if (jsonResult) {
         setOverviewData(jsonResult);
-        
-        // Create a map of month_num to sale data
+
         const salesMap = new Map();
-        jsonResult.saleTrend.forEach((item) => {
+        jsonResult.saleTrend?.forEach((item) => {
           salesMap.set(item.month_num, {
             name: item.month_name,
             sales: parseInt(item.total_amount),
             month_num: item.month_num,
-            year: item.year
+            year: item.year,
           });
         });
-        
-        // Merge API data with all months template
-        const completeData = allMonths.map(month => {
+
+        const completeData = allMonths.map((month) => {
           const apiData = salesMap.get(month.month_num);
           if (apiData) {
             return {
               name: month.name,
               month_num: month.month_num,
               sales: apiData.sales,
-              year: apiData.year
+              year: apiData.year,
             };
           }
           return month;
         });
-        
+
         setChartData(completeData);
-        
-        // Set popular product data
+
         if (jsonResult.popular_product_data) {
           setPopularProduct(jsonResult.popular_product_data);
         }
-        
-        // Set top customer data
+
         if (jsonResult.top_customer_data) {
           setTopCustomer(jsonResult.top_customer_data);
         }
@@ -109,14 +111,12 @@ function PosOverview() {
     } catch (err) {
       setError(err.message);
       console.error("Error fetching POS overview:", err);
-      // Set all months with zero values as fallback
       setChartData(allMonths);
     } finally {
       setLoading(false);
     }
   };
 
-  //for img preview
   const showImagePreview = (imageUrl) => {
     Swal.fire({
       imageUrl: imageUrl,
@@ -139,320 +139,870 @@ function PosOverview() {
     MOrders?.data,
   );
 
-  // Header data from API
-  const headerdata = overviewData ? [
+  // Dynamic Color Icons
+  const icons = [
+    <DollarIcon style={{ color: "#3B82F6" }} />,
+    <OrderIcon style={{ color: "#A855F7" }} />,
+    <ProductIcon style={{ color: "#F97316" }} />,
+    <CustomerIcon style={{ color: "#EC4899" }} />,
+  ];
+
+  // Map API values to your beautiful Cards Layout
+  const headerdata = [
     {
       title: "Total Revenue",
-      amount: `${overviewData.total_revenue?.toLocaleString() || 0} ks`,
-      icon: <DollarIcon style={{ fontSize: "24px", color: "#10b981" }} />
+      amount: `${overviewData?.total_revenue?.toLocaleString() || 0} ks`,
+      increasement: "+11%",
+      compare: "from yesterday",
+      iconBg: isDarkMode ? "#1E3A8A" : "#EFF6FF",
     },
     {
       title: "Admin Total Orders",
-      amount: overviewData.total_order?.toString() || "0",
-      icon: <ShoppingBagIcon style={{ fontSize: "24px", color: "#3b82f6" }} />
+      amount: overviewData?.total_order?.toLocaleString() || "0",
+      increasement: "-3%",
+      compare: "from yesterday",
+      iconBg: isDarkMode ? "#581C87" : "#F3E8FF",
     },
     {
-      title: "Total stock Products",
+      title: "Total Product",
       amount: overviewData.total_products?.toString() || "0",
       icon: <ProductIcon style={{ fontSize: "24px", color: "#ec4899" }} />
     },
     {
       title: "Total Customers",
-      amount: overviewData.total_customer?.toString() || "0",
-      icon: <CustomerIcon style={{ fontSize: "24px", color: "#8b5cf6" }} />
+      amount: overviewData?.total_customer?.toLocaleString() || "0",
+      increasement: "+12",
+      compare: "New Customers",
+      iconBg: isDarkMode ? "#701A75" : "#FCE7F3",
     },
-  ] : [];
+  ];
 
-  // Find max sales for Y-axis domain
-  const maxSales = Math.max(...chartData.map(d => d.sales), 0);
-  const yAxisDomain = [0, Math.ceil(maxSales * 1.1)]; // Add 10% padding
+  const maxSales = Math.max(...chartData.map((d) => d.sales), 0);
+  const yAxisDomain = [0, Math.ceil(maxSales * 1.1) || 10000];
 
   if (loading) {
     return (
-      <div className="posoverviewmain">
-        <div className="posheader">
-          <h1 style={FontStyle}>Point of Sale Overview Dashboard</h1>
-          <p style={FontStyle}>Welcome back. Here's today's shop overview</p>
-        </div>
-        <div style={{ textAlign: "center", padding: "50px" }}>
-          <div className="spinner"></div>
-          <p>Loading dashboard data...</p>
-        </div>
+      <div
+        style={{
+          padding: "24px",
+          minHeight: "100vh",
+          backgroundColor: themeStyles.backgroundColor,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          gap: "16px",
+          fontFamily: "sans-serif",
+        }}
+      >
+        <div className="spinner"></div>
+        <p style={{ color: themeStyles.color }}>Loading dashboard data...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="posoverviewmain">
-        <div className="posheader">
-          <h1 style={FontStyle}>Point of Sale Overview Dashboard</h1>
-          <p style={FontStyle}>Welcome back. Here's today's shop overview</p>
-        </div>
-        <div style={{ textAlign: "center", padding: "50px", color: "#ef4444" }}>
-          <p>Error: {error}</p>
-          <button 
-            onClick={fetchPosOverview}
-            style={{
-              marginTop: "16px",
-              padding: "8px 16px",
-              background: "#1e293b",
-              color: "#fff",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer"
-            }}
-          >
-            Retry
-          </button>
-        </div>
+      <div
+        style={{
+          padding: "24px",
+          minHeight: "100vh",
+          backgroundColor: themeStyles.backgroundColor,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          gap: "16px",
+          fontFamily: "sans-serif",
+          color: "#EF4444",
+        }}
+      >
+        <p>Error: {error}</p>
+        <button
+          onClick={() => {
+            fetchPosOverview();
+            GetMobileOrders();
+          }}
+          style={{
+            padding: "8px 16px",
+            background: "#4F46E5",
+            color: "#fff",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+          }}
+        >
+          Retry
+        </button>
       </div>
     );
   }
 
   return (
-    <>
-      <div className="posoverviewmain">
-        <div className="posheader">
-          <h1 style={FontStyle}>Point of Sale Overview Dashboard</h1>
-          <p style={FontStyle}>Welcome back. Here's today's shop overview</p>
-        </div>
-        
-        <div className="posbody">
-          {headerdata.map((item, index) => {
-            return (
-              <div className="posbodyheader" key={index}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-                  <p>{item.title}</p>
-                  {item.icon}
+    <div
+      style={{
+        padding: "24px",
+        minHeight: "100vh",
+        fontFamily: "sans-serif",
+        backgroundColor: themeStyles.backgroundColor,
+        color: themeStyles.color,
+        boxSizing: "border-box",
+      }}
+    >
+      {/* 1. Header Section */}
+      <div style={{ marginBottom: "32px" }}>
+        <h1
+          style={{
+            fontSize: "24px",
+            fontWeight: "700",
+            letterSpacing: "-0.5px",
+            margin: "0 0 4px 0",
+          }}
+        >
+          Point of Sale Overview Dashboard
+        </h1>
+        <p style={{ fontSize: "14px", color: themeStyles.subText, margin: 0 }}>
+          Welcome back. Here's today's shop overview
+        </p>
+      </div>
+
+      {/* 2. Overview Cards Layout */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: "20px",
+          marginBottom: "32px",
+        }}
+      >
+        {headerdata.map((item, index) => {
+          const isPositive =
+            item.increasement.startsWith("+") ||
+            item.increasement.startsWith("11%");
+          return (
+            <div
+              key={index}
+              style={{
+                padding: "20px",
+                borderRadius: "16px",
+                border: `1px solid ${themeStyles.borderColor}`,
+                backgroundColor: themeStyles.cardBg,
+                boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                }}
+              >
+                <div>
+                  <p
+                    style={{
+                      fontSize: "12px",
+                      fontWeight: "600",
+                      color: "#94A3B8",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      margin: 0,
+                    }}
+                  >
+                    {item.title}
+                  </p>
+                  <h3
+                    style={{
+                      fontSize: "22px",
+                      fontWeight: "700",
+                      margin: "8px 0 0 0",
+                      letterSpacing: "-0.5px",
+                    }}
+                  >
+                    {item.amount}
+                  </h3>
                 </div>
-                <h3>{item.amount}</h3>
-                <h5>
-                  <span></span>
-                </h5>
+                <div
+                  style={{
+                    padding: "10px",
+                    borderRadius: "12px",
+                    backgroundColor: item.iconBg,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {icons[index]}
+                </div>
               </div>
-            );
-          })}
-        </div>
-        
-        <div className="posbody2">
-          <div className="poschart">
-            <h2>Sale Statistics</h2>
-            <div style={{ width: "100%", height: "270px" }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData}>
-                  <CartesianGrid
-                    strokeDasharray="0"
-                    vertical={false}
-                    stroke="#ccc"
-                  />
-                  <XAxis 
-                    dataKey="name" 
-                    tick={{ fontSize: 12 }}
-                    interval={0}
-                  />
-                  <YAxis 
-                    tickFormatter={(value) => value.toLocaleString()}
-                    domain={yAxisDomain}
-                  />
-                  <Tooltip 
-                    formatter={(value) => [`${value.toLocaleString()} ks`, "Sales"]}
-                    labelFormatter={(label) => `${label}`}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="sales" 
-                    stroke="#3b82f6" 
-                    strokeWidth={2}
-                    dot={{ r: 4, fill: "#3b82f6" }}
-                    activeDot={{ r: 6 }}
-                    connectNulls={true}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          
-          <div className="top">
-            {/* Popular Product Section */}
-            <div
-              className="topProduct"
-              style={{ background: Font_color && "#E1E1E1" }}
-            >
-              <h2>Popular Product</h2>
-              {popularProduct ? (
-                <div
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  marginTop: "16px",
+                  fontSize: "12px",
+                }}
+              >
+                <span
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    marginLeft: "1em",
+                    padding: "2px 8px",
+                    borderRadius: "9999px",
+                    fontWeight: "600",
+                    backgroundColor: isPositive ? "#E6F4EA" : "#FCE8E6",
+                    color: isPositive ? "#137333" : "#C5221F",
                   }}
                 >
-                  <img 
-                    src={popularProduct.popular_product_image || Shoe} 
-                    alt="Popular Product" 
-                    style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "8px" }}
-                    onError={(e) => {
-                      e.target.src = Shoe;
-                    }}
-                  />
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <p style={{ fontWeight: 600, margin: 0 }}>
-                      {popularProduct.popular_product_name || "No product"}
-                    </p>
-                    <p style={{ color: "#10b981", fontWeight: 600, margin: 0 }}>
-                      {popularProduct.popular_product_price?.toLocaleString() || "0"} ks
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ textAlign: "center", padding: "20px", color: "#9ca3af" }}>
-                  No popular product data
-                </div>
-              )}
+                  {item.increasement}
+                </span>
+                <span style={{ color: themeStyles.subText }}>
+                  {item.compare}
+                </span>
+              </div>
             </div>
+          );
+        })}
+      </div>
 
-            {/* Top Customer Section */}
-            <div
-              className="topProduct"
-              style={{ background: Font_color && "#E1E1E1" }}
-            >
-              <h2>Top Customer</h2>
-              {topCustomer ? (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    marginLeft: "1em",
+      {/* 3. Chart & Side Content Layout */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: "24px",
+          marginBottom: "32px",
+        }}
+      >
+        {/* Sales Chart Box */}
+        <div
+          style={{
+            gridColumn: "span 2",
+            padding: "24px",
+            borderRadius: "16px",
+            border: `1px solid ${themeStyles.borderColor}`,
+            backgroundColor: themeStyles.cardBg,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+            boxSizing: "border-box",
+          }}
+        >
+          <h2
+            style={{
+              fontSize: "18px",
+              fontWeight: "700",
+              margin: "0 0 24px 0",
+            }}
+          >
+            Sale Statistics
+          </h2>
+          <div style={{ width: "100%", height: "280px" }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={chartData}
+                margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke={themeStyles.chartGrid}
+                />
+                <XAxis
+                  dataKey="name"
+                  stroke="#94A3B8"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  stroke="#94A3B8"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                  domain={yAxisDomain}
+                  tickFormatter={(value) => value.toLocaleString()}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: themeStyles.cardBg,
+                    borderColor: themeStyles.borderColor,
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
                   }}
-                >
-                  <img 
-                    src={topCustomer.top_customer_image || "https://via.placeholder.com/60"} 
-                    alt="Top Customer" 
-                    style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "50%" }}
-                    onError={(e) => {
-                      e.target.src = "https://via.placeholder.com/60";
-                    }}
-                  />
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <p style={{ fontWeight: 600, margin: 0 }}>
-                      {topCustomer.top_customer_name || "No customer"}
-                    </p>
-                    {topCustomer.top_customer_address && (
-                      <p style={{ fontSize: "12px", color: "#6b7280", margin: 0 }}>
-                        {topCustomer.top_customer_address}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <div style={{ textAlign: "center", padding: "20px", color: "#9ca3af" }}>
-                  No top customer data
-                </div>
-              )}
-            </div>
+                  itemStyle={{ color: themeStyles.color }}
+                  formatter={(value) => [
+                    `${value.toLocaleString()} ks`,
+                    "Sales",
+                  ]}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="sales"
+                  stroke="#4F46E5"
+                  strokeWidth={3}
+                  dot={{ r: 4, fill: "#4F46E5", strokeWidth: 0 }}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="posfooter1">
-          <h2>Recent Order</h2>
-          <div className="towarpthetable">
-            <div className="postablewarper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Order ID</th>
-                    <th>Customer</th>
-                    <th>Amount</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Payment</th>
-                    <th>Payment Proof</th>
-                    <th>Order Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Array.isArray(MOrders.data) ? (
-                    MOrders.data.length > 0 ? (
-                      MOrders.data
-                        ?.slice(startnumber, endnumber)
-                        .map((item, index) => {
-                          return (
-                            <tr key={index} className="posoverviewtr">
-                              <td>{item.order_id}</td>
-                              <td className="customername">
-                                {item.customer_name}
-                              </td>
-                              <td>{item.Total}</td>
-                              <td style={{ color: "#6a7d95" }}>{item.Date}</td>
-                              <td>{item.Time}</td>
-                              <td>{item.payment_method}</td>
-                              <td className="imgcontainer">
-                                <img
-                                  src={item.payment_proof}
-                                  className="posorderimg"
-                                  onClick={() =>
-                                    showImagePreview(item.payment_proof)
-                                  }
-                                  alt="Payment Proof"
-                                />
-                              </td>
-                              <td>
-                                <span
-                                  className={`status-badge ${item.order_status.toLowerCase()}`}
-                                >
-                                  {item.order_status}
-                                </span>
-                              </td>
-                            </tr>
-                          );
-                        })
-                    ) : (
-                      <tr>
-                        <td
-                          colSpan="8"
-                          style={{
-                            textAlign: "center",
-                            padding: "20px",
-                            borderTop: "1px solid #0f0e0e4f",
-                            borderBottom: "1px solid #0f0e0e4f",
-                            marginTop: "3px",
-                          }}
-                        >
-                          No data
-                        </td>
-                      </tr>
-                    )
-                  ) : (
-                    [...Array(10)].map((_, index) => {
-                      return <CustomerLoading times={8} key={index} />;
-                    })
-                  )}
-                  <tr>
-                    <td colSpan={8}></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            {TableFooterJsx}
+        {/* Right Side Cards */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          {/* Popular Product */}
+          <div
+            style={{
+              padding: "20px",
+              borderRadius: "16px",
+              border: `1px solid ${themeStyles.borderColor}`,
+              backgroundColor: themeStyles.cardBg,
+              flex: 1,
+            }}
+          >
+            <h2
+              style={{
+                fontSize: "16px",
+                fontWeight: "700",
+                margin: "0 0 16px 0",
+              }}
+            >
+              Popular Product
+            </h2>
+            {popularProduct ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "16px",
+                  padding: "12px",
+                  borderRadius: "12px",
+                  backgroundColor: themeStyles.subCardBg,
+                  border: `1px solid ${themeStyles.borderColor}`,
+                }}
+              >
+                <img
+                  src={popularProduct.popular_product_image || Shoe}
+                  alt="Product"
+                  style={{
+                    width: "64px",
+                    height: "64px",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                    backgroundColor: "#FFFFFF",
+                    padding: "4px",
+                    border: `1px solid ${themeStyles.borderColor}`,
+                  }}
+                  onError={(e) => {
+                    e.target.src = Shoe;
+                  }}
+                />
+                <div>
+                  <p style={{ fontWeight: "600", fontSize: "14px", margin: 0 }}>
+                    {popularProduct.popular_product_name || "No product name"}
+                  </p>
+                  <p
+                    style={{
+                      color: "#4F46E5",
+                      fontWeight: "700",
+                      fontSize: "14px",
+                      margin: "4px 0 0 0",
+                    }}
+                  >
+                    {popularProduct.popular_product_price?.toLocaleString() ||
+                      0}{" "}
+                    ks
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "16px",
+                  color: "#94A3B8",
+                  fontSize: "14px",
+                }}
+              >
+                No popular product data
+              </div>
+            )}
+          </div>
+
+          {/* Top Customer */}
+          <div
+            style={{
+              padding: "20px",
+              borderRadius: "16px",
+              border: `1px solid ${themeStyles.borderColor}`,
+              backgroundColor: themeStyles.cardBg,
+              flex: 1,
+            }}
+          >
+            <h2
+              style={{
+                fontSize: "16px",
+                fontWeight: "700",
+                margin: "0 0 16px 0",
+              }}
+            >
+              Top Customer
+            </h2>
+            {topCustomer ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "16px",
+                  padding: "12px",
+                  borderRadius: "12px",
+                  backgroundColor: themeStyles.subCardBg,
+                  border: `1px solid ${themeStyles.borderColor}`,
+                }}
+              >
+                {topCustomer.top_customer_image ? (
+                  <img
+                    src={topCustomer.top_customer_image}
+                    alt="Customer"
+                    style={{
+                      width: "48px",
+                      height: "48px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                    }}
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: "48px",
+                      height: "48px",
+                      borderRadius: "50%",
+                      backgroundColor: "#EEF2FF",
+                      color: "#4F46E5",
+                      fontWeight: "700",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {topCustomer.top_customer_name
+                      ? topCustomer.top_customer_name
+                          .substring(0, 2)
+                          .toUpperCase()
+                      : "CH"}
+                  </div>
+                )}
+                <div>
+                  <p style={{ fontWeight: "600", fontSize: "14px", margin: 0 }}>
+                    {topCustomer.top_customer_name || "No customer"}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: "12px",
+                      color: "#94A3B8",
+                      margin: "2px 0 0 0",
+                    }}
+                  >
+                    {topCustomer.top_customer_address || "N/A"}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "16px",
+                  color: "#94A3B8",
+                  fontSize: "14px",
+                }}
+              >
+                No top customer data
+              </div>
+            )}
           </div>
         </div>
       </div>
-    </>
+
+      {/* 4. Recent Orders Table Section */}
+      <div
+        style={{
+          padding: "24px",
+          borderRadius: "16px",
+          border: `1px solid ${themeStyles.borderColor}`,
+          backgroundColor: themeStyles.cardBg,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+        }}
+      >
+        <h2
+          style={{
+            fontSize: "18px",
+            fontWeight: "700",
+            margin: "0 0 24px 0",
+            color: themeStyles.color,
+          }}
+        >
+          Recent Order
+        </h2>
+
+        <div style={{ overflowX: "auto" }}>
+          <table
+            style={{
+              width: "100%",
+              textAlign: "left",
+              borderCollapse: "collapse",
+            }}
+          >
+            <thead>
+              <tr
+                style={{
+                  borderBottom: `1px solid ${themeStyles.borderColor}`,
+                  color: "#94A3B8",
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  textTransform: "uppercase",
+                }}
+              >
+                <th style={{ paddingBottom: "16px", paddingLeft: "12px" }}>
+                  Order ID
+                </th>
+                <th style={{ paddingBottom: "16px", paddingLeft: "12px" }}>
+                  Customer
+                </th>
+                <th style={{ paddingBottom: "16px", paddingLeft: "12px" }}>
+                  Amount
+                </th>
+                <th style={{ paddingBottom: "16px", paddingLeft: "12px" }}>
+                  Date
+                </th>
+                <th style={{ paddingBottom: "16px", paddingLeft: "12px" }}>
+                  Time
+                </th>
+                <th style={{ paddingBottom: "16px", paddingLeft: "12px" }}>
+                  Payment
+                </th>
+                <th
+                  style={{
+                    paddingBottom: "16px",
+                    paddingLeft: "12px",
+                    textAlign: "center",
+                  }}
+                >
+                  Proof
+                </th>
+                <th
+                  style={{
+                    paddingBottom: "16px",
+                    paddingRight: "12px",
+                    textAlign: "right",
+                    width: "140px",
+                  }}
+                >
+                  Order Status
+                </th>
+              </tr>
+            </thead>
+            <tbody style={{ fontSize: "14px", color: themeStyles.color }}>
+              {Array.isArray(MOrders?.data) ? (
+                MOrders.data.length > 0 ? (
+                  <>
+                    {MOrders.data
+                      .slice((currentPage - 1) * 5, currentPage * 5)
+                      .map((item, index) => {
+                        const status = item.order_status
+                          ? item.order_status.toLowerCase()
+                          : "";
+                        return (
+                          <tr
+                            key={index}
+                            style={{
+                              borderBottom: `1px solid ${themeStyles.borderColor}`,
+                              transition: "background-color 0.2s",
+                              height: "69px",
+                            }}
+                            className="table-row-hover"
+                          >
+                            <td
+                              style={{
+                                padding: "16px 12px",
+                                fontWeight: "600",
+                                color: "#4F46E5",
+                              }}
+                            >
+                              #{item.order_id}
+                            </td>
+                            <td
+                              style={{
+                                padding: "16px 12px",
+                                fontWeight: "600",
+                              }}
+                            >
+                              {item.customer_name}
+                            </td>
+                            <td
+                              style={{
+                                padding: "16px 12px",
+                                fontWeight: "600",
+                              }}
+                            >
+                              {item.Total?.toLocaleString()} ks
+                            </td>
+                            <td
+                              style={{ padding: "16px 12px", color: "#94A3B8" }}
+                            >
+                              {item.Date}
+                            </td>
+                            <td
+                              style={{ padding: "16px 12px", color: "#94A3B8" }}
+                            >
+                              {item.Time}
+                            </td>
+                            <td style={{ padding: "16px 12px" }}>
+                              <span
+                                style={{
+                                  fontSize: "12px",
+                                  backgroundColor: isDarkMode
+                                    ? "#334155"
+                                    : "#F1F5F9",
+                                  color: isDarkMode ? "#E1E1E1" : "#475569",
+                                  padding: "4px 8px",
+                                  borderRadius: "6px",
+                                  fontWeight: "500",
+                                }}
+                              >
+                                {item.payment_method}
+                              </span>
+                            </td>
+                            <td style={{ padding: "16px 12px" }}>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyBox: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <img
+                                  src={item.payment_proof}
+                                  style={{
+                                    width: "44px",
+                                    height: "28px",
+                                    borderRadius: "4px",
+                                    objectFit: "cover",
+                                    cursor: "pointer",
+                                    border: `1px solid ${themeStyles.borderColor}`,
+                                  }}
+                                  onClick={() =>
+                                    showImagePreview(item.payment_proof)
+                                  }
+                                  alt="Proof"
+                                />
+                              </div>
+                            </td>
+                            <td
+                              style={{
+                                padding: "16px 12px",
+                                textAlign: "center",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  display: "inline-block",
+                                  padding: "5px 12px",
+                                  borderRadius: "10px",
+                                  fontSize: "12px",
+                                  fontWeight: "600",
+                                  minWidth: "80px",
+                                  textAlign: "center",
+                                  backgroundColor:
+                                    status === "completed"
+                                      ? "#D1FAE5"
+                                      : status === "pending"
+                                        ? "#FEF3C7"
+                                        : "#FEE2E2",
+                                  color:
+                                    status === "completed"
+                                      ? "#065F46"
+                                      : status === "pending"
+                                        ? "#D97706"
+                                        : "#991B1B",
+                                }}
+                              >
+                                {item.order_status}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+
+                    {/* Row ၅ ခုပြည့်အောင် ကွက်လပ်ဖြည့်ပေးခြင်း */}
+                    {MOrders.data.slice((currentPage - 1) * 5, currentPage * 5)
+                      .length < 5 &&
+                      [
+                        ...Array(
+                          5 -
+                            MOrders.data.slice(
+                              (currentPage - 1) * 5,
+                              currentPage * 5,
+                            ).length,
+                        ),
+                      ].map((_, index) => (
+                        <tr
+                          key={`empty-${index}`}
+                          style={{
+                            borderBottom: `1px solid ${themeStyles.borderColor}`,
+                            height: "69px",
+                          }}
+                        >
+                          <td colSpan="8" style={{ padding: "16px 12px" }}>
+                            &nbsp;
+                          </td>
+                        </tr>
+                      ))}
+                  </>
+                ) : (
+                  [...Array(5)].map((_, index) => (
+                    <tr
+                      key={`nodata-${index}`}
+                      style={{
+                        borderBottom: `1px solid ${themeStyles.borderColor}`,
+                        height: "69px",
+                      }}
+                    >
+                      {index === 2 ? (
+                        <td
+                          colSpan="8"
+                          style={{ textAlign: "center", color: "#94A3B8" }}
+                        >
+                          No orders found
+                        </td>
+                      ) : (
+                        <td colSpan="8">&nbsp;</td>
+                      )}
+                    </tr>
+                  ))
+                )
+              ) : (
+                [...Array(5)].map((_, index) => (
+                  <tr key={index}>
+                    <td colSpan="8" style={{ padding: "16px 0" }}>
+                      <CustomerLoading times={8} />
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* 🏁 Report Style အတိုင်း အသစ်ပြင်ဆင်ထားသော Pagination Footer Section */}
+        {Array.isArray(MOrders?.data) && (
+          <div
+            style={{
+              marginTop: "16px",
+              paddingTop: "14px",
+              borderTop: `1px solid ${themeStyles.borderColor}`,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            {/* ဘယ်ဘက်ခြမ်း Information ပြသမှု */}
+            <span
+              style={{ fontSize: "13px", color: "#64748B", fontWeight: "500" }}
+            >
+              Showing {MOrders.data.length > 0 ? (currentPage - 1) * 5 + 1 : 0}{" "}
+              to {Math.min(currentPage * 5, MOrders.data.length)} of{" "}
+              {MOrders.data.length} entries
+            </span>
+
+            {/* ညာဘက်ခြမ်း ခလုတ်များစုစည်းမှု */}
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              {/* Previous Button */}
+              <button
+                type="button"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "6px",
+                  border: `1px solid ${themeStyles.borderColor}`,
+                  backgroundColor: themeStyles.cardBg,
+                  color: themeStyles.color,
+                  cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                  opacity: currentPage === 1 ? 0.4 : 1,
+                  transition: "all 0.15s",
+                }}
+              >
+                {/* Material UI Icon မရှိလျှင် standard text သို့မဟုတ် Icon သုံးနိုင်သည် */}
+                <span style={{ fontSize: "18px", fontWeight: "600" }}>
+                  &lt;
+                </span>
+              </button>
+
+              {/* Page Display */}
+              <span
+                style={{
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  color: themeStyles.color,
+                  minWidth: "85px",
+                  textAlign: "center",
+                }}
+              >
+                Page {currentPage} of{" "}
+                {Math.ceil((MOrders.data.length || 0) / 5) || 1}
+              </span>
+
+              {/* Next Button */}
+              <button
+                type="button"
+                disabled={
+                  currentPage === Math.ceil((MOrders.data.length || 0) / 5) ||
+                  MOrders.data.length === 0
+                }
+                onClick={() =>
+                  setCurrentPage((prev) =>
+                    Math.min(prev + 1, Math.ceil(MOrders.data.length / 5)),
+                  )
+                }
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "6px",
+                  border: `1px solid ${themeStyles.borderColor}`,
+                  backgroundColor: themeStyles.cardBg,
+                  color: themeStyles.color,
+                  cursor:
+                    currentPage === Math.ceil((MOrders.data.length || 0) / 5) ||
+                    MOrders.data.length === 0
+                      ? "not-allowed"
+                      : "pointer",
+                  opacity:
+                    currentPage === Math.ceil((MOrders.data.length || 0) / 5) ||
+                    MOrders.data.length === 0
+                      ? 0.4
+                      : 1,
+                  transition: "all 0.15s",
+                }}
+              >
+                <span style={{ fontSize: "18px", fontWeight: "600" }}>
+                  &gt;
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 

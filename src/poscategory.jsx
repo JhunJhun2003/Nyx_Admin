@@ -43,13 +43,12 @@ function PosCategory() {
     close,
   } = useNoti();
 
-  const Font_color = Boolean(backcolor == "#1A1C1E");
-  const FontStyle = {
-    color: Font_color ? "#E1E1E1" : "#0D1B2A",
-  };
+  // 🌓 Dark Mode State Boolean စစ်ဆေးခြင်း
+  const isDarkMode = Boolean(backcolor === "#1A1C1E");
 
   useEffect(() => {
-    (GetCategories(), GetTags());
+    GetCategories();
+    GetTags();
   }, []);
 
   async function addCategory(e) {
@@ -288,7 +287,6 @@ function PosCategory() {
     }
   }
 
-  //function to show imgpreview
   const imgpreview = (event) => {
     let name = event.target.files[0];
     setfile(name);
@@ -301,10 +299,15 @@ function PosCategory() {
 
   return (
     <>
+      <Toaster />
       {categoryloading}
-      <div className="poscategorymain">
+      {/* 📦 Container မှာ Theme dynamically ချိတ်ပေးထားပါတယ် */}
+      <div
+        className={`poscategorymain ${isDarkMode ? "dark-theme" : "light-theme"}`}
+      >
+        {/* Category Header */}
         <div className="Poscategoryheader">
-          <h1 style={FontStyle}>
+          <h1>
             <CategoryIcon />
             Category
           </h1>
@@ -320,6 +323,7 @@ function PosCategory() {
           </button>
         </div>
 
+        {/* Category Items List */}
         <div className="poscategorybody">
           {Array.isArray(Categories.data) ? (
             Categories.data.length > 0 ? (
@@ -336,7 +340,10 @@ function PosCategory() {
                 );
               })
             ) : (
-              <div className="singlecategory" onClick={() => setshow(true)}>
+              <div
+                className="singlecategory state-empty-row"
+                onClick={() => setshow(true)}
+              >
                 <p>No Category Yet</p>
               </div>
             )
@@ -345,17 +352,11 @@ function PosCategory() {
           )}
         </div>
 
-        <hr
-          style={{
-            margin: "1em ",
-            height: "5px",
-            background: "black",
-            width: "100%",
-          }}
-        />
+        <hr className="category-hr-divider" />
 
+        {/* Tags Header */}
         <div className="poscategorybody2">
-          <h1 style={FontStyle}>
+          <h1>
             <TagIcon style={{ fontSize: "35px" }} />
             Tags
           </h1>
@@ -371,6 +372,8 @@ function PosCategory() {
             Add Tags
           </button>
         </div>
+
+        {/* Tags Items List */}
         <div className="poscategoryfooter">
           {Array.isArray(Tags.data) ? (
             Tags.data.length > 0 ? (
@@ -382,7 +385,7 @@ function PosCategory() {
                 );
               })
             ) : (
-              <h3 style={{ color: "red" }} onClick={() => setshow1(true)}>
+              <h3 className="tag-empty-warning" onClick={() => setshow1(true)}>
                 There is no tags
               </h3>
             )
@@ -390,46 +393,52 @@ function PosCategory() {
             [...Array(4)].map((_, index) => <LoaingTag key={index} />)
           )}
         </div>
-        {/* _______________________________________________________________________________________________________________________________________________*/}
-        {/*for Pop up box*/}
+
+        {/* __________________________ POPUP DIALOGS MODALS __________________________ */}
+
+        {/* Category Details/Create Popup Box */}
         {show && (
           <div className="showwarper">
             <form
               className="categorypopup"
               onSubmit={selecttoDel ? handleUpdateCategory : addCategory}
             >
-              <h1 className="categorypopupheader">
-                {selecttoDel ? "Category Details" : "New Category"}
-              </h1>
+              <div className="popup-top-bar">
+                <h1 className="categorypopupheader">
+                  {selecttoDel ? "Category Details" : "New Category"}
+                </h1>
+                <button
+                  type="button"
+                  className="categorycloseIcon"
+                  onClick={() => {
+                    setshow(false);
+                    setallow(false);
+                    setselecttoDel(null);
+                    setfile(null);
+                    setfilepath(null);
+                  }}
+                >
+                  <CloseIcon />
+                </button>
+              </div>
 
-              <button
-                className="categorycloseIcon"
-                onClick={() => {
-                  setshow(false);
-                  setallow(false);
-                  setselecttoDel(null);
-                  setfile(null);
-                  setfilepath(null);
-                }}
-              >
-                <CloseIcon />
-              </button>
-
-              <p>Category Name</p>
-
+              <p className="field-title-label">Category Name</p>
               <input
                 type="text"
-                className="category"
+                className="category-text-field"
                 defaultValue={selecttoDel ? selecttoDel.name : ""}
                 readOnly={selecttoDel && !allow}
                 required={!selecttoDel}
                 ref={Categoryname}
                 key={selecttoDel ? 2 : ""}
+                placeholder="Enter category name"
               />
 
               <div
                 className="categoryimgwarper"
-                onClick={() => CategoryImage.current.click()}
+                onClick={() =>
+                  (!selecttoDel || allow) && CategoryImage.current.click()
+                }
               >
                 <input
                   type="file"
@@ -438,40 +447,52 @@ function PosCategory() {
                   disabled={selecttoDel && !allow}
                   required={!selecttoDel}
                   onChange={imgpreview}
+                  accept="image/*"
                 />
                 {file ? (
-                  <img src={filepath} />
+                  <img src={filepath} alt="preview" />
                 ) : selecttoDel ? (
-                  <img src={selecttoDel.image_url} />
+                  <img src={selecttoDel.image_url} alt="category" />
                 ) : (
                   <>
                     <UploadIcon />
-                    <p>Photo</p>
+                    <p style={{ margin: 0, fontSize: "12px" }}>Photo</p>
                   </>
                 )}
               </div>
+
               {selecttoDel ? (
                 <div className="categoryupdate">
-                  <button onClick={handleDeleteCategory} type="button">
+                  <button
+                    onClick={handleDeleteCategory}
+                    type="button"
+                    className="btn-delete-action"
+                  >
                     Delete
                   </button>
 
                   <div>
                     <button
+                      className="btn-edit-action"
                       onClick={() => {
                         setallow(true);
-                        Categoryname.current.focus();
+                        setTimeout(() => Categoryname.current.focus(), 50);
                       }}
                       type="button"
                     >
                       Edit
                     </button>
-                    <button disabled={selecttoDel && !allow}>Update</button>
+                    <button
+                      disabled={selecttoDel && !allow}
+                      className="btn-submit-action"
+                    >
+                      Update
+                    </button>
                   </div>
                 </div>
               ) : (
                 <div className="categorycreatebtn">
-                  <button style={{ background: "#0D1B2A", color: "white" }}>
+                  <button type="submit" className="btn-submit-action">
                     Create
                   </button>
                   <button
@@ -481,8 +502,9 @@ function PosCategory() {
                       setfilepath(null);
                     }}
                     type="button"
+                    className="btn-cancel-action"
                   >
-                    cancel
+                    Cancel
                   </button>
                 </div>
               )}
@@ -490,7 +512,7 @@ function PosCategory() {
           </div>
         )}
 
-        {/*for Tag box*/}
+        {/* Tags Details/Create Popup Box */}
         {show1 && (
           <div className="show1warper">
             <div className="tagpopup">
@@ -498,15 +520,17 @@ function PosCategory() {
                 <h2>{editdata ? "Update Tags" : "New Tags"}</h2>
                 <button
                   className="tagcloseIcon"
+                  type="button"
                   onClick={() => {
                     setshow1(false);
-                    setisallow(true);
+                    seteditdata(null);
+                    setisallow(false);
                   }}
                 >
                   <CloseIcon />
                 </button>
               </div>
-              <p>Tag name</p>
+              <p className="field-title-label">Tag name</p>
               <form onSubmit={editdata ? handleUpdateTags : AddTags}>
                 <input
                   type="text"
@@ -516,33 +540,45 @@ function PosCategory() {
                   defaultValue={editdata ? editdata.name : ""}
                   key={editdata ? 3 : ""}
                   readOnly={isallow}
+                  placeholder="Enter tag name"
                 />
 
                 {editdata ? (
                   <div className="tagupdatebtn">
-                    <button onClick={handleDeleteTags} type="button">
+                    <button
+                      onClick={handleDeleteTags}
+                      type="button"
+                      className="btn-delete-action"
+                    >
                       Delete
                     </button>
                     <div>
                       <button
+                        className="btn-edit-action"
                         onClick={() => {
                           setisallow(false);
-                          Tagsref.current.focus();
+                          setTimeout(() => Tagsref.current.focus(), 50);
                         }}
                         type="button"
                       >
                         Edit
                       </button>
-                      <button disabled={isallow}>Update</button>
+                      <button disabled={isallow} className="btn-submit-action">
+                        Update
+                      </button>
                     </div>
                   </div>
                 ) : (
                   <div className="tagbutton">
-                    <button type="submit">
-                      {editdata ? "Delete" : "Create"}
+                    <button type="submit" className="btn-submit-action">
+                      Create
                     </button>
-                    <button type="button" onClick={() => setshow1(false)}>
-                      cancel
+                    <button
+                      type="button"
+                      onClick={() => setshow1(false)}
+                      className="btn-cancel-action"
+                    >
+                      Cancel
                     </button>
                   </div>
                 )}
@@ -550,7 +586,7 @@ function PosCategory() {
             </div>
           </div>
         )}
-        {/*for brand input box*/}
+
         {show2 && <BrandPopUp data={{ setshow2: setshow2 }} />}
       </div>
     </>

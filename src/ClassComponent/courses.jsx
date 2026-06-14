@@ -103,6 +103,9 @@ const Courses = () => {
                   })
                 }
               />
+              <div className="course-title-wrapper">
+                <h3>{c.course_name}</h3>
+              </div>
             </div>
           ))}
         </div>
