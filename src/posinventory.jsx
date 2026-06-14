@@ -32,40 +32,9 @@ function PosInventory() {
   const { Inventory, GetInventory } = useGetInventroy();
   const { backcolor } = useContext(Context);
 
-  let Condition = [
-    { title: "Total Inventory", data: "1200" },
-    { title: "Out of Stocks", data: "98" },
-    { title: "Out of Stocks", data: "98" },
-    { title: "Top Categories", data: "Badminton" },
-  ];
-
   const Font_color = Boolean(backcolor == "#1A1C1E");
   const FontStyle = {
     color: Font_color ? "#E1E1E1" : "#0F172A",
-  };
-
-  // Fetch inventory statistics from API
-  const fetchInventoryStats = async () => {
-    try {
-      const response = await fetch(
-        "http://38.60.216.25:5000/api/inventory/totalinventory"
-      );
-      const data = await response.json();
-      console.log("Inventory Stats:", data);
-      
-      if (data && data["total inventory"]) {
-        setInventoryStats({
-          totalInventory: data["total inventory"].total_inventory || "0",
-          outOfStock: data["total inventory"].out_of_stock || "0",
-          lowStock: data["total inventory"].low_stock || "0",
-          topCategory: data["top category"] || "N/A"
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching inventory stats:", error);
-    } finally {
-      setStatsLoading(false);
-    }
   };
 
   // Fetch inventory statistics from API
@@ -106,14 +75,6 @@ function PosInventory() {
     { title: "Top Categories", data: inventoryStats.topCategory },
   ];
 
-  // Condition data from API
-  const Condition = [
-    { title: "Total Inventory", data: inventoryStats.totalInventory },
-    { title: "Out of Stocks", data: inventoryStats.outOfStock },
-    { title: "Low Stocks", data: inventoryStats.lowStock },
-    { title: "Top Categories", data: inventoryStats.topCategory },
-  ];
-
   function changevalue(event) {
     setvalue(event.target.value);
     setCurrentPage(1);
@@ -130,14 +91,14 @@ function PosInventory() {
     let result = Inventory.data;
     if (value !== "All") {
       result = result.filter((item) =>
-        item.category?.toLowerCase().includes(value.toLowerCase()),
+        item.category?.toLowerCase().includes(value.toLowerCase())
       );
     }
     if (text.trim() !== "") {
       result = result.filter(
         (item) =>
           item.productName?.toLowerCase().includes(text.trim().toLowerCase()) ||
-          item.tags??.toLowerCase().includes(text.trim().toLowerCase()),
+          item.tags?.toLowerCase().includes(text.trim().toLowerCase())
       );
     }
     setfiltered(result);
@@ -152,7 +113,6 @@ function PosInventory() {
   // Row ၁၀ ခု ပြည့်အောင် ကွက်လပ်ဖြည့်ဖို့ တွက်ချက်ခြင်း
   const emptyRowsCount = rowsPerPage - currentRows.length;
 
-
   return (
     <div
       className={`posinventorymain ${Font_color ? "dark-theme" : "light-theme"}`}
@@ -162,46 +122,41 @@ function PosInventory() {
         <InventoryIcon className="inventoryIcon" />
         Inventory
       </h1>
-        
 
-      {/* 📊 Top 4 Cards Row (🌓 Light/Dark Mode ကိုက်ညီအောင် ပြင်ဆင်ပြီး) */}
+      {/* 📊 Top 4 Cards Row */}
       <div className="inventoryCondition">
         {Condition.map((item, index) => {
-          // Icon dynamically ပြောင်းလဲခြင်း
           const cardIcons = [
-            <AllItemsIcon className="card-icon" style={{ color: "#4f46e5" }} />, // Total
-            <StockOutIcon className="card-icon" style={{ color: "#ef4444" }} />, // Out
-            <AlertIcon className="card-icon" style={{ color: "#f59e0b" }} />, // Alert
-            <CategoryIcon className="card-icon" style={{ color: "#10b981" }} />, // Category
+            <AllItemsIcon className="card-icon" style={{ color: "#4f46e5" }} />,
+            <StockOutIcon className="card-icon" style={{ color: "#ef4444" }} />,
+            <AlertIcon className="card-icon" style={{ color: "#f59e0b" }} />,
+            <CategoryIcon className="card-icon" style={{ color: "#10b981" }} />,
           ];
 
           return (
-            // 🛠️ white-card ကို ဖြုတ်ပြီး condition-card အဖြစ်ပဲ ထားရှိပါသည်
             <div key={index} className="condition-card">
               <div className="card-top-row">
                 <p className="card-title">{item.title}</p>
-                {/* 🛠️ Icon ထည့်ထားတဲ့နေရာ */}
                 <div className="icon-wrapper">{cardIcons[index]}</div>
               </div>
               <h4 className="card-data">
-                  {statsLoading ? (
-                    <span className="loading-text">...</span>
-                  ) : (
-                    item.data
-                  )}
-                </h4>
+                {statsLoading ? (
+                  <span className="loading-text">...</span>
+                ) : (
+                  item.data
+                )}
+              </h4>
             </div>
           );
         })}
       </div>
-        
 
       {/* Table Action Header Area */}
       <div className="inventoryheader">
         <h2 style={FontStyle}>Product Stocks Overview</h2>
 
         <div className="header-controls-right">
-          <select onChange={changevalue} className="inventory-select">
+          <select onChange={changevalue} className="inventory-select" value={value}>
             <option value="All">All Categories</option>
             {Array.isArray(Categories.data) && Categories.data.length > 0 ? (
               Categories.data.map((item, index) => (
@@ -223,7 +178,6 @@ function PosInventory() {
             <SearchIcon className="search-icon-inventory" />
           </div>
         </div>
-        
       </div>
 
       {/* 📦 Modern Data Table Container */}
@@ -263,7 +217,6 @@ function PosInventory() {
                       <td style={{ textAlign: "center" }}>
                         <span
                           className={`status-badge ${isOutOfStock ? "badge-out" : "badge-in"}`}
-                            fontWeight: item.current_stock === 0 ? "bold" : "normal"
                         >
                           {isOutOfStock ? "Out of Stock" : "Available"}
                         </span>
@@ -329,6 +282,5 @@ function PosInventory() {
     </div>
   );
 }
-
 
 export default PosInventory;
