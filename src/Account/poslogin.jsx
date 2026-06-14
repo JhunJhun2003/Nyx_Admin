@@ -91,7 +91,7 @@ function PosLogin() {
         <p className="faillogin" ref={validpassword}>
           *invalid password
         </p>
-        <p className="forgot">Forgot Password ?</p>
+        {/* <p className="forgot">Forgot Password ?</p> */}
       </span>
 
       <button>Login</button>
