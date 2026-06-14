@@ -139,7 +139,11 @@ function ClassNav() {
 
             <button
               className="logoutbutton"
-              onClick={() => setisClassLogin(false)}
+              onClick={() => {
+                setisClassLogin(false);
+                localStorage.removeItem("isClassLogin");
+                nagivate("/login/academiclogin", { replace: true });
+              }}
             >
               <LogoutIcon />
               LOGOUT

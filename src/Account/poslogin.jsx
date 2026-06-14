@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 function PosLogin() {
   const navigate = useNavigate();
 
-  const { setislogin } = useContext(Context);
+  const { setislogin, setisClassLogin } = useContext(Context);
   const emailref = useRef();
   const passwordref = useRef();
   const validemail = useRef();
@@ -49,9 +49,11 @@ function PosLogin() {
             passwordref.current.style.color = "initial";
           }, 10000);
         } else if (data.token) {
-          navigate("/", { replace: true });
+          localStorage.removeItem("isClassLogin");
+          setisClassLogin(false);
           localStorage.setItem("islogin", "true");
           setislogin(true);
+          navigate("/", { replace: true });
         }
       }
     } catch (error) {
