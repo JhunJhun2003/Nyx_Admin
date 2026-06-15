@@ -7,7 +7,7 @@ function AcademicLogin() {
   const navigate = useNavigate();
 
   const { setisClassLogin, setislogin } = useContext(Context);
-  const { Loading, openerror, openloading, opensuccess, close } = useNoti();
+  const { Loading, openerror, openloading , close } = useNoti();
 
   const emailref = useRef();
   const passwordref = useRef();
