@@ -108,8 +108,7 @@ export default function StatCards() {
       setLoading(true);
       setError(null);
       const response = await fetch(
-        "http://
-130.94.99.9:5000/api/trainingoverview/showtrainingoverview"
+        "http://130.94.99.9:5000/api/trainingoverview/showtrainingoverview"
       );
       if (!response.ok) {
         throw new Error("Failed to fetch training overview data");

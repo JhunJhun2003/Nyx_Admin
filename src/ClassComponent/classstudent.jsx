@@ -50,8 +50,7 @@ const StudentsTable = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        "http://
-130.94.99.9:5000/api/coursestudent/showtrainingstudentall",
+        "http://130.94.99.9:5000/api/coursestudent/showtrainingstudentall",
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");

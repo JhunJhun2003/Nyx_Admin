@@ -23,9 +23,8 @@ const Courses = () => {
   const fetchCourses = async () => {
     try {
       const res = await fetch(
-        "http://
-130.94.99.9:5000/api/coursemanagement/showtraining",
-      );
+        "http://130.94.99.9:5000/api/coursemanagement/showtraining",
+      ); //http://130.94.99.9:5000/api/coursemanagement/showtraining
       const data = await res.json();
       setCourses(Array.isArray(data) ? data : data?.data || []);
     } catch (err) {
@@ -50,8 +49,7 @@ const Courses = () => {
 
     try {
       const res = await fetch(
-        "http://
-130.94.99.9:5000/api/coursemanagement/addcourse",
+        "http://130.94.99.9:5000/api/coursemanagement/addcourse",
         {
           method: "POST",
           body: formData,
