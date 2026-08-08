@@ -122,11 +122,14 @@ export default function Dashboard() {
 
   useEffect(() => {
     const mobileApiUrl =
-      "http://38.60.216.25:5000/api/mobilerental/showmobilebooking";
+      "http://
+130.94.99.9:5000/api/mobilerental/showmobilebooking";
     const localApiUrl =
-      "http://38.60.216.25:5000/api/localbooking/showlocalbooking";
+      "http://
+130.94.99.9:5000/api/localbooking/showlocalbooking";
     const overviewApiUrl =
-      "http://38.60.216.25:5000/api/rentaloverview/showrentaloverview";
+      "http://
+130.94.99.9:5000/api/rentaloverview/showrentaloverview";
 
     setLoading(true);
 

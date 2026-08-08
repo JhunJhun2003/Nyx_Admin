@@ -50,7 +50,8 @@ const StudentsTable = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        "http://38.60.216.25:5000/api/coursestudent/showtrainingstudentall",
+        "http://
+130.94.99.9:5000/api/coursestudent/showtrainingstudentall",
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -148,7 +149,8 @@ const StudentsTable = () => {
       const studentSource = studentToDelete?.source;
 
       const response = await fetch(
-        `http://38.60.216.25:5000/api/course/deletetrainingstudent/${deletingStudentId}/${studentSource}`,
+        `http://
+130.94.99.9:5000/api/course/deletetrainingstudent/${deletingStudentId}/${studentSource}`,
         {
           method: "DELETE",
           headers: {
@@ -215,7 +217,8 @@ const StudentsTable = () => {
 
     try {
       const response = await fetch(
-        `http://38.60.216.25:5000/api/coursestudent/trainingstudentdetailfindid/${studentId}/${studentSource}`,
+        `http://
+130.94.99.9:5000/api/coursestudent/trainingstudentdetailfindid/${studentId}/${studentSource}`,
       );
       if (!response.ok) {
         throw new Error("Failed to fetch student details from server.");

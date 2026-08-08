@@ -44,7 +44,8 @@ const CourseManagement = () => {
   const fetchCourses = async () => {
     try {
       const res = await fetch(
-        "http://38.60.216.25:5000/api/coursemanagement/showtraining",
+        "http://
+130.94.99.9:5000/api/coursemanagement/showtraining",
       );
 
       const data = await res.json();
@@ -110,7 +111,8 @@ const CourseManagement = () => {
 
     try {
       const response = await fetch(
-        `http://38.60.216.25:5000/api/coursemanagement/updatecourse/${selectedCourse.id}`,
+        `http://
+130.94.99.9:5000/api/coursemanagement/updatecourse/${selectedCourse.id}`,
         {
           method: "PUT",
           body: formData,
@@ -160,7 +162,8 @@ const CourseManagement = () => {
     const id = deleteConfirm.courseId;
     try {
       const response = await fetch(
-        `http://38.60.216.25:5000/api/course/deletetraining/${id}`,
+        `http://
+130.94.99.9:5000/api/course/deletetraining/${id}`,
         {
           method: "DELETE",
         },

@@ -99,7 +99,8 @@ function PosOrder() {
       setLoading(true);
       setError(null);
       const response = await fetch(
-        "http://38.60.216.25:5000/api/order/totalResult",
+        "http://
+130.94.99.9:5000/api/order/totalResult",
       );
       if (!response.ok) {
         throw new Error("Failed to fetch order statistics");

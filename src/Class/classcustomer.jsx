@@ -101,7 +101,8 @@ function ClassCustomer() {
 
     try {
       const response = await fetch(
-        `http://38.60.216.25:5000/api/customer/updatecustomer/${id}/true`,
+        `http://
+130.94.99.9:5000/api/customer/updatecustomer/${id}/true`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -149,7 +150,8 @@ function ClassCustomer() {
 
     try {
       const response = await fetch(
-        `http://38.60.216.25:5000/api/customer/updatecustomer/${id}/false`,
+        `http://
+130.94.99.9:5000/api/customer/updatecustomer/${id}/false`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

@@ -46,7 +46,8 @@ const AddStudentForm = () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        "http://38.60.216.25:5000/api/course/get_training_level_and_class",
+        "http://
+130.94.99.9:5000/api/course/get_training_level_and_class",
       );
 
       const result = await response.json();
@@ -105,7 +106,8 @@ const AddStudentForm = () => {
   const fetchPaymentData = async () => {
     try {
       const response = await fetch(
-        "http://38.60.216.25:5000/api/payment/showpayment",
+        "http://
+130.94.99.9:5000/api/payment/showpayment",
       );
 
       const result = await response.json();
@@ -263,7 +265,8 @@ const AddStudentForm = () => {
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
       const response = await fetch(
-        "http://38.60.216.25:5000/api/coursestudent/addtrainingstudent",
+        "http://
+130.94.99.9:5000/api/coursestudent/addtrainingstudent",
         {
           method: "POST",
           body: submitData,
