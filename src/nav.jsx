@@ -13,6 +13,7 @@ function Nav() {
   const handletoken = () => {
     setislogin(false);
     localStorage.removeItem("islogin");
+    localStorage.removeItem("adminPassword");
     nagivate("/login/poslogin", { replace: true });
   };
 
