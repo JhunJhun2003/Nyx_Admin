@@ -9,33 +9,21 @@ import CustomerLoading from "./Components/loadingcustomer";
 import { useGetCustomer } from "./Api_Call";
 import Swal from "sweetalert2";
 
-
 function PosCustomer() {
   const [text, settext] = useState("");
   const [filteredData, setfilteredData] = useState([]);
-  const [warnedCustomers, setWarnedCustomers] = useState([]);
+  const [deletingId, setDeletingId] = useState(null);
 
   // 📄 Pagination States
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
-  const [deletingId, setDeletingId] = useState(null);
 
   const { backcolor, Token } = useContext(Context);
   const { GetCustomer, Customers } = useGetCustomer();
 
   const textchange = (event) => {
     settext(event.target.value);
-    setCurrentPage(1); // Search လုပ်ရင် page 1 ပြန်သွားမယ်
-  };
-
-  const toggleWarning = (id) => {
-    if (warnedCustomers.includes(id)) {
-      setWarnedCustomers(
-        warnedCustomers.filter((customerId) => customerId !== id),
-      );
-    } else {
-      setWarnedCustomers([...warnedCustomers, id]);
-    }
+    setCurrentPage(1);
   };
 
   useEffect(() => {
@@ -49,7 +37,7 @@ function PosCustomer() {
               .includes(text.toLocaleLowerCase().trim()) ||
             item.address
               ?.toLocaleLowerCase()
-              .includes(text.toLocaleLowerCase().trim()),
+              .includes(text.toLocaleLowerCase().trim())
         );
       }
       setfilteredData(data);
@@ -77,14 +65,15 @@ function PosCustomer() {
         setDeletingId(id);
         
         const response = await fetch(
-          `http://38.60.216.25:5000/api/customer/user/${id}`,
+          `http://
+130.94.99.9:5000/api/customer/user/${id}`,
           {
             method: "DELETE",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${Token}`,
             },
-          },
+          }
         );
         
         const data = await response.json();
@@ -137,112 +126,153 @@ function PosCustomer() {
     };
   };
 
-  // 🌓 Dark Mode / Light Mode စစ်ဆေးခြင်း
+  // 🌓 Dark Mode / Light Mode
   const isDarkMode = Boolean(backcolor === "#1A1C1E");
+
+  // Dynamic styles based on theme
+  const FontStyle = {
+    color: isDarkMode ? "#E1E1E1" : "#0D1B2A",
+  };
+  const InputStyle = {
+    backgroundColor: isDarkMode ? "#E1E1E1" : "#0D1B2A",
+  };
 
   // 🧮 Pagination Calculation
   const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
-
-  // Data မပြည့်ရင် Row ၁၀ ခု ကွက်တိဖြစ်အောင် Empty Rows ထည့်ပေးခြင်း
   const emptyRowsCount = rowsPerPage - currentRows.length;
 
   return (
-    <div
-      className={`Poscustomermain ${isDarkMode ? "dark-theme" : "light-theme"}`}
-    >
+    <div className={`Poscustomermain ${isDarkMode ? "dark-theme" : "light-theme"}`}>
       {/* Header Block */}
       <div className="Poscustomerheader">
-        <h1>
-          <PersonIcon style={{ fontSize: "26px", color: "#4F46E5" }} />
-          Customers List
+        <h1 style={FontStyle}>
+          <PersonIcon style={{ fontSize: "28px" }} />
+          Customers
         </h1>
-        <div className="search-box-wrapper">
+        <div style={InputStyle} className="search-box-wrapper">
           <input
             type="search"
             onChange={textchange}
             placeholder="Search customers..."
+            style={{ color: !isDarkMode ? "white" : "#0D1B2A" }}
           />
-          <SearchIcon className="search-icon-inside" />
-        </div>
-        <div className="customertableContainer">
-          <table className="customertable">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Customer</th>
-                <th>Address</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Warning Status</th>
-                <th style={{ textAlign: "center" }}>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Array.isArray(filteredData) ? (
-                filteredData.length > 0 ? (
-                  filteredData.map((item, index) => {
-                    // Get warning status from the API response
-                    const warningStatus = item.warning || "false";
-                    const statusDisplay = getWarningStatusDisplay(warningStatus);
-                    
-                    return (
-                      <tr key={index}>
-                        <td>{item.id}</td>
-                        <td>{item.name}</td>
-                        <td>{item.address || "-"}</td>
-                        <td>{item.phone || "-"}</td>
-                        <td>{item.email || "-"}</td>
-                        <td>
-                          <span style={statusDisplay.style}>
-                            {statusDisplay.text}
-                          </span>
-                        </td>
-                        <td className="customerbuttoncontainer">
-                          <button
-                            className="deletebutton"
-                            onClick={() => delete_customer(item.id)}
-                            disabled={deletingId === item.id}
-                            style={{
-                              backgroundColor: "#dc2626",
-                              color: "white",
-                              border: "none",
-                              padding: "6px 12px",
-                              borderRadius: "6px",
-                              cursor: deletingId === item.id ? "not-allowed" : "pointer",
-                              opacity: deletingId === item.id ? 0.7 : 1,
-                            }}
-                          >
-                            {deletingId === item.id ? "Deleting..." : "Delete"}
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <td
-                      colSpan="7"
-                      style={{ textAlign: "center", padding: "20px" }}
-                    >
-                      No data
-                    </td>
-                  </tr>
-                )
-              ) : (
-                [...Array(10)].map((_, index) => (
-                  <CustomerLoading key={index} times={7} />
-                ))
-              )}
-            </tbody>
-          </table>
+          <SearchIcon className="search-icon-inside" style={{ color: !isDarkMode ? "white" : "#0D1B2A" }} />
         </div>
       </div>
+
+      <div className="customertableContainer">
+        <table className="customertable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Customer</th>
+              <th>Address</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Warning Status</th>
+              <th style={{ textAlign: "center" }}>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.isArray(filteredData) && filteredData.length > 0 ? (
+              <>
+                {currentRows.map((item, index) => {
+                  const warningStatus = item.warning || "false";
+                  const statusDisplay = getWarningStatusDisplay(warningStatus);
+                  
+                  return (
+                    <tr key={index}>
+                      <td>{item.id}</td>
+                      <td>{item.name}</td>
+                      <td>{item.address || "-"}</td>
+                      <td>{item.phone || "-"}</td>
+                      <td>{item.email || "-"}</td>
+                      <td>
+                        <span style={statusDisplay.style}>
+                          {statusDisplay.text}
+                        </span>
+                      </td>
+                      <td className="customerbuttoncontainer">
+                        <button
+                          className="deletebutton"
+                          onClick={() => delete_customer(item.id)}
+                          disabled={deletingId === item.id}
+                          style={{
+                            backgroundColor: "#dc2626",
+                            color: "white",
+                            border: "none",
+                            padding: "6px 12px",
+                            borderRadius: "6px",
+                            cursor: deletingId === item.id ? "not-allowed" : "pointer",
+                            opacity: deletingId === item.id ? 0.7 : 1,
+                          }}
+                        >
+                          {deletingId === item.id ? "Deleting..." : "Delete"}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+                {emptyRowsCount > 0 &&
+                  Array.from({ length: emptyRowsCount }).map((_, index) => (
+                    <tr key={`empty-${index}`} className="row-empty">
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                    </tr>
+                  ))}
+              </>
+            ) : (
+              [...Array(10)].map((_, index) => (
+                <CustomerLoading key={index} times={7} />
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination Controls */}
+      {filteredData.length > 0 && (
+        <div className="pos-pagination-footer">
+          <span className="pagination-info">
+            Showing {filteredData.length > 0 ? indexOfFirstRow + 1 : 0} to{" "}
+            {Math.min(indexOfLastRow, filteredData.length)} of{" "}
+            {filteredData.length} entries
+          </span>
+          <div className="pagination-btn-group">
+            <button
+              type="button"
+              className="pagination-btn"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+            >
+              <NavigateBeforeIcon style={{ fontSize: "20px" }} />
+            </button>
+
+            <span className="page-number-display">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              type="button"
+              className="pagination-btn"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+            >
+              <NavigateNextIcon style={{ fontSize: "20px" }} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
 
 export default PosCustomer;

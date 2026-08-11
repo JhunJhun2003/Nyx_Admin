@@ -78,7 +78,9 @@ const AddClassForm = () => {
     SU: 7,
   };
 
-  const BASE_URL = "http://38.60.216.25:5000";
+//   const BASE_URL = "http://
+// 130.94.99.9:5000";
+const BASE_URL = "http://130.94.99.9:5000";
 
   // Validate time format (HH:MM:SS)
   const isValidTimeFormat = (time) => {

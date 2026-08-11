@@ -1,11 +1,11 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef } from "react";
 import "./login.css";
 import { Context } from "../Hooks/context";
 import { useNavigate } from "react-router-dom";
 function PosLogin() {
   const navigate = useNavigate();
 
-  const { setislogin } = useContext(Context);
+  const { setislogin, setisClassLogin } = useContext(Context);
   const emailref = useRef();
   const passwordref = useRef();
   const validemail = useRef();
@@ -49,9 +49,12 @@ function PosLogin() {
             passwordref.current.style.color = "initial";
           }, 10000);
         } else if (data.token) {
-          navigate("/", { replace: true });
+          localStorage.removeItem("isClassLogin");
+          localStorage.setItem("adminPassword", passwordref.current.value);
+          setisClassLogin(false);
           localStorage.setItem("islogin", "true");
           setislogin(true);
+          navigate("/", { replace: true });
         }
       }
     } catch (error) {
@@ -89,7 +92,7 @@ function PosLogin() {
         <p className="faillogin" ref={validpassword}>
           *invalid password
         </p>
-        <p className="forgot">Forgot Password ?</p>
+        {/* <p className="forgot">Forgot Password ?</p> */}
       </span>
 
       <button>Login</button>

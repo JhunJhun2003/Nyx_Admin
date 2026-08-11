@@ -67,7 +67,7 @@ function PosReport() {
       setLoading(true);
       setError(null);
       const response = await fetch(
-        "http://38.60.216.25:5000/api/posoverview/showposoverview",
+        "http://130.94.99.9:5000/api/posoverview/showposoverview",
       );
       if (!response.ok) {
         throw new Error("Failed to fetch POS overview data");

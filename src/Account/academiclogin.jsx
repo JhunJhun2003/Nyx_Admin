@@ -6,8 +6,8 @@ import { useNoti } from "../Hooks/alert";
 function AcademicLogin() {
   const navigate = useNavigate();
 
-  const { setisClassLogin } = useContext(Context);
-  const { Loading, openerror, openloading, opensuccess, close } = useNoti();
+  const { setisClassLogin, setislogin } = useContext(Context);
+  const { Loading, openerror, openloading , close } = useNoti();
 
   const emailref = useRef();
   const passwordref = useRef();
@@ -54,9 +54,12 @@ function AcademicLogin() {
             passwordref.current.style.color = "initial";
           }, 10000);
         } else if (data.token) {
-          navigate("/class", { replace: true });
+          localStorage.removeItem("islogin");
+          localStorage.setItem("adminPassword", passwordref.current.value);
+          setislogin(false);
           localStorage.setItem("isClassLogin", "true");
           setisClassLogin(true);
+          navigate("/class", { replace: true });
         }
       } else {
         openerror("something went wrong");

@@ -66,10 +66,10 @@ function App() {
   );
   const [Length, setLength] = useState(1);
   const [islogin, setislogin] = useState(
-    localStorage.getItem("islogin") || false,
+    localStorage.getItem("islogin") === "true",
   );
   const [isClassLogin, setisClassLogin] = useState(
-    localStorage.getItem("isClassLogin") || false,
+    localStorage.getItem("isClassLogin") === "true",
   );
 
   return (

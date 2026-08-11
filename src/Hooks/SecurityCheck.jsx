@@ -12,6 +12,11 @@ export function useSecurityCheck() {
 
   const passwordref = useRef();
 
+  const getStoredAdminPassword = () => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("adminPassword")?.trim() ?? "";
+  };
+
   const openbox = (callBackfun, Fun) => {
     console.log("set show is true");
     setfun(() => callBackfun);
@@ -26,11 +31,17 @@ export function useSecurityCheck() {
 
   function handlechange(e) {
     e.preventDefault();
-    let adminpassword = passwordref.current.value;
-    if (adminpassword == "alpha123") {
-      fun(e);
+    const enteredPassword = passwordref.current?.value ?? "";
+    const storedPassword = getStoredAdminPassword();
+
+    if (enteredPassword && enteredPassword === storedPassword) {
+      if (typeof fun === "function") {
+        fun(e);
+      }
       closebox();
-      if (fun1) fun1(false);
+      if (typeof fun1 === "function") {
+        fun1(false);
+      }
     } else {
       setwrong(true);
       passwordref.current.value = "";

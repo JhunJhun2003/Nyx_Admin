@@ -36,7 +36,7 @@ export default function RecentPaymentsTable({
       setLoading(true);
       setError(null);
       const response = await fetch(
-        "http://38.60.216.25:5000/api/trainingoverview/training_overview",
+        "http://130.94.99.9:5000/api/trainingoverview/training_overview",
       );
       if (!response.ok) {
         throw new Error("Failed to fetch training overview data");

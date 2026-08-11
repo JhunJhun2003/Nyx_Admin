@@ -19,7 +19,6 @@ function PosInventory() {
 
   // 📄 Pagination States
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10;
   const [inventoryStats, setInventoryStats] = useState({
     totalInventory: "0",
     outOfStock: "0",
@@ -27,6 +26,7 @@ function PosInventory() {
     topCategory: "N/A"
   });
   const [statsLoading, setStatsLoading] = useState(true);
+  const rowsPerPage = 10;
 
   const { Categories, GetCategories } = useGetCategory();
   const { Inventory, GetInventory } = useGetInventroy();
@@ -34,14 +34,17 @@ function PosInventory() {
 
   const Font_color = Boolean(backcolor == "#1A1C1E");
   const FontStyle = {
-    color: Font_color ? "#E1E1E1" : "#0F172A",
+    color: Font_color ? "#E1E1E1" : "#0D1B2A",
+  };
+  const InputStyle = {
+    backgroundColor: Font_color ? "#E1E1E1" : "#0D1B2A",
   };
 
   // Fetch inventory statistics from API
   const fetchInventoryStats = async () => {
     try {
       const response = await fetch(
-        "http://38.60.216.25:5000/api/inventory/totalinventory"
+        "http://130.94.99.9:5000/api/inventory/totalinventory"
       );
       const data = await response.json();
       console.log("Inventory Stats:", data);
@@ -75,6 +78,7 @@ function PosInventory() {
     { title: "Top Categories", data: inventoryStats.topCategory },
   ];
 
+  //for option
   function changevalue(event) {
     setvalue(event.target.value);
     setCurrentPage(1);
@@ -91,14 +95,14 @@ function PosInventory() {
     let result = Inventory.data;
     if (value !== "All") {
       result = result.filter((item) =>
-        item.category?.toLowerCase().includes(value.toLowerCase())
+        item.category?.toLowerCase().includes(value.toLowerCase()),
       );
     }
     if (text.trim() !== "") {
       result = result.filter(
         (item) =>
           item.productName?.toLowerCase().includes(text.trim().toLowerCase()) ||
-          item.tags?.toLowerCase().includes(text.trim().toLowerCase())
+          item.tags?.toLowerCase().includes(text.trim().toLowerCase()),
       );
     }
     setfiltered(result);
@@ -195,7 +199,7 @@ function PosInventory() {
             </tr>
           </thead>
           <tbody>
-            {Array.isArray(Inventory.data) ? (
+            {Array.isArray(Inventory.data) && Inventory.data.length > 0 ? (
               <>
                 {/* 1. Show dynamic table rows */}
                 {currentRows.map((item, index) => {
@@ -249,36 +253,38 @@ function PosInventory() {
       </div>
 
       {/* 🏁 Pagination Controls Footer */}
-      <div className="pos-pagination-footer">
-        <span className="pagination-info">
-          Showing {filteredData.length > 0 ? indexOfFirstRow + 1 : 0} to{" "}
-          {Math.min(indexOfLastRow, filteredData.length)} of{" "}
-          {filteredData.length} stocks
-        </span>
-        <div className="pagination-btn-group">
-          <button
-            type="button"
-            className="pagination-btn"
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((prev) => prev - 1)}
-          >
-            <NavigateBeforeIcon style={{ fontSize: "20px" }} />
-          </button>
-
-          <span className="page-number-display">
-            Page {currentPage} of {totalPages}
+      {filteredData.length > 0 && (
+        <div className="pos-pagination-footer">
+          <span className="pagination-info">
+            Showing {filteredData.length > 0 ? indexOfFirstRow + 1 : 0} to{" "}
+            {Math.min(indexOfLastRow, filteredData.length)} of{" "}
+            {filteredData.length} stocks
           </span>
+          <div className="pagination-btn-group">
+            <button
+              type="button"
+              className="pagination-btn"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+            >
+              <NavigateBeforeIcon style={{ fontSize: "20px" }} />
+            </button>
 
-          <button
-            type="button"
-            className="pagination-btn"
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((prev) => prev + 1)}
-          >
-            <NavigateNextIcon style={{ fontSize: "20px" }} />
-          </button>
+            <span className="page-number-display">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              type="button"
+              className="pagination-btn"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+            >
+              <NavigateNextIcon style={{ fontSize: "20px" }} />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
