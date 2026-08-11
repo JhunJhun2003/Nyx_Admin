@@ -69,13 +69,13 @@ const AddClassForm = () => {
   };
 
   const days = {
-    M: 1,
-    TU: 2,
-    W: 3,
-    TH: 4,
-    F: 5,
-    SA: 6,
-    SU: 7,
+    M: 18,
+    TU: 19,
+    W: 20,
+    TH: 21,
+    F: 22,
+    SA: 23,
+    SU: 24,
   };
 
 //   const BASE_URL = "http://
