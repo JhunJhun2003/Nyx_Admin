@@ -66,7 +66,7 @@ function ClassLoaclBooking() {
     open({
       order_no: item.id.toString().padStart(4, "0"),
       payment: item?.payment_method || "Cash",
-      Date: item?.date,
+      Date: item?.Date,
       Time: new Date(item.create_at).toLocaleTimeString(),
       court_fee: item?.Court_Fee || 0,
       rental_fee: rental_fee,
@@ -185,7 +185,7 @@ function ClassLoaclBooking() {
                                 .join(", ")
                             : "--------------"}
                         </td>
-                        <td>{item.date}</td>
+                        <td>{item.Date}</td>
                         <td>{new Date(item.create_at).toLocaleTimeString()}</td>
                         <td>{item.Total || "00000"} ks</td>
                         <td>{item.payment_method}</td>

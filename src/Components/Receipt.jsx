@@ -59,7 +59,7 @@ export const useReceipt = () => {
                   </span>
                   <span>
                     <h3>Payment:</h3>
-                    <p>{info?.payment || "Kpay"}</p>
+                    <p>{info?.payment || "-"}</p>
                   </span>
                 </div>
                 <div className="rc21">

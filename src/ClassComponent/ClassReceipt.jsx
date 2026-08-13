@@ -69,8 +69,16 @@ export const useClassReceipt = () => {
                     <p>{info?.Date || new Date().toLocaleDateString()}</p>
                   </span>
                   <span>
-                    <h3>Time:</h3>
-                    <p>{info?.Time || new Date().toLocaleTimeString()}</p>
+                    <h3>Start Time:</h3>
+                    <p>
+                      {info?.start_time
+                        ? info.start_time.slice(0, 5)
+                        : info?.Time || "-"}
+                    </p>
+                  </span>
+                  <span>
+                    <h3>End Time:</h3>
+                    <p>{info?.end_time ? info.end_time.slice(0, 5) : "-"}</p>
                   </span>
                 </div>
               </div>
@@ -84,6 +92,21 @@ export const useClassReceipt = () => {
                   <h3>{info ? info.court_fee : "---------"} ks</h3>
                   <h3>{info ? info.rental_fee : "---------"} ks</h3>
                 </span>
+              </div>
+              <hr />
+              <div className="rc_equipments">
+                <h3>Equipments:</h3>
+                {info?.items && Array.isArray(info.items) && info.items.length > 0 ? (
+                  <ul className="rc_equipment_list">
+                    {info.items.map((it, idx) => (
+                      <li key={idx}>
+                        {it.equipment ? it.equipment : "Item"} - {it.quantity || 0} x {it.price || 0} ks
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>None</p>
+                )}
               </div>
               <hr />
               <div className="rc4">
