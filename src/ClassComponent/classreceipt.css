@@ -19,10 +19,11 @@
   padding-bottom: 30px;
 }
 .rccmain {
+  margin-top: 60px;
   display: flex;
   flex-direction: column;
   width: 518px;
-  height: 570px;
+  /* height: 570px; */
   position: absolute;
   left: 50%;
   top: 40%;
