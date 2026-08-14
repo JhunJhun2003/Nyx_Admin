@@ -72,8 +72,15 @@ const AddClassForm = () => {
     }
   };
 
-  const days = { M: 1, TU: 2, W: 3, TH: 4, F: 5, SA: 6, SU: 7 };
-  const BASE_URL = "http://130.94.99.9:5000";
+  const days = {
+    M: 18,
+    TU: 19,
+    W: 20,
+    TH: 21,
+    F: 22,
+    SA: 23,
+    SU: 24,
+  };
 
   const isValidTimeFormat = (time) => {
     const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;

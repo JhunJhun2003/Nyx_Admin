@@ -117,13 +117,13 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
   const [deleteType, setDeleteType] = useState("");
 
   const daysList = [
-    { id: 1, name: "Monday" },
-    { id: 2, name: "Tuesday" },
-    { id: 3, name: "Wednesday" },
-    { id: 4, name: "Thursday" },
-    { id: 5, name: "Friday" },
-    { id: 6, name: "Saturday" },
-    { id: 7, name: "Sunday" },
+    { id: 18, name: "Monday" },
+    { id: 19, name: "Tuesday" },
+    { id: 20, name: "Wednesday" },
+    { id: 21, name: "Thursday" },
+    { id: 22, name: "Friday" },
+    { id: 23, name: "Saturday" },
+    { id: 24, name: "Sunday" },
   ];
 
   const applyLevelData = (

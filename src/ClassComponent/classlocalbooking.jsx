@@ -70,16 +70,12 @@ function ClassLoaclBooking() {
         return total + Number(current.price) * Number(current.quantity);
       }, 0);
     }
-
-    // open ခေါ်ယူခြင်း (isDark သေချာစွာ ဖြတ်ပေးထားပါသည်)
     open(
       {
         order_no: item.id.toString().padStart(4, "0"),
         payment: item?.payment_method || "Cash",
-        Date: item?.date,
-        Time: item?.create_at
-          ? new Date(item.create_at).toLocaleTimeString()
-          : "------------",
+        Date: item?.Date,
+        Time: new Date(item.create_at).toLocaleTimeString(),
         court_fee: item?.Court_Fee || 0,
         rental_fee: rental_fee,
         total_amount: item?.Total || 0,
@@ -209,13 +205,9 @@ function ClassLoaclBooking() {
                                 .join(", ")
                             : "--------------"}
                         </td>
-                        <td>{item.date}</td>
-                        <td>
-                          {item.create_at
-                            ? new Date(item.create_at).toLocaleTimeString()
-                            : "------------"}
-                        </td>
-                        <td>{item.Total || "0"} ks</td>
+                        <td>{item.Date}</td>
+                        <td>{new Date(item.create_at).toLocaleTimeString()}</td>
+                        <td>{item.Total || "00000"} ks</td>
                         <td>{item.payment_method}</td>
                         <td>
                           <div className="specialdiv">

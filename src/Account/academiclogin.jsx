@@ -55,6 +55,7 @@ function AcademicLogin() {
           }, 10000);
         } else if (data.token) {
           localStorage.removeItem("islogin");
+          localStorage.setItem("adminPassword", passwordref.current.value);
           setislogin(false);
           localStorage.setItem("isClassLogin", "true");
           setisClassLogin(true);

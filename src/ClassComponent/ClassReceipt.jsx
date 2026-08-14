@@ -61,7 +61,36 @@ export const useClassReceipt = () => {
                 <h3>Order Placed Successfully!</h3>
                 <p>Thank you for shopping with us</p>
               </div>
-
+              <div className="rc2">
+                <div className="rc21" style={{ width: "50%" }}>
+                  <span>
+                    <h3>Registration id:</h3>
+                    <p>#{info?.order_no || "00000"}</p>
+                  </span>
+                  <span>
+                    <h3>Payment:</h3>
+                    <p>{info?.payment || "Cash"}</p>
+                  </span>
+                </div>
+                <div className="rc21">
+                  <span>
+                    <h3>Date:</h3>
+                    <p>{info?.Date || new Date().toLocaleDateString()}</p>
+                  </span>
+                  <span>
+                    <h3>Start Time:</h3>
+                    <p>
+                      {info?.start_time
+                        ? info.start_time.slice(0, 5)
+                        : info?.Time || "-"}
+                    </p>
+                  </span>
+                  <span>
+                    <h3>End Time:</h3>
+                    <p>{info?.end_time ? info.end_time.slice(0, 5) : "-"}</p>
+                  </span>
+                </div>
+              </div>
               <hr />
 
               <div className="rc-row">
@@ -74,16 +103,33 @@ export const useClassReceipt = () => {
                   {info?.Date || new Date().toLocaleDateString()}
                 </span>
               </div>
-              <div className="rc-row">
-                <span className="label">Payment</span>
-                <span className="value">{info?.payment || "Cash"}</span>
+              <hr />
+              <div className="rc_equipments">
+                <h3>Equipments:</h3>
+                {info?.items &&
+                Array.isArray(info.items) &&
+                info.items.length > 0 ? (
+                  <ul className="rc_equipment_list">
+                    {info.items.map((it, idx) => (
+                      <li key={idx}>
+                        {it.equipment ? it.equipment : "Item"} -{" "}
+                        {it.quantity || 0} x {it.price || 0} ks
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>None</p>
+                )}
               </div>
-              <div className="rc-row">
-                <span className="label">Time</span>
-                <span className="value">
-                  {info?.Time && info.Time !== "Invalid Date"
-                    ? info.Time
-                    : "------------"}
+              <hr />
+              <div className="rc4">
+                <span className="rc41">
+                  <h3>Total Amount:</h3>
+                  <h3>Discount(%):</h3>
+                </span>
+                <span className="rc42">
+                  <h3>{info ? info.total_amount : "---------"} KS</h3>
+                  <h3>{info?.discount || 0} ks</h3>
                 </span>
               </div>
 

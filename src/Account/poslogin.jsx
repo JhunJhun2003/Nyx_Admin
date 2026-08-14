@@ -50,6 +50,7 @@ function PosLogin() {
           }, 10000);
         } else if (data.token) {
           localStorage.removeItem("isClassLogin");
+          localStorage.setItem("adminPassword", passwordref.current.value);
           setisClassLogin(false);
           localStorage.setItem("islogin", "true");
           setislogin(true);

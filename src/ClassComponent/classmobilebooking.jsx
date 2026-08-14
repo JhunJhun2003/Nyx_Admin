@@ -52,6 +52,11 @@ function ClassMobileBooking() {
     settext(e.target.value);
   };
 
+  function formatTimeSlot(start, end) {
+    if (!start || !end) return "-";
+    return `${start.slice(0, 5)} - ${end.slice(0, 5)}`;
+  }
+
   function show_reciept(item) {
     let rental_fee = 0;
     if (Array.isArray(item.items) && item.items.length > 0) {
@@ -71,6 +76,17 @@ function ClassMobileBooking() {
       },
       isDark, // <--- ဒီမှာ isDark ကို ထည့်ပေးလိုက်ပါ
     );
+    open({
+      order_no: item.id.toString().padStart(4, "0"),
+      payment: item?.payment_method || "Cash",
+      Date: item?.Date,
+      start_time: item?.start_time,
+      end_time: item?.end_time,
+      court_fee: item?.Court_Fee || 0,
+      rental_fee: rental_fee,
+      total_amount: item?.Total || 0,
+      items: item.items || [],
+    });
   }
 
   async function ExportTable() {
@@ -151,8 +167,10 @@ function ClassMobileBooking() {
                   Venue /<br /> Court
                 </th>
                 <th>Equipment</th>
-                <th>Date</th>
-                <th>Time</th>
+                <th>
+                  Date / <br />
+                  Time Slot
+                </th>
                 <th>
                   Total <br /> amount
                 </th>
@@ -186,8 +204,11 @@ function ClassMobileBooking() {
                                 .join(", ")
                             : "--------------"}
                         </td>
-                        <td>{item.date}</td>
-                        <td>{new Date(item.create_at).toLocaleTimeString()}</td>
+                        <td>
+                          {item.Date}
+                          <br />
+                          {formatTimeSlot(item.start_time, item.end_time)}
+                        </td>
                         <td>{item.Total} ks</td>
                         <td>{item.payment_method}</td>
                         <td>
