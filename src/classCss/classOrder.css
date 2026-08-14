@@ -1,158 +1,566 @@
+/* Base Container */
 .classordermain {
-  padding: 1em 1.5em;
+  padding: 5px 1.5em;
   display: flex;
   flex-direction: column;
-  gap: 1em;
-  height: 100vh;
+  gap: 20px;
+  min-height: 100vh;
   width: 100%;
+  background-color: #f8fafc;
+  color: #1e293b;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-sizing: border-box;
 }
+
+.classordermain * {
+  box-sizing: border-box;
+}
+
+/* Top Header */
 .classorderbody1 {
   display: flex;
-  width: 100% !important;
-  justify-content: space-between !important;
+  width: 100%;
+  justify-content: space-between;
   align-items: center;
-  height: 5vh;
 }
+
 .classorderheader {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-.classorderbody1 button {
-  font-size: 12px;
-  border: 1px solid #0d1b2a;
-  padding: 6px 1em;
-  border-radius: 10px;
-  color: white;
-  background-color: #0d1b2a;
-}
-.classorderbody2 {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  height: auto;
-}
-.classorderdata {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  padding: 10px;
-  width: 23%;
-  border-radius: 5px;
-}
-.classorderbody2 > :first-child {
-  background-color: #becefd;
-}
-.classorderbody2 > :nth-child(2) {
-  background-color: #b0fdad;
-}
-.classorderbody2 > :nth-child(3) {
-  background-color: #ddc2ff;
-}
-.classorderbody2 > :last-child {
-  background-color: #fa6767;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
 }
 
+.header-icon {
+  color: #3b82f6;
+}
+
+.btn-add-order {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 8px;
+  color: #ffffff;
+  background-color: #1e293b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-add-order:hover {
+  background-color: #334155;
+  transform: translateY(-1px);
+}
+
+/* Stat Cards Row */
+/* Stat Cards Row (Flexbox အချိုးကျ ပြင်ဆင်ချက်) */
+.stat-cards-container {
+  display: flex;
+  width: 100%;
+  gap: 16px;
+}
+
+.order-stat-card {
+  flex: 1; /* ကဒ် ၄ ခုလုံး အကျယ် ညီတူညီမျှ ယူစေရန် */
+  min-width: 0; /* Flex container ထဲမှာ Content Overflow မဖြစ်စေရန် */
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+/* Mobile & Tablet အတွက် Responsive Layout */
+@media (max-width: 1024px) {
+  .stat-cards-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Tablet မှာ ၂ ခုစီ ခွဲပြမည် */
+  }
+}
+
+@media (max-width: 640px) {
+  .stat-cards-container {
+    grid-template-columns: 1fr; /* Mobile မှာ ၁ ခုစီ အစဉ်လိုက်ပြမည် */
+  }
+}
+
+.order-stat-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+}
+
+.order-stat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.order-stat-card-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.order-stat-card-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.order-stat-card-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.order-stat-card-change {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.order-stat-card-change.positive {
+  color: #16a34a;
+}
+.order-stat-card-change.negative {
+  color: #dc2626;
+}
+
+/* Table Section Container */
 .classorderbody3 {
   width: 100%;
-  border: 1px solid black;
-  border-radius: 10px;
-  flex-grow: 1;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
+
 .classorderfooter1 {
   display: flex;
   width: 100%;
   justify-content: space-between;
-  padding: 10px;
-  gap: 1em;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
 }
+
 .classorderfooter1 h2 {
-  font-weight: bold;
-  font-family: Inter;
-  font-size: larger;
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0;
+  color: #0f172a;
 }
-.classorderfooter1 div {
-  margin-left: auto;
-  display: flex;
-  width: 230px;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #0d1b2a;
-  border-radius: 10px;
-  padding: 3px 7px;
-}
-.classorderfooter1 div input {
-  border: none;
-  outline: none;
-  background-color: initial;
-  color: white;
-}
-.classorderfooter1 button {
-  border: 1px solid #0d1b2a;
-  border-radius: 10px;
-  background-color: #0d1b2a;
-  padding: 3px 10px;
-  font-size: 12px;
-  outline: none;
+
+.order-actions-right {
   display: flex;
   align-items: center;
-  gap: 5px;
-  color: white;
+  gap: 12px;
 }
-.classorderfooter2 {
-  padding-top: 1px !important;
-  width: 100%;
-  padding: 10px;
-  margin-top: 2em;
-  height: 55vh;
-  overflow: scroll;
+
+.classordersearch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 6px 12px;
+  width: 240px;
+  transition: border-color 0.2s;
 }
-.classorderfooter2 .classordertable {
-  width: 100%;
-  border-collapse: collapse;
-}
-.classorderfooter2 .classordertable thead {
-  position: sticky;
-  top: 0;
+
+.classordersearch:focus-within {
+  border-color: #3b82f6;
   background-color: #ffffff;
 }
-.classorderfooter2 .classordertable th {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.384);
-  font-family: Inter;
-  padding: 14px 10px;
-  font-size: 14px;
-  text-align: center;
+
+.classordersearch .search-icon {
+  color: #94a3b8;
+  font-size: 18px;
 }
-.classorderfooter2 .classordertable td {
-  font-family: Inter;
-  padding: 1em 10px !important;
-  text-align: center;
-  font-size: 13px;
-  border-bottom: 1px solid #0d1b2a57;
-}
-.imgrow {
-  width: 50px;
-  height: 30px;
-  border-radius: 3px;
-  display: inline-block;
-  background-color: gray;
-}
-.imgrow img {
-  width: 100%;
-  height: 100%;
-  border-radius: 3px;
-}
-.classordertdbtn button {
+
+.classordersearch input {
   border: none;
   outline: none;
-  padding: 5px 10px;
-  background-color: #16f90e4b;
-  border-radius: 10px;
+  background: transparent;
+  color: #1e293b;
+  font-size: 13px;
+  width: 100%;
 }
+
+.btn-export {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  color: #ffffff;
+  background-color: #1e293b;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-export:hover {
+  background-color: #334155;
+  transform: translateY(-1px);
+}
+
+/* Table Area */
 .towarpthetable {
   width: 100%;
   display: flex;
   flex-direction: column;
-  position: relative;
+}
+
+.classorderfooter2 {
+  width: 100%;
+  max-height: 58vh;
+  overflow-y: auto;
+}
+
+.classordertable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.classordertable thead {
+  position: sticky;
+  top: 0;
+  background-color: #f8fafc;
+  z-index: 2;
+}
+
+.classordertable th {
+  border-bottom: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.classordertable td {
+  padding: 12px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+  height: 52px;
+}
+
+.classordertable tr:not(.empty-row):hover {
+  background-color: #f8fafc;
+}
+
+/* Empty Placeholder Row Design */
+.empty-row td {
+  border-bottom: 1px solid #f1f5f9;
+  height: 52px;
+  pointer-events: none;
+}
+
+.font-semibold {
+  font-weight: 600;
+  color: #0f172a;
+}
+.amount-cell {
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.payment-badge {
+  background-color: #f1f5f9;
+  color: #475569;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+/* Payment Proof Image */
+.imgrow {
+  width: 48px;
+  height: 32px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e2e8f0;
+  cursor: pointer;
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  transition: transform 0.2s;
+}
+
+.imgrow:hover {
+  transform: scale(1.05);
+}
+
+.imgrow img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-img {
+  font-size: 9px;
+  color: #94a3b8;
+}
+
+/* Action View Button */
+.btn-view {
+  border: none;
+  outline: none;
+  padding: 6px 14px;
+  background-color: #e0f2fe;
+  color: #0284c7;
+  font-weight: 600;
+  font-size: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+
+.btn-view:hover {
+  background-color: #bae6fd;
+  color: #0369a1;
+}
+
+.table-empty {
+  padding: 30px !important;
+  color: #94a3b8;
+}
+
+/* Table Footer / Pagination Wrapper (Light Mode) */
+.table-footer-wrapper {
+  padding: 12px 20px;
+  border-top: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.table-footer-wrapper button {
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.table-footer-wrapper button:hover:not(:disabled) {
+  background-color: #e2e8f0;
+}
+
+.table-footer-wrapper button.active {
+  background-color: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+}
+
+/* SweetAlert Image Preview Modal */
+.preview-swal-popup {
+  border-radius: 12px !important;
+  padding: 16px !important;
+}
+
+.preview-image-style {
+  max-height: 75vh !important;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.preview-swal-close {
+  color: #94a3b8 !important;
+}
+
+/* View Receipt Modal Theme Styles */
+.receipt-modal-theme-wrapper {
+  color: #111827;
+}
+
+/* ---------------------------------------------------- */
+/* 🌙 DARK MODE OVERRIDES */
+/* ---------------------------------------------------- */
+.classordermain.dark-mode {
+  background-color: #121315;
+  color: #e2e8f0;
+}
+
+.classordermain.dark-mode .classorderheader {
+  color: #ffffff;
+}
+
+.classordermain.dark-mode .btn-add-order {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+.classordermain.dark-mode .btn-add-order:hover {
+  background-color: #2563eb;
+}
+
+.classordermain.dark-mode .order-stat-card {
+  background-color: #1a1c1e;
+  border-color: #2d3139;
+}
+
+.classordermain.dark-mode .order-stat-card-title {
+  color: #94a3b8;
+}
+
+.classordermain.dark-mode .order-stat-card-badge {
+  background-color: #24272b;
+  color: #cbd5e1;
+}
+
+.classordermain.dark-mode .order-stat-card-value {
+  color: #ffffff;
+}
+
+.classordermain.dark-mode .classorderbody3 {
+  background-color: #1a1c1e;
+  border-color: #2d3139;
+}
+
+.classordermain.dark-mode .classorderfooter1 {
+  border-bottom-color: #2d3139;
+}
+
+.classordermain.dark-mode .classorderfooter1 h2 {
+  color: #ffffff;
+}
+
+.classordermain.dark-mode .classordersearch {
+  background-color: #24272b;
+  border-color: #383d44;
+}
+
+.classordermain.dark-mode .classordersearch input {
+  color: #ffffff;
+}
+
+.classordermain.dark-mode .btn-export {
+  background-color: #24272b;
+  border-color: #383d44;
+  color: #e2e8f0;
+}
+
+.classordermain.dark-mode .btn-export:hover {
+  background-color: #2d3139;
+}
+
+.classordermain.dark-mode .classordertable thead {
+  background-color: #24272b;
+}
+
+.classordermain.dark-mode .classordertable th {
+  border-bottom-color: #2d3139;
+  color: #94a3b8;
+}
+
+.classordermain.dark-mode .classordertable td {
+  border-bottom-color: #2d3139;
+  color: #cbd5e1;
+}
+
+.classordermain.dark-mode .empty-row td {
+  border-bottom-color: #2d3139;
+}
+
+.classordermain.dark-mode .classordertable tr:not(.empty-row):hover {
+  background-color: #24272b;
+}
+
+.classordermain.dark-mode .font-semibold {
+  color: #ffffff;
+}
+
+.classordermain.dark-mode .amount-cell {
+  color: #4ade80;
+}
+
+.classordermain.dark-mode .payment-badge {
+  background-color: #24272b;
+  color: #94a3b8;
+}
+
+.classordermain.dark-mode .imgrow {
+  background-color: #24272b;
+  border-color: #383d44;
+}
+
+.classordermain.dark-mode .btn-view {
+  background-color: #0369a1;
+  color: #e0f2fe;
+}
+
+.classordermain.dark-mode .btn-view:hover {
+  background-color: #0284c7;
+}
+
+/* Dark Mode Pagination Footer Line & Controls */
+.classordermain.dark-mode .table-footer-wrapper {
+  background-color: #1a1c1e;
+  border-top-color: #2d3139;
+  color: #94a3b8;
+}
+
+.classordermain.dark-mode .table-footer-wrapper button {
+  background-color: #24272b;
+  color: #cbd5e1;
+  border-color: #383d44;
+}
+
+.classordermain.dark-mode .table-footer-wrapper button:hover:not(:disabled) {
+  background-color: #2d3139;
+  color: #ffffff;
+}
+
+.classordermain.dark-mode .table-footer-wrapper button.active {
+  background-color: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+}
+
+.preview-swal-popup.dark-swal {
+  border: 1px solid #2d3139 !important;
+}
+
+/* Dark Mode for Receipt Modal Box */
+.receipt-modal-theme-wrapper.dark-theme-modal div[role="dialog"],
+.receipt-modal-theme-wrapper.dark-theme-modal .receipt-container {
+  background-color: #1a1c1e !important;
+  color: #ffffff !important;
+  border: 1px solid #2d3139 !important;
 }

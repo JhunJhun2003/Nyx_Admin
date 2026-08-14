@@ -2,21 +2,35 @@ import PeopleIcon from "@mui/icons-material/PeopleAltSharp";
 import SearchIcon from "@mui/icons-material/SearchSharp";
 import "../classCss/classcustomer.css";
 import { useGetClassCustomer } from "../ClassApi";
-import { useEffect, useState } from "react";
 import { useNoti } from "../Hooks/alert";
 import { useTableFooter } from "../Hooks/tablefooter";
 import Swal from "sweetalert2";
+import React, { useState, useEffect, useContext } from "react";
+import { Context } from "../Hooks/context";
 
 function ClassCustomer() {
+  const { classBackColor } = useContext(Context);
+
+  // 🎯 1. isDark ကို အရင်ဆုံး စစ်ဆေးခြင်း (Case-Insensitive)
+  const isDark = classBackColor?.toLowerCase() === "#1a1c1e";
+
+  // 🎯 2. Dynamic Theme Generator Function
+  const getSwalTheme = () => ({
+    background: isDark ? "#1A1C1E" : "#ffffff",
+    color: isDark ? "#E1E1E1" : "#0f172a",
+  });
+
   const [Index, setIndex] = useState(0);
   const [filtered, setfiletered] = useState(null);
   const [text, settext] = useState(null);
   const [warningLoading, setWarningLoading] = useState({});
   const [deleteLoading, setDeleteLoading] = useState({});
 
+  // Warning status များကို Instant Real-Time UI Toggle လုပ်ရန် State
+  const [warnedStatus, setWarnedStatus] = useState({});
+
   const { GetClassCustomers, ClassCustomers } = useGetClassCustomer();
-  const { Loading, opensuccess, openconfirm, openerror, openloading } =
-    useNoti();
+  const { Loading } = useNoti();
   const { TableFooterJsx, startnumber, endnumber } = useTableFooter();
 
   useEffect(() => {
@@ -25,7 +39,6 @@ function ClassCustomer() {
 
   const textchange = (event) => {
     settext(event.target.value);
-    console.log(text);
   };
 
   useEffect(() => {
@@ -40,46 +53,20 @@ function ClassCustomer() {
           );
         });
       }
+
+      // Initial warn state များကို backend data မှ synchronize လုပ်ခြင်း
+      const initialWarnMap = {};
+      result.forEach((c) => {
+        initialWarnMap[c.id] = Boolean(
+          c.is_warned || c.is_warning || c.warning,
+        );
+      });
+      setWarnedStatus((prev) => ({ ...initialWarnMap, ...prev }));
     }
     setfiletered(result);
   }, [text, ClassCustomers.data?.[Index], Index]);
 
-  // Delete customer
-  async function delete_customer(id) {
-    if (!id) return;
-
-    let isConfirm = await openconfirm(
-      "Deleting Customer?",
-      "Are you sure to delete this customer?",
-    );
-    if (!isConfirm) return;
-
-    setDeleteLoading((prev) => ({ ...prev, [id]: true }));
-    openloading();
-
-    try {
-      let response = await fetch(
-        `${import.meta.env.VITE_CLASS_DELETE_MOBILE_BOOKING}/${id}`,
-        { method: "DELETE" },
-      );
-      if (response.ok) {
-        await GetClassCustomers();
-        opensuccess(
-          "Action Successful",
-          "Customer deleted successfully from list",
-        );
-      } else {
-        openerror("Something went wrong");
-      }
-    } catch (err) {
-      console.log(err);
-      openerror("Cannot connect with server");
-    } finally {
-      setDeleteLoading((prev) => ({ ...prev, [id]: false }));
-    }
-  }
-
-  // Add warning to customer
+  // 1. Add Warning Function
   async function addWarning(id) {
     if (!id) return;
 
@@ -92,17 +79,16 @@ function ClassCustomer() {
       cancelButtonColor: "#6c757d",
       confirmButtonText: "Confirm",
       cancelButtonText: "Cancel",
+      ...getSwalTheme(),
     });
 
     if (!result.isConfirmed) return;
 
     setWarningLoading((prev) => ({ ...prev, [id]: true }));
-    openloading();
 
     try {
       const response = await fetch(
-        `http://
-130.94.99.9:5000/api/customer/updatecustomer/${id}/true`,
+        `http://130.94.99.9:5000/api/customer/updatecustomer/${id}/true`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -112,23 +98,41 @@ function ClassCustomer() {
       const data = await response.json();
 
       if (response.ok && data.status === "success") {
+        setWarnedStatus((prev) => ({ ...prev, [id]: true }));
         await GetClassCustomers();
-        opensuccess(
-          "Action Successful",
-          "Warning added to customer successfully!",
-        );
+
+        await Swal.fire({
+          title: "Action Successful",
+          text: "Warning added to customer successfully!",
+          icon: "success",
+          confirmButtonText: "Great, Thank!",
+          confirmButtonColor: "#3b82f6",
+          ...getSwalTheme(),
+        });
       } else {
-        openerror(data.message || "Failed to add warning");
+        await Swal.fire({
+          title: "Failed",
+          text: data.message || "Failed to add warning",
+          icon: "error",
+          confirmButtonColor: "#ef4444",
+          ...getSwalTheme(),
+        });
       }
     } catch (err) {
       console.error("Add warning error:", err);
-      openerror("Cannot connect with server");
+      await Swal.fire({
+        title: "Error",
+        text: "Cannot connect with server",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+        ...getSwalTheme(),
+      });
     } finally {
       setWarningLoading((prev) => ({ ...prev, [id]: false }));
     }
   }
 
-  // Remove warning from customer
+  // 2. Remove Warning Function
   async function removeWarning(id) {
     if (!id) return;
 
@@ -141,17 +145,16 @@ function ClassCustomer() {
       cancelButtonColor: "#6c757d",
       confirmButtonText: "Confirm",
       cancelButtonText: "Cancel",
+      ...getSwalTheme(),
     });
 
     if (!result.isConfirmed) return;
 
     setWarningLoading((prev) => ({ ...prev, [id]: true }));
-    openloading();
 
     try {
       const response = await fetch(
-        `http://
-130.94.99.9:5000/api/customer/updatecustomer/${id}/false`,
+        `http://130.94.99.9:5000/api/customer/updatecustomer/${id}/false`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -161,28 +164,106 @@ function ClassCustomer() {
       const data = await response.json();
 
       if (response.ok && data.status === "success") {
+        setWarnedStatus((prev) => ({ ...prev, [id]: false }));
         await GetClassCustomers();
-        opensuccess(
-          "Action Successful",
-          "Warning removed from customer successfully!",
-        );
+
+        await Swal.fire({
+          title: "Action Successful",
+          text: "Warning removed from customer successfully!",
+          icon: "success",
+          confirmButtonText: "Great, Thank!",
+          confirmButtonColor: "#3b82f6",
+          ...getSwalTheme(),
+        });
       } else {
-        openerror(data.message || "Failed to remove warning");
+        await Swal.fire({
+          title: "Failed",
+          text: data.message || "Failed to remove warning",
+          icon: "error",
+          confirmButtonColor: "#ef4444",
+          ...getSwalTheme(),
+        });
       }
     } catch (err) {
       console.error("Remove warning error:", err);
-      openerror("Cannot connect with server");
+      await Swal.fire({
+        title: "Error",
+        text: "Cannot connect with server",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+        ...getSwalTheme(),
+      });
     } finally {
       setWarningLoading((prev) => ({ ...prev, [id]: false }));
     }
   }
 
+  // 3. Delete Customer Function
+  async function delete_customer(id) {
+    if (!id) return;
+
+    const result = await Swal.fire({
+      title: "Deleting Customer?",
+      text: "Are you sure to delete this customer?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+      ...getSwalTheme(),
+    });
+
+    if (!result.isConfirmed) return;
+
+    setDeleteLoading((prev) => ({ ...prev, [id]: true }));
+
+    try {
+      let response = await fetch(
+        `${import.meta.env.VITE_CLASS_DELETE_MOBILE_BOOKING}/${id}`,
+        { method: "DELETE" },
+      );
+
+      if (response.ok) {
+        await GetClassCustomers();
+
+        await Swal.fire({
+          title: "Action Successful",
+          text: "Customer deleted successfully from list",
+          icon: "success",
+          confirmButtonText: "Great, Thank!",
+          confirmButtonColor: "#3b82f6",
+          ...getSwalTheme(),
+        });
+      } else {
+        await Swal.fire({
+          title: "Error",
+          text: "Something went wrong",
+          icon: "error",
+          confirmButtonColor: "#ef4444",
+          ...getSwalTheme(),
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      await Swal.fire({
+        title: "Error",
+        text: "Cannot connect with server",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+        ...getSwalTheme(),
+      });
+    } finally {
+      setDeleteLoading((prev) => ({ ...prev, [id]: false }));
+    }
+  }
+
   return (
-    <div className="classcustomermain">
+    <div className={`classcustomermain ${isDark ? "dark-mode" : ""}`}>
       <header className="ccheader">
         {Loading}
-        <PeopleIcon sx={{ fontSize: "30px" }} />
-        <h2>Customers</h2>
+        <PeopleIcon sx={{ fontSize: "35px" }} />
+        <h2 style={{ fontSize: "30px" }}>Customers</h2>
       </header>
       <div className="ccbody">
         <div className="ccnav">
@@ -192,20 +273,17 @@ function ClassCustomer() {
                 ClassCustomers.data.map((item, index) => (
                   <h3
                     key={index}
-                    style={{
-                      background: Index == index ? "#F0F0F0" : "initial",
-                      color: Index == index ? "#0D1B2A" : "#ffffff",
-                    }}
+                    className={Index === index ? "active-tab" : ""}
                     onClick={() => setIndex(index)}
                   >
                     {item.venue_name}
                   </h3>
                 ))
               ) : (
-                <h3 style={{ color: "white" }}>No venue</h3>
+                <h3 className="no-venue">No venue</h3>
               )
             ) : (
-              <h3 style={{ color: "white" }}>Loading...</h3>
+              <h3 className="no-venue">Loading...</h3>
             )}
           </div>
           <div className="ccnav2">
@@ -214,7 +292,7 @@ function ClassCustomer() {
               placeholder="Search..."
               onChange={textchange}
             />
-            <SearchIcon sx={{ color: "white" }} />
+            <SearchIcon className="search-icon" />
           </div>
         </div>
         <div className="towarpthetable">
@@ -238,6 +316,8 @@ function ClassCustomer() {
                     filtered
                       .slice(startnumber, endnumber)
                       .map((item, index) => {
+                        const isWarned = Boolean(warnedStatus[item.id]);
+                        const isProcessing = warningLoading[item.id];
 
                         return (
                           <tr key={index}>
@@ -249,7 +329,13 @@ function ClassCustomer() {
                             <td>
                               {Array.isArray(item.time_slots) &&
                               item.time_slots.length > 0
-                                ? `${item.time_slots[0].start_time.slice(0, 5)} - ${item.time_slots[0].end_time.slice(0, 5)}`
+                                ? `${item.time_slots[0].start_time.slice(
+                                    0,
+                                    5,
+                                  )} - ${item.time_slots[0].end_time.slice(
+                                    0,
+                                    5,
+                                  )}`
                                 : "null"}
                             </td>
                             <td>{item.remarks || "-"}</td>
@@ -257,61 +343,34 @@ function ClassCustomer() {
                               <div className="classactiondiv">
                                 <button
                                   onClick={() => addWarning(item.id)}
-                                  disabled={warningLoading[item.id]}
-                                  style={{
-                                    backgroundColor: "#f59e0b",
-                                    color: "white",
-                                    border: "none",
-                                    padding: "4px 8px",
-                                    borderRadius: "4px",
-                                    cursor: warningLoading[item.id]
-                                      ? "not-allowed"
-                                      : "pointer",
-                                    opacity: warningLoading[item.id] ? 0.7 : 1,
-                                    fontSize: "12px",
-                                    marginRight: "5px",
-                                  }}
+                                  disabled={isProcessing || isWarned}
+                                  className={`btn-action btn-add-warning ${
+                                    isWarned ? "dimmed-warned" : ""
+                                  }`}
                                 >
-                                  {warningLoading[item.id]
+                                  {isProcessing
                                     ? "Processing..."
-                                    : "Add Warning"}
+                                    : isWarned
+                                      ? "Warning"
+                                      : "Add Warning"}
                                 </button>
+
                                 <button
                                   onClick={() => removeWarning(item.id)}
-                                  disabled={warningLoading[item.id]}
-                                  style={{
-                                    backgroundColor: "#4adc26",
-                                    color: "white",
-                                    border: "none",
-                                    padding: "4px 8px",
-                                    borderRadius: "4px",
-                                    cursor: warningLoading[item.id]
-                                      ? "not-allowed"
-                                      : "pointer",
-                                    opacity: warningLoading[item.id] ? 0.7 : 1,
-                                    fontSize: "12px",
-                                    marginRight: "5px",
-                                  }}
+                                  disabled={isProcessing || !isWarned}
+                                  className={`btn-action btn-remove-warning ${
+                                    !isWarned ? "dimmed-remove" : ""
+                                  }`}
                                 >
-                                  {warningLoading[item.id]
+                                  {isProcessing
                                     ? "Processing..."
                                     : "Remove Warning"}
                                 </button>
+
                                 <button
                                   onClick={() => delete_customer(item.id)}
                                   disabled={deleteLoading[item.id]}
-                                  style={{
-                                    backgroundColor: "#dc2626",
-                                    color: "white",
-                                    border: "none",
-                                    padding: "4px 8px",
-                                    borderRadius: "4px",
-                                    cursor: deleteLoading[item.id]
-                                      ? "not-allowed"
-                                      : "pointer",
-                                    opacity: deleteLoading[item.id] ? 0.7 : 1,
-                                    fontSize: "12px",
-                                  }}
+                                  className="btn-action btn-delete"
                                 >
                                   {deleteLoading[item.id]
                                     ? "Deleting..."
@@ -345,10 +404,12 @@ function ClassCustomer() {
               </tbody>
             </table>
           </div>
-          {TableFooterJsx}
+
+          <div className="custom-table-footer-wrapper">{TableFooterJsx}</div>
         </div>
       </div>
     </div>
   );
 }
+
 export default ClassCustomer;

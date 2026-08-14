@@ -1,26 +1,74 @@
+/* Theme Variables for Light Mode */
 .cvawarper {
-  position: absolute;
+  --cva-overlay: rgba(0, 0, 0, 0.45);
+  --cva-card-bg: #ffffff;
+  --cva-text-primary: #0f172a;
+  --cva-text-secondary: #475569;
+  --cva-input-bg: #f1f5f9;
+  --cva-input-text: #0f172a;
+  --cva-input-border: #cbd5e1;
+  --cva-upload-bg: #f8fafc;
+  --cva-upload-border: #94a3b8;
+  --cva-btn-cancel-bg: transparent;
+  --cva-btn-cancel-border: #0d1b2a;
+  --cva-btn-cancel-text: #0d1b2a;
+  --cva-btn-primary-bg: #0d1b2a;
+  --cva-btn-primary-text: #ffffff;
+  --cva-btn-edit-bg: rgba(22, 163, 74, 0.15);
+  --cva-btn-edit-text: #15803d;
+  --cva-btn-delete-bg: #d12c2c;
+
+  position: fixed;
   width: calc(100% - 230px);
-  background-color: rgba(128, 128, 128, 0.445);
+  background-color: var(--cva-overlay);
   height: 100vh;
-  z-index: 30;
+  z-index: 1000;
   top: 0;
   right: 0;
+  transition: background-color 0.2s ease;
 }
+
+/* Dark Mode Overrides */
+.cvawarper.dark-mode {
+  --cva-overlay: rgba(0, 0, 0, 0.65);
+  --cva-card-bg: #242629;
+  --cva-text-primary: #f8fafc;
+  --cva-text-secondary: #cbd5e1;
+  --cva-input-bg: #242629;
+  --cva-input-text: #f8fafc;
+  --cva-input-border: #334155;
+  --cva-upload-bg: #242629;
+  --cva-upload-border: #475569;
+  --cva-btn-cancel-bg: transparent;
+  --cva-btn-cancel-border: #475569;
+  --cva-btn-cancel-text: #cbd5e1;
+  --cva-btn-primary-bg: #3b82f6;
+  --cva-btn-primary-text: #ffffff;
+  --cva-btn-edit-bg: rgba(34, 197, 94, 0.2);
+  --cva-btn-edit-text: #4ade80;
+  --cva-btn-delete-bg: #ef4444;
+}
+
+/* Modal Card Container */
 .cvamain {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   width: 400px;
-  height: 400px;
-  border-radius: 10px;
-  padding: 10px 1em;
-  background-color: #f0f0f0;
+  min-height: 400px;
+  border-radius: 12px;
+  padding: 20px;
+  background-color: var(--cva-card-bg);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  box-sizing: border-box;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.2s ease;
 }
+
+/* Modal Header */
 .cvabody1 {
   display: flex;
   width: 100%;
@@ -29,38 +77,73 @@
   margin-bottom: 5px;
 }
 .cvabody1 h3 {
-  font-family: Inter;
-  font-size: medium;
+  font-family: "Inter", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cva-text-primary);
+  margin: 0;
 }
-.cvabody1 button {
+.close-btn {
   border: none;
   outline: none;
-  background-color: initial;
+  background-color: transparent;
+  cursor: pointer;
+  color: var(--cva-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 6px;
 }
+.close-btn:hover {
+  color: var(--cva-text-primary);
+}
+
+/* Form Inputs */
 .cvabody2 p,
 .cvabody3 p {
-  font-family: Work Sans;
-  padding: 3px;
-  font-size: small;
+  font-family: "Work Sans", sans-serif;
+  padding: 2px 0;
+  font-size: 0.85rem;
+  color: var(--cva-text-secondary);
+  margin: 0 0 4px 0;
 }
 .cvabody2 input {
   width: 100%;
-  padding: 10px 7px;
-  border: none;
-  background: #d9d9d9;
-  border-radius: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--cva-input-border);
+  background: var(--cva-input-bg);
+  color: var(--cva-input-text);
+  border-radius: 8px;
+  box-sizing: border-box;
+  outline: none;
+  font-size: 0.9rem;
 }
+.cvabody2 input:focus {
+  border-color: var(--cva-btn-primary-bg);
+}
+
+/* Image Upload Area */
 .cvabody31 {
-  width: 100px;
-  height: 100px;
-  background-color: #d9d9d9;
+  width: 110px;
+  height: 110px;
+  background-color: var(--cva-upload-bg);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   border-radius: 10px;
-  border: 1px dashed #000000;
+  border: 1.5px dashed var(--cva-upload-border);
   position: relative;
+  cursor: pointer;
+  color: var(--cva-text-secondary);
+}
+.cvabody31 p {
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+.upload-icon {
+  color: var(--cva-text-secondary);
 }
 .venuehidden {
   opacity: 0;
@@ -71,13 +154,22 @@
 .venueimgurl {
   width: 100%;
   height: 100%;
-  border-radius: 10px;
+  border-radius: 8px;
+  object-fit: cover;
 }
+
+/* Checkbox Label */
 .cvabody4 {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.875rem;
+  color: var(--cva-text-primary);
+  cursor: pointer;
 }
+
+/* Action Buttons (Edit Mode) */
 .cvabody5 {
   display: flex;
   width: 100%;
@@ -86,46 +178,61 @@
   gap: 10px;
 }
 .cvabody5 button {
-  padding: 7px 1em;
-  border-radius: 10px;
-  width: 80px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
   border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
 }
-.cvabody5 :first-child {
-  background-color: #d12c2c;
-  color: white;
+.cvabody5 button:hover {
+  opacity: 0.9;
 }
-.cvabody5 :nth-child(2) {
-  background-color: #16f90e50;
-  color: #0d1b2a;
+.cvabody5 button:first-child {
+  background-color: var(--cva-btn-delete-bg);
+  color: #ffffff;
+}
+.cvabody5 button:nth-child(2) {
+  background-color: var(--cva-btn-edit-bg);
+  color: var(--cva-btn-edit-text);
   margin-left: auto;
 }
-.cvabody5 :nth-child(3):disabled {
-  opacity: 0.3;
+.cvabody5 button:last-child {
+  background-color: var(--cva-btn-primary-bg);
+  color: var(--cva-btn-primary-text);
 }
-.cvabody5 :last-child {
-  background-color: #0d1b2a;
-  color: white;
+.cvabody5 button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
+
+/* Action Buttons (New Mode) */
 .cvabody6 {
   display: flex;
   gap: 10px;
   align-self: flex-end;
   margin-top: auto;
 }
-.cvabody6 :first-child {
-  padding: 7px 1em;
-  border: 1px solid #0d1b2a;
-  width: 80px;
-  border-radius: 10px;
+.cvabody6 button:first-child {
+  padding: 8px 16px;
+  border: 1px solid var(--cva-btn-cancel-border);
+  background-color: var(--cva-btn-cancel-bg);
+  color: var(--cva-btn-cancel-text);
+  width: 85px;
+  border-radius: 8px;
   outline: none;
+  cursor: pointer;
+  font-weight: 600;
 }
-.cvabody6 :last-child {
-  padding: 7px 1em;
-  background-color: #0d1b2a;
-  color: white;
-  border-radius: 10px;
+.cvabody6 button:last-child {
+  padding: 8px 16px;
+  background-color: var(--cva-btn-primary-bg);
+  color: var(--cva-btn-primary-text);
+  border-radius: 8px;
   outline: none;
-  width: 80px;
+  width: 85px;
   border: none;
+  cursor: pointer;
+  font-weight: 600;
 }

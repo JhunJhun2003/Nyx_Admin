@@ -10,14 +10,20 @@ import {
 } from "recharts";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 
-export default function ChartSection({ onExport }) {
+export default function ChartSection({ onExport, isDark }) {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // All months template
+  // Dynamic Theme Colors
+  const cardBg = isDark ? "#242629" : "#ffffff";
+  const borderColor = isDark ? "#334155" : "#e5e7eb";
+  const textColor = isDark ? "#f8fafc" : "#111827";
+  const subTextColor = isDark ? "#94a3b8" : "#6b7280";
+  const inputBg = isDark ? "#1e293b" : "#ffffff";
+
   const allMonths = [
     { month: "Jan", month_num: 1, enrollment: 0 },
     { month: "Feb", month_num: 2, enrollment: 0 },
@@ -38,47 +44,41 @@ export default function ChartSection({ onExport }) {
       setLoading(true);
       setError(null);
       const response = await fetch(
-        "http://130.94.99.9:5000/api/trainingoverview/showtrainingoverview"
+        "http://130.94.99.9:5000/api/trainingoverview/showtrainingoverview",
       );
       if (!response.ok) {
         throw new Error("Failed to fetch enrollment data");
       }
       const jsonResult = await response.json();
-      
+
       if (jsonResult.success && jsonResult.data) {
         const enrollmentData = jsonResult.data.Enrollment || [];
-        
-        // Create a map of month_num to enrollment data
         const enrollmentMap = new Map();
         enrollmentData.forEach((item) => {
           enrollmentMap.set(item.month_num, {
             month: item.month_name,
             enrollment: item.total_students,
-            month_num: item.month_num
+            month_num: item.month_num,
           });
         });
-        
-        // Merge API data with all months template
-        const completeData = allMonths.map(month => {
+
+        const completeData = allMonths.map((month) => {
           const apiData = enrollmentMap.get(month.month_num);
-          if (apiData) {
-            return {
-              month: month.month,
-              month_num: month.month_num,
-              enrollment: apiData.enrollment
-            };
-          }
-          return month;
+          return apiData
+            ? {
+                month: month.month,
+                month_num: month.month_num,
+                enrollment: apiData.enrollment,
+              }
+            : month;
         });
-        
+
         setChartData(completeData);
       } else {
         throw new Error("No enrollment data found");
       }
     } catch (err) {
       setError(err.message);
-      console.error("Error fetching enrollment data:", err);
-      // Set all months with zero values as fallback
       setChartData(allMonths);
     } finally {
       setLoading(false);
@@ -89,64 +89,55 @@ export default function ChartSection({ onExport }) {
     fetchEnrollmentData();
   }, []);
 
-  // Filter chart data based on date range if needed
   const getFilteredChartData = () => {
     if (!startDate && !endDate) return chartData;
-    
     if (startDate && endDate) {
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      const startMonth = start.getMonth() + 1;
-      const endMonth = end.getMonth() + 1;
-      
+      const startMonth = new Date(startDate).getMonth() + 1;
+      const endMonth = new Date(endDate).getMonth() + 1;
       return chartData.filter(
-        (item) => item.month_num >= startMonth && item.month_num <= endMonth
+        (item) => item.month_num >= startMonth && item.month_num <= endMonth,
       );
     }
-    
     return chartData;
   };
 
   const filteredData = getFilteredChartData();
-
-  // Find max enrollment for Y-axis domain
-  const maxEnrollment = Math.max(...filteredData.map(d => d.enrollment), 0);
-  const yAxisDomain = [0, Math.ceil(maxEnrollment * 1.1)]; // Add 10% padding
+  const maxEnrollment = Math.max(...filteredData.map((d) => d.enrollment), 0);
+  const yAxisDomain = [0, Math.ceil(maxEnrollment * 1.1)];
 
   if (loading) {
     return (
       <div
         style={{
-          background: "#fff",
-          border: "1px solid #e5e7eb",
+          background: cardBg,
+          border: `1px solid ${borderColor}`,
           borderRadius: "12px",
           padding: "24px",
           marginBottom: "24px",
         }}
       >
-        <div
+        <h2
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "20px",
+            fontSize: "20px",
+            fontWeight: 700,
+            margin: 0,
+            color: textColor,
           }}
         >
-          <h2 style={{ fontSize: "20px", fontWeight: 700, margin: 0 }}>
-            Enrollment Trends
-          </h2>
-        </div>
+          Enrollment Trends
+        </h2>
         <div
           style={{
             height: "260px",
-            background: "#f3f4f6",
+            background: isDark ? "#1e293b" : "#f3f4f6",
             borderRadius: "8px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            marginTop: "20px",
           }}
         >
-          <p style={{ color: "#6b7280" }}>Loading chart data...</p>
+          <p style={{ color: subTextColor }}>Loading chart data...</p>
         </div>
       </div>
     );
@@ -156,25 +147,23 @@ export default function ChartSection({ onExport }) {
     return (
       <div
         style={{
-          background: "#fff",
-          border: "1px solid #e5e7eb",
+          background: cardBg,
+          border: `1px solid ${borderColor}`,
           borderRadius: "12px",
           padding: "24px",
           marginBottom: "24px",
         }}
       >
-        <div
+        <h2
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "20px",
+            fontSize: "20px",
+            fontWeight: 700,
+            margin: 0,
+            color: textColor,
           }}
         >
-          <h2 style={{ fontSize: "20px", fontWeight: 700, margin: 0 }}>
-            Enrollment Trends
-          </h2>
-        </div>
+          Enrollment Trends
+        </h2>
         <div
           style={{
             height: "260px",
@@ -207,8 +196,8 @@ export default function ChartSection({ onExport }) {
   return (
     <div
       style={{
-        background: "#fff",
-        border: "1px solid #e5e7eb",
+        background: cardBg,
+        border: `1px solid ${borderColor}`,
         borderRadius: "12px",
         padding: "24px",
         marginBottom: "24px",
@@ -222,7 +211,14 @@ export default function ChartSection({ onExport }) {
           marginBottom: "20px",
         }}
       >
-        <h2 style={{ fontSize: "20px", fontWeight: 700, margin: 0 }}>
+        <h2
+          style={{
+            fontSize: "20px",
+            fontWeight: 700,
+            margin: 0,
+            color: textColor,
+          }}
+        >
           Enrollment Trends
         </h2>
         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -232,11 +228,12 @@ export default function ChartSection({ onExport }) {
             onChange={(e) => setStartDate(e.target.value)}
             style={{
               padding: "6px 12px",
-              border: "1px solid #e5e7eb",
+              background: inputBg,
+              color: textColor,
+              border: `1px solid ${borderColor}`,
               borderRadius: "6px",
               fontSize: "14px",
             }}
-            placeholder="Start Month"
           />
           <input
             type="month"
@@ -244,16 +241,17 @@ export default function ChartSection({ onExport }) {
             onChange={(e) => setEndDate(e.target.value)}
             style={{
               padding: "6px 12px",
-              border: "1px solid #e5e7eb",
+              background: inputBg,
+              color: textColor,
+              border: `1px solid ${borderColor}`,
               borderRadius: "6px",
               fontSize: "14px",
             }}
-            placeholder="End Month"
           />
           <button
             onClick={onExport}
             style={{
-              background: "#1e293b",
+              background: isDark ? "#2563eb" : "#0D1B2A",
               color: "#fff",
               border: "none",
               borderRadius: "8px",
@@ -281,7 +279,7 @@ export default function ChartSection({ onExport }) {
             justifyContent: "center",
           }}
         >
-          <p style={{ color: "#9ca3af" }}>No enrollment data available</p>
+          <p style={{ color: subTextColor }}>No enrollment data available</p>
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={260}>
@@ -292,18 +290,18 @@ export default function ChartSection({ onExport }) {
             <CartesianGrid
               strokeDasharray="0"
               vertical={false}
-              stroke="#e5e7eb"
+              stroke={borderColor}
             />
             <XAxis
               dataKey="month"
-              tick={{ fontSize: 12, fill: "#9ca3af" }}
+              tick={{ fontSize: 12, fill: subTextColor }}
               axisLine={false}
               tickLine={false}
               interval={0}
             />
             <YAxis
               domain={yAxisDomain}
-              tick={{ fontSize: 12, fill: "#9ca3af" }}
+              tick={{ fontSize: 12, fill: subTextColor }}
               axisLine={false}
               tickLine={false}
               allowDecimals={false}
@@ -311,8 +309,10 @@ export default function ChartSection({ onExport }) {
             />
             <Tooltip
               contentStyle={{
+                backgroundColor: cardBg,
+                borderColor: borderColor,
+                color: textColor,
                 borderRadius: "8px",
-                border: "1px solid #e5e7eb",
                 fontSize: "13px",
               }}
               formatter={(value) => [`${value} students`, "Enrollment"]}

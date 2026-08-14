@@ -1,73 +1,43 @@
+import React, { useEffect, useState, useContext } from "react";
 import OrderIcon from "@mui/icons-material/DensityMedium";
-import "../classCss/classOrder.css";
-import { classOrdertable, headerdata } from "../DataExport";
 import SearchIcon from "@mui/icons-material/SearchSharp";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
-import { Outlet, useNavigate } from "react-router-dom";
-import { useGetClassOrder } from "../ClassApi";
-import { useEffect, useState } from "react";
-import * as XLSX from "xlsx";
-import { useReceipt } from "../Components/Receipt";
-import Swal from "sweetalert2";
-import { useTableFooter } from "../Hooks/tablefooter";
+import AddIcon from "@mui/icons-material/Add";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Restaurant, MonetizationOn, CalendarToday } from "@mui/icons-material";
+import { Outlet, useNavigate } from "react-router-dom";
+import * as XLSX from "xlsx";
+import Swal from "sweetalert2";
+import "../classCss/classOrder.css";
+import { useGetClassOrder } from "../ClassApi";
+import { useReceipt } from "../Components/Receipt";
+import { useTableFooter } from "../Hooks/tablefooter";
+import { Context } from "../Hooks/context";
 
-const StatCard = ({ title, value, change, icon, iconColor, isCurrent }) => (
-  <div
-    style={{
-      background: "#fff",
-      border: "1px solid #e5e7eb",
-      borderRadius: "12px",
-      padding: "20px 24px",
-      flex: 1,
-      minWidth: 0,
-    }}
-  >
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-        marginBottom: "8px",
-      }}
-    >
-      <span style={{ fontSize: "13px", color: "#6b7280", fontWeight: 500 }}>
-        {title}
-      </span>
+// Stat Card Component (Theme aware)
+const StatCard = ({
+  title,
+  value,
+  change,
+  icon,
+  iconColor,
+  isCurrent,
+  isDark,
+}) => (
+  <div className={`order-stat-card ${isDark ? "dark-card" : ""}`}>
+    <div className="order-stat-card-header">
+      <span className="order-stat-card-title">{title}</span>
       {isCurrent ? (
-        <span
-          style={{
-            fontSize: "12px",
-            color: "#6b7280",
-            background: "#f3f4f6",
-            padding: "2px 8px",
-            borderRadius: "4px",
-          }}
-        >
-          Today
-        </span>
+        <span className="order-stat-card-badge">Today</span>
       ) : (
-        <span style={{ fontSize: "20px", color: iconColor || "#3b82f6" }}>
+        <span className="order-stat-card-icon" style={{ color: iconColor }}>
           {icon}
         </span>
       )}
     </div>
+    <div className="order-stat-card-value">{value}</div>
     <div
-      style={{
-        fontSize: "22px",
-        fontWeight: 700,
-        color: "#111827",
-        marginBottom: "6px",
-      }}
-    >
-      {value}
-    </div>
-    <div
-      style={{
-        fontSize: "12px",
-        color: change.includes("-") ? "#ef4444" : "#16a34a",
-        fontWeight: 500,
-      }}
+      className={`order-stat-card-change ${change.includes("-") ? "negative" : "positive"}`}
     >
       {change.includes("vs") || change.includes("-") || change.includes("+")
         ? `↗ ${change}`
@@ -77,11 +47,13 @@ const StatCard = ({ title, value, change, icon, iconColor, isCurrent }) => (
 );
 
 function ClassOrder() {
+  const { classBackColor } = useContext(Context);
+  const isDark = classBackColor === "#1A1C1E";
+
   const [text, settext] = useState("");
   const [filtered, setfiltered] = useState(null);
 
   const navigate = useNavigate();
-
   const { GetOrder, ClassOrders } = useGetClassOrder();
   const { ReceipetJsx, open } = useReceipt();
   const { startnumber, endnumber, TableFooterJsx } = useTableFooter(filtered);
@@ -90,17 +62,20 @@ function ClassOrder() {
     GetOrder();
   }, []);
 
-  //for img preview
+  // Payment Proof Image Preview Modal (Light / Dark Theme)
   const showImagePreview = (imageUrl) => {
     if (!imageUrl) return;
     Swal.fire({
       imageUrl: imageUrl,
       imageAlt: "Payment Proof",
       showConfirmButton: false,
-      showCloseButton: false,
-      background: "transparent",
+      showCloseButton: true,
+      background: isDark ? "#1a1c1e" : "#ffffff",
+      color: isDark ? "#ffffff" : "#111827",
       customClass: {
+        popup: `preview-swal-popup ${isDark ? "dark-swal" : ""}`,
         image: "preview-image-style",
+        closeButton: "preview-swal-close",
       },
     });
   };
@@ -108,7 +83,6 @@ function ClassOrder() {
   async function ExportTable() {
     alert("Please Read the documentation(document.txt) or comment");
     if (!filtered) return;
-    return; // here,the row and cell are different according to customer wish.,so , ask him first and modify here;
     let formattedData = filtered.map((item) => ({
       "Order Id": item.order_id,
       Customer: item.customer_name,
@@ -125,7 +99,7 @@ function ClassOrder() {
   }
 
   useEffect(() => {
-    let result = ClassOrders.data;
+    let result = ClassOrders?.data;
     if (Array.isArray(result) && result.length > 0) {
       result = result.filter((item) => {
         return (
@@ -139,23 +113,18 @@ function ClassOrder() {
       });
     }
     setfiltered(result);
-  }, [text, ClassOrders.data]);
+  }, [text, ClassOrders?.data]);
 
   const textchange = (e) => {
     settext(e.target.value);
   };
 
-  //function to show receipet
   function show_receipet(item) {
-    console.log(item);
-
-    let newchildData = item.items?.map((item) => {
-      return {
-        ...item,
-        productName: item.product_name,
-        quantity: item.quantity,
-      };
-    });
+    let newchildData = item.items?.map((item) => ({
+      ...item,
+      productName: item.product_name,
+      quantity: item.quantity,
+    }));
 
     open({
       Date: item.Data,
@@ -171,67 +140,100 @@ function ClassOrder() {
     });
   }
 
+  // Pagination အတွက် ရွေးချယ်ထားသော Data Rows
+  const currentRows = Array.isArray(filtered)
+    ? filtered.slice(startnumber, endnumber)
+    : [];
+
+  // Table တွင် အနည်းဆုံး Row ၅ ခု စာ အမြဲရှိနေစေရန်အတွက် တွက်ချက်ခြင်း
+  const TARGET_ROW_COUNT = 5;
+  const emptyRowsCount =
+    filtered && filtered.length > 0
+      ? Math.max(0, TARGET_ROW_COUNT - currentRows.length)
+      : 0;
+
   return (
-    <div className="classordermain">
-      {ReceipetJsx}
+    <div className={`classordermain ${isDark ? "dark-mode" : ""}`}>
+      {/* View Modal Receipt Wrapper */}
+      <div
+        className={`receipt-modal-theme-wrapper ${isDark ? "dark-theme-modal" : ""}`}
+      >
+        {ReceipetJsx}
+      </div>
+
+      {/* Header Section */}
       <div className="classorderbody1">
         <h2 className="classorderheader">
-          <OrderIcon />
-          Order
+          <OrderIcon className="header-icon" />
+          <span style={{ fontSize: "30px" }}>Orders Management</span>
         </h2>
-        <button onClick={() => navigate("classorderaddmenu")}>
-          + Add Order
+        <button
+          className="btn-add-order"
+          onClick={() => navigate("classorderaddmenu")}
+        >
+          <AddIcon sx={{ fontSize: "18px" }} />
+          Add Order
         </button>
       </div>
+
       {/* Stat Cards Row */}
-      <div style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
+      <div className="stat-cards-container">
         <StatCard
           title="TODAY ORDERS"
           value="12 orders"
           change="7"
-          icon={<CalendarToday sx={{ fontSize: "24px" }} />}
+          icon={<CalendarToday sx={{ fontSize: "20px" }} />}
           iconColor="#ef4444"
           isCurrent={true}
+          isDark={isDark}
         />
         <StatCard
           title="TOTAL ORDERS"
           value="250"
           change="+12"
-          icon={<MonetizationOn sx={{ fontSize: "24px" }} />}
+          icon={<MonetizationOn sx={{ fontSize: "20px" }} />}
           iconColor="#3b82f6"
+          isDark={isDark}
         />
         <StatCard
           title="TOP SELLING MENU"
-          value="Dinnerr"
+          value="Dinner"
           change="45"
-          icon={<Restaurant sx={{ fontSize: "24px" }} />}
+          icon={<Restaurant sx={{ fontSize: "20px" }} />}
           iconColor="#f59e0b"
+          isDark={isDark}
         />
         <StatCard
           title="TOTAL REVENUE"
           value="250,000 Ks"
           change="5"
-          icon={<MonetizationOn sx={{ fontSize: "24px" }} />}
+          icon={<MonetizationOn sx={{ fontSize: "20px" }} />}
           iconColor="#10b981"
+          isDark={isDark}
         />
       </div>
 
+      {/* Main Table Container */}
       <div className="classorderbody3">
         <div className="classorderfooter1">
           <h2>Top Orders</h2>
-          <div className="classordersearch">
-            <input
-              type="search"
-              placeholder="Search Order No..."
-              onChange={textchange}
-            />
-            <SearchIcon sx={{ color: "white" }} />
+          <div className="order-actions-right">
+            <div className="classordersearch">
+              <SearchIcon className="search-icon" />
+              <input
+                type="search"
+                placeholder="Search Order No..."
+                value={text}
+                onChange={textchange}
+              />
+            </div>
+            <button className="btn-export" onClick={ExportTable}>
+              <SaveAltIcon sx={{ fontSize: "18px" }} />
+              Export
+            </button>
           </div>
-          <button onClick={ExportTable}>
-            <SaveAltIcon sx={{ color: "white", fontSize: "20px" }} />
-            Export
-          </button>
         </div>
+
         <div className="towarpthetable">
           <div className="classorderfooter2">
             <table className="classordertable">
@@ -247,54 +249,83 @@ function ClassOrder() {
               <tbody>
                 {Array.isArray(filtered) ? (
                   filtered.length > 0 ? (
-                    filtered
-                      .slice(startnumber, endnumber)
-                      .map((item, index) => {
-                        return (
-                          <tr key={index}>
-                            <td>{item.reciept_no}</td>
-                            <td>{item.Total} ks</td>
-                            <td>{item.payment_method}</td>
-                            <td className="imgrowmain">
-                              <div className="imgrow">
+                    <>
+                      {/* Actual Data Rows */}
+                      {currentRows.map((item, index) => (
+                        <tr key={index}>
+                          <td className="font-semibold">{item.reciept_no}</td>
+                          <td className="amount-cell">{item.Total} Ks</td>
+                          <td>
+                            <span className="payment-badge">
+                              {item.payment_method || "N/A"}
+                            </span>
+                          </td>
+                          <td className="imgrowmain">
+                            <div
+                              className="imgrow"
+                              onClick={() =>
+                                showImagePreview(item.payment_image)
+                              }
+                            >
+                              {item.payment_image ? (
                                 <img
                                   src={item.payment_image}
-                                  onClick={() =>
-                                    showImagePreview(item.payment_image)
-                                  }
+                                  alt="Payment Proof"
                                 />
-                              </div>
-                            </td>
-                            <td className="classordertdbtn">
-                              <button onClick={() => show_receipet(item)}>
-                                View
-                              </button>
-                            </td>
+                              ) : (
+                                <span className="no-img">No Image</span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="classordertdbtn">
+                            <button
+                              className="btn-view"
+                              onClick={() => show_receipet(item)}
+                            >
+                              <VisibilityIcon sx={{ fontSize: "15px" }} />
+                              View
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+
+                      {/* Row ၅ ခု မပြည့်ပါက နေရာအလွတ် (Placeholder Rows) ဖြည့်ပေးခြင်း */}
+                      {Array.from({ length: emptyRowsCount }).map(
+                        (_, index) => (
+                          <tr key={`empty-${index}`} className="empty-row">
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
                           </tr>
-                        );
-                      })
+                        ),
+                      )}
+                    </>
                   ) : (
                     <tr>
-                      <td colSpan={5} style={{ textAlign: "center" }}>
-                        no result found...
+                      <td colSpan={5} className="table-empty">
+                        No orders found...
                       </td>
                     </tr>
                   )
                 ) : (
                   <tr>
-                    <td colSpan={5} style={{ textAlign: "center" }}>
-                      Loading...
+                    <td colSpan={5} className="table-empty">
+                      Loading orders...
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
-            {TableFooterJsx}
           </div>
+          <div className="table-footer-wrapper">{TableFooterJsx}</div>
         </div>
       </div>
-      <Outlet context={{ GetOrder: GetOrder }} />
+
+      <Outlet context={{ GetOrder }} />
     </div>
   );
 }
+
 export default ClassOrder;

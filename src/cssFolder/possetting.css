@@ -3,7 +3,10 @@
   display: flex;
   flex-direction: column;
   gap: 1em;
-  height: 100vh;
+  height: auto;
+  min-height: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .possettingheader {

@@ -1,16 +1,43 @@
-/* General Layout Structure */
+/* General Layout Structure & CSS Theme Variables */
+:root {
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --border-color: #e5e7eb;
+  --bg-input: #f3f4f6;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --accent-primary: #0284c7;
+  --modal-header-border: #f1f5f9;
+}
+
+/* Dark Mode Variables (Slate Color Palette) */
+.dashboard-container.dark {
+  --bg-main: #0f172a;
+  --bg-card: #1e293b;
+  --border-color: #334155;
+  --bg-input: #0f172a;
+  --text-primary: #ffffff;
+  --text-secondary: #94a3b8;
+  --accent-primary: #0284c7;
+  --modal-header-border: #334155;
+}
+
 body {
   margin: 0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f1f5f9;
 }
 
 .dashboard-container {
   display: flex;
   min-height: 100vh;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
-/* =================  MAIN CONTENT STYLES ================= */
+/* ================= MAIN CONTENT STYLES ================= */
 .main-content {
   flex-grow: 1;
   padding: 25px;
@@ -27,7 +54,7 @@ body {
 .page-title {
   margin: 0;
   font-size: 30px;
-  color: #0b1320;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -38,7 +65,7 @@ body {
 }
 
 .add-course-btn {
-  background-color: #0b1320;
+  background-color: var(--accent-primary);
   color: #ffffff;
   border: none;
   padding: 10px 20px;
@@ -48,6 +75,11 @@ body {
   align-items: center;
   gap: 6px;
   cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.add-course-btn:hover {
+  opacity: 0.9;
 }
 
 /* ၁။ ကတ်တွေစီမယ့် Grid စနစ် */
@@ -55,19 +87,19 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 24px;
-  padding: 16px;
+  padding: 16px 0;
 }
 
 /* ၂။ Course Card Layout */
 .course-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  height: 100%; /* ကတ်တွေ အမြင့်ချင်း တူနေစေရန် */
+  height: 100%;
   cursor: pointer;
   transition:
     transform 0.2s ease,
@@ -76,39 +108,43 @@ body {
 
 .course-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
 }
 
-/* ၃။ ပုံတွေကို အချိုးအစား ညီညာအောင် ထိန်းချုပ်ခြင်း */
+/* ၃။ Banner Image */
 .course-banner-img {
   width: 100%;
-  height: 160px; /* ပုံတွေအားလုံးကို အမြင့် ပုံသေ သတ်မှတ်ခြင်း */
-  object-fit: cover; /* ပုံမပိန်မလိမ်ဘဲ ကွက်တိ ဖြတ်ယူခြင်း */
-  background-color: #f3f4f6;
+  height: 160px;
+  object-fit: cover;
+  background-color: var(--bg-input);
   display: block;
 }
 
-/* ၄။ သီးသန့် Title Wrapper အတွက်သာ CSS ပေးခြင်း (ဒါကြောင့် တခြား icons/buttons တွေ မပျက်တော့ပါ) */
+/* ၄။ Course Title Wrapper */
 .course-card .course-title-wrapper {
   padding: 16px;
   display: flex;
   align-items: center;
-  flex-grow: 1; /* စာတိုစာရှည်ဖြစ်ပါက နေရာလွတ်ကို မျှယူပြီး အောက်ခြေကို ညီစေခြင်း */
+  flex-grow: 1;
 }
 
 .course-card .course-title-wrapper h3 {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-primary);
   line-height: 1.4;
   font-family: "Inter", sans-serif;
-
-  /* စာသား အရမ်းရှည်ရင် ကတ်ကြီး ပျက်မသွားဘဲ စာလုံးအစက်လေးတွေ (...) ပြောင်းရန် */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.no-courses-message {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
 }
 
 /* ================= MODAL OVERLAYS & POPUPS ================= */
@@ -118,7 +154,8 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -127,11 +164,12 @@ body {
 
 /* Create Box */
 .modal-box {
-  background: #ffffff;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   width: 480px;
   max-width: 90%;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
 
@@ -140,54 +178,60 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--modal-header-border);
 }
 
 .modal-header h3 {
   margin: 0;
-  font-size: 26px;
-  color: #1e293b;
+  font-size: 22px;
+  color: var(--text-primary);
 }
+
 .close-icon {
-  color: #cbd5e1;
+  color: var(--text-secondary);
   cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.close-icon:hover {
+  color: var(--text-primary);
 }
 
 .modal-body {
   padding: 24px;
 }
+
 .input-group {
   margin-bottom: 18px;
 }
+
 .input-group label {
   display: block;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #475569;
+  color: var(--text-secondary);
   margin-bottom: 6px;
-}
-.input-group input[type="text"] {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  box-sizing: border-box;
 }
 
 .cona {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #cbd5e1;
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  background-color: #f8fafc !important;
+  background-color: var(--bg-input) !important;
+  color: var(--text-primary);
   box-sizing: border-box;
   outline: none;
 }
 
+.cona::placeholder {
+  color: var(--text-secondary);
+}
+
 .upload-box {
-  border: 2px dashed #cbd5e1;
+  border: 2px dashed var(--border-color);
   border-radius: 8px;
-  background-color: #f8fafc;
+  background-color: var(--bg-input);
   height: 130px;
   display: flex;
   align-items: stretch;
@@ -197,11 +241,11 @@ body {
 
 .upload-label {
   display: flex !important;
-  flex-direction: column; /* 💡 Column ကနေ Row (ဘေးတိုက်) ကို ပြောင်းလိုက်တာပါ */
-  align-items: center; /* Icon နဲ့ စာသား အပေါ်အောက် အလယ်တည့်တည့် ဖြစ်အောင် */
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 8px; /* 💡 Icon နဲ့ စာသားကြား ဘေးတိုက် အကွာအဝေး စိတ်ကြိုက်ချန်ရန် */
-  color: #94a3b8;
+  gap: 8px;
+  color: var(--text-secondary);
   cursor: pointer;
   width: 100%;
   height: 100%;
@@ -209,51 +253,83 @@ body {
 
 .camera-icon {
   font-size: 2rem !important;
-  margin-bottom: 0px; /* 💡 အပေါ်အောက် မဟုတ်တော့လို့ အောက်က margin ကို 0 ပေးလိုက်ပါတယ် */
+  margin-bottom: 0px;
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--modal-header-border);
+}
+
+.btn-cancel {
+  padding: 10px 25px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-create {
+  padding: 10px 35px;
+  border: none;
+  background-color: var(--accent-primary);
+  color: #ffffff;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 /* Success Box */
 .success-modal-box {
-  background: linear-gradient(to bottom, #e0f2fe, #f0f9ff);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 30px;
   text-align: center;
   width: 320px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
+
 .success-icon-wrapper {
-  background: white;
-  width: 45px;
-  height: 45px;
+  background: rgba(16, 185, 129, 0.1);
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 12px auto;
 }
+
 .success-icon {
-  color: #16a34a !important;
-  font-size: 2rem !important;
+  color: #10b981 !important;
+  font-size: 2.2rem !important;
 }
+
 .success-modal-box h3 {
-  color: #1e3a8a;
+  color: var(--text-primary);
   margin: 6px 0;
 }
+
 .success-modal-box p {
-  color: #4b5563;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   margin-bottom: 20px;
 }
+
 .success-btn {
-  background-color: #0b1320;
+  background-color: var(--accent-primary);
   color: white;
   border: none;
   border-radius: 6px;
   padding: 10px 20px;
+  font-weight: 600;
   cursor: pointer;
 }

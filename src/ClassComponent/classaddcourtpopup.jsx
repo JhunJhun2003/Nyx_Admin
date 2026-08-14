@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import "./classaddcourtpopup.css";
 import CloseIcon from "@mui/icons-material/CloseOutlined";
-import { useNoti } from "../Hooks/alert";
 
 function ClassCourtPopUp({ data }) {
   const {
@@ -15,15 +14,11 @@ function ClassCourtPopUp({ data }) {
     openloading,
     opensuccess,
     GetCourts,
+    isDark, // Parent ကနေ ပို့လိုက်တဲ့ isDark ကို ရယူခြင်း
   } = data;
 
   const dataref = useRef();
   const disref = useRef();
-
-  //Don't delete this comments
-  // id 1 is to add new Pro
-  // id 2 is to add new Con
-  // id 3 is to add new Service
 
   async function class_court_add(e) {
     e.preventDefault();
@@ -37,16 +32,16 @@ function ClassCourtPopUp({ data }) {
     let text = {};
     if (id == 1) {
       text.header = "New Pro Added to List";
-      text.body = "Your new New Pro has been shown";
+      text.body = "Your new Pro has been shown";
     } else if (id == 2) {
       text.header = "New Con Added to List";
-      text.body = "Your new New Con has been shown";
+      text.body = "Your new Con has been shown";
     } else if (id == 3) {
       text.header = "New Service Added to List";
       text.body = "Your new service has been shown";
     } else if (id == 4) {
       text.header = "New Rule Added to List";
-      text.body = "Your new service has been show ";
+      text.body = "Your new rule has been shown";
     }
     if (!url[id]) return;
 
@@ -57,6 +52,7 @@ function ClassCourtPopUp({ data }) {
     };
     if (id == 4) senddata.description = disref.current.value;
     if (id === 1) senddata.detail = "testing";
+
     openloading();
     try {
       const response = await fetch(url[id], {
@@ -66,29 +62,28 @@ function ClassCourtPopUp({ data }) {
         },
         body: JSON.stringify(senddata),
       });
-      console.log(senddata);
+
       if (response.ok) {
-        console.log(venue_id);
         GetCourts(venue_id);
         opensuccess(text.header, text.body);
         set_show(false);
       } else {
-        openerror("something went wrong");
+        openerror("Something went wrong");
         set_show(false);
       }
     } catch (error) {
-      openerror("Cannot Connect with sever");
+      openerror("Cannot connect with server");
       console.error(error);
       set_show(false);
     }
   }
 
   return (
-    <div className="cupwarper">
+    <div className={`cupwarper ${isDark ? "dark-mode" : ""}`}>
       <form
         className="cupmain"
         onSubmit={class_court_add}
-        style={{ height: id == 4 ? "250px" : "200px" }}
+        style={{ minHeight: id == 4 ? "280px" : "210px" }}
       >
         <span className="cupcontent1">
           <h2>{header}</h2>
@@ -102,13 +97,13 @@ function ClassCourtPopUp({ data }) {
         </span>
         {id == 4 && (
           <span className="cupcontent4">
-            <p>Descripition</p>
+            <p>Description</p>
             <textarea rows={2} ref={disref} />
           </span>
         )}
         <span className="cupcontent3">
           <button onClick={() => set_show(false)} type="button">
-            cancel
+            Cancel
           </button>
           <button type="submit">Create</button>
         </span>
@@ -116,4 +111,5 @@ function ClassCourtPopUp({ data }) {
     </div>
   );
 }
+
 export default ClassCourtPopUp;

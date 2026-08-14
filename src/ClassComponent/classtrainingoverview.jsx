@@ -1,12 +1,21 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useGetClassOverview } from "../ClassApi";
 import StatCards from "./StatCards";
 import ChartSection from "./ChartSection";
 import RecentPaymentsTable from "./RecentPaymentsTable";
+import { Context } from "../Hooks/context";
 
 export default function ClassTrainingOverview() {
   const { training, GetTrainingOverview } = useGetClassOverview();
   const [paymentMode, setPaymentMode] = useState("mobile");
+
+  const { classBackColor } = useContext(Context); // 2. classBackColor ကို ရယူရန်
+  const isDark = classBackColor === "#1A1C1E";
+
+  const themeStyles = {
+    backgroundColor: classBackColor,
+    color: isDark ? "#E1E1E1" : "#111827",
+  };
 
   useEffect(() => {
     GetTrainingOverview();
@@ -22,17 +31,18 @@ export default function ClassTrainingOverview() {
     <div
       style={{
         fontFamily: "'Segoe UI', sans-serif",
-        background: "#f3f4f6",
+        background: themeStyles.backgroundColor, // Context background သုံးခြင်း
         minHeight: "100vh",
         padding: "24px",
-        color: "#111827",
+        color: themeStyles.color,
       }}
     >
-      <StatCards />
-      <ChartSection onExport={handleExportToExcel} />
+      <StatCards isDark={isDark} />
+      <ChartSection onExport={handleExportToExcel} isDark={isDark} />
       <RecentPaymentsTable
         paymentMode={paymentMode}
         onPaymentModeChange={setPaymentMode}
+        isDark={isDark}
       />
     </div>
   );

@@ -4,70 +4,87 @@ import SchoolIcon from "@mui/icons-material/SchoolSharp";
 import PaidIcon from "@mui/icons-material/PaidSharp";
 import PersonAddIcon from "@mui/icons-material/PersonAddSharp";
 
-// Clean Modern StatCard Component
-const StatCard = ({ title, value, change, icon, iconColor, isCurrent }) => (
-  <div
-    style={{
-      background: "#fff",
-      border: "1px solid #e5e7eb",
-      borderRadius: "12px",
-      padding: "20px 24px",
-      flex: 1,
-      minWidth: 0,
-    }}
-  >
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-        marginBottom: "8px",
-      }}
-    >
-      <span style={{ fontSize: "13px", color: "#6b7280", fontWeight: 500 }}>
-        {title}
-      </span>
-      {isCurrent ? (
-        <span
-          style={{
-            fontSize: "12px",
-            color: "#6b7280",
-            background: "#f3f4f6",
-            padding: "2px 8px",
-            borderRadius: "4px",
-          }}
-        >
-          Current
-        </span>
-      ) : (
-        <span style={{ fontSize: "20px", color: iconColor || "#3b82f6" }}>
-          {icon}
-        </span>
-      )}
-    </div>
-    <div
-      style={{
-        fontSize: "22px",
-        fontWeight: 700,
-        color: "#111827",
-        marginBottom: "6px",
-      }}
-    >
-      {value}
-    </div>
-    <div
-      style={{
-        fontSize: "12px",
-        color: change.includes("-") ? "#ef4444" : "#16a34a",
-        fontWeight: 500,
-      }}
-    >
-      {change}
-    </div>
-  </div>
-);
+const StatCard = ({
+  title,
+  value,
+  change,
+  icon,
+  iconColor,
+  isCurrent,
+  isDark,
+}) => {
+  const cardBg = isDark ? "#242629" : "#ffffff";
+  const borderColor = isDark ? "#334155" : "#e5e7eb";
+  const textColor = isDark ? "#f8fafc" : "#111827";
+  const subTextColor = isDark ? "#94a3b8" : "#6b7280";
+  const currentBadgeBg = isDark ? "#334155" : "#f3f4f6";
 
-export default function StatCards() {
+  return (
+    <div
+      style={{
+        background: cardBg,
+        border: `1px solid ${borderColor}`,
+        borderRadius: "12px",
+        padding: "20px 24px",
+        flex: 1,
+        minWidth: 0,
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          marginBottom: "8px",
+        }}
+      >
+        <span
+          style={{ fontSize: "13px", color: subTextColor, fontWeight: 500 }}
+        >
+          {title}
+        </span>
+        {isCurrent ? (
+          <span
+            style={{
+              fontSize: "12px",
+              color: subTextColor,
+              background: currentBadgeBg,
+              padding: "2px 8px",
+              borderRadius: "4px",
+            }}
+          >
+            Current
+          </span>
+        ) : (
+          <span style={{ fontSize: "20px", color: iconColor || "#3b82f6" }}>
+            {icon}
+          </span>
+        )}
+      </div>
+      <div
+        style={{
+          fontSize: "22px",
+          fontWeight: 700,
+          color: textColor,
+          marginBottom: "6px",
+        }}
+      >
+        {value}
+      </div>
+      <div
+        style={{
+          fontSize: "12px",
+          color: change.includes("-") ? "#ef4444" : "#16a34a",
+          fontWeight: 500,
+        }}
+      >
+        {change}
+      </div>
+    </div>
+  );
+};
+
+export default function StatCards({ isDark }) {
   const [statsData, setStatsData] = useState([
     {
       title: "TOTAL STUDENTS",
@@ -99,7 +116,7 @@ export default function StatCards() {
       iconColor: "#ec4899",
     },
   ]);
-  
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -108,25 +125,21 @@ export default function StatCards() {
       setLoading(true);
       setError(null);
       const response = await fetch(
-        "http://130.94.99.9:5000/api/trainingoverview/showtrainingoverview"
+        "http://130.94.99.9:5000/api/trainingoverview/showtrainingoverview",
       );
       if (!response.ok) {
         throw new Error("Failed to fetch training overview data");
       }
       const jsonResult = await response.json();
-      
+
       if (jsonResult.success && jsonResult.data) {
         const data = jsonResult.data;
-        
-        // Format monthly revenue with commas
-        const formattedRevenue = data.Monthly_revenue 
-          ? `${data.Monthly_revenue.toLocaleString()} Ks` 
+        const formattedRevenue = data.Monthly_revenue
+          ? `${data.Monthly_revenue.toLocaleString()} Ks`
           : "0 Ks";
-        
-        // Calculate percentage change (you can adjust this logic based on your needs)
         const studentChange = data.Total_students > 0 ? "+5%" : "0%";
         const revenueChange = data.Monthly_revenue > 0 ? "+10%" : "0%";
-        
+
         setStatsData([
           {
             title: "TOTAL STUDENTS",
@@ -163,7 +176,6 @@ export default function StatCards() {
       }
     } catch (err) {
       setError(err.message);
-      console.error("Error fetching training overview:", err);
     } finally {
       setLoading(false);
     }
@@ -173,6 +185,9 @@ export default function StatCards() {
     fetchTrainingOverview();
   }, []);
 
+  const cardBg = isDark ? "#242629" : "#ffffff";
+  const borderColor = isDark ? "#334155" : "#e5e7eb";
+
   if (loading) {
     return (
       <div style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
@@ -180,8 +195,8 @@ export default function StatCards() {
           <div
             key={i}
             style={{
-              background: "#fff",
-              border: "1px solid #e5e7eb",
+              background: cardBg,
+              border: `1px solid ${borderColor}`,
               borderRadius: "12px",
               padding: "20px 24px",
               flex: 1,
@@ -191,7 +206,7 @@ export default function StatCards() {
             <div
               style={{
                 height: "60px",
-                background: "#f3f4f6",
+                background: isDark ? "#334155" : "#f3f4f6",
                 borderRadius: "4px",
               }}
             ></div>
@@ -209,8 +224,8 @@ export default function StatCards() {
           gap: "16px",
           marginBottom: "24px",
           padding: "20px",
-          background: "#fff",
-          border: "1px solid #e5e7eb",
+          background: cardBg,
+          border: `1px solid ${borderColor}`,
           borderRadius: "12px",
           textAlign: "center",
         }}
@@ -236,7 +251,7 @@ export default function StatCards() {
   return (
     <div style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
       {statsData.map((stat, index) => (
-        <StatCard key={index} {...stat} />
+        <StatCard key={index} {...stat} isDark={isDark} />
       ))}
     </div>
   );

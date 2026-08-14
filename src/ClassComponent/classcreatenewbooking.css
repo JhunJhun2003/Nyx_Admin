@@ -1,381 +1,680 @@
+/* Container & Base Layout */
 .createordermain {
-  position: absolute;
-  width: calc(100% - 230px);
-  height: 100vh;
-  background-color: #f0f0f0;
+  position: fixed;
   top: 0;
   right: 0;
+  width: calc(100% - 230px);
+  height: 100vh;
+  background-color: #f8fafc;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  overflow-y: hidden;
+  z-index: 100;
+  font-family: "Inter", sans-serif;
+  color: #1e293b;
+  box-sizing: border-box;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
-.createordermain .createordertitle {
-  font-family: Belanosima;
-  font-size: x-large;
-  padding: 7px 15px;
-  font-weight: 600;
-  height: 6vh;
-}
-.createordermain .createordernav {
+
+/* Header Navbar */
+.createordernav {
   background-color: #0d1b2a;
   display: flex;
   align-items: center;
-  height: 30px;
+  padding: 10px 20px;
+  gap: 12px;
+  height: 56px;
+  box-sizing: border-box;
 }
-.createordermain .addclassorderbody {
+
+.back-nav-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.back-nav-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.back-icon {
+  color: #ffffff;
+  font-size: 26px !important;
+}
+
+.createordertitle {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* Layout Grid Body */
+.addclassorderbody {
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: calc(95vh - 40px);
+  height: calc(100vh - 56px);
+  padding: 16px;
+  gap: 16px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
-.createordermain .addclassorderbody1 {
+/* Left Column */
+.addclassorderbody1 {
   display: flex;
   flex-direction: column;
-  padding: 5px 10px;
-  width: 60%;
-  gap: 10px;
-  height: calc(95vh - 45px);
-}
-.createordermain .createorderreciept {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #0d1b2a;
-  justify-content: space-evenly;
-  border-radius: 10px;
-  width: 100%;
-  background-color: #ffffff;
-  padding: 10px 10px;
-  padding-bottom: 15px;
-}
-.createordermain .createorderreciept p {
-  font-family: Inter;
-  font-size: smaller;
-  padding: 3px;
-}
-.createordermain .createorderreciept span {
-  padding: 7px 8px;
-  width: 100%;
-  color: gray;
-  border-radius: 5px;
-  border: 1px solid rgba(128, 128, 128, 0.397);
-}
-
-.createordermain .addclassorderbody2 {
-  display: flex;
-  width: 40%;
-  justify-content: space-between;
-  padding: 5px 10px;
-  height: calc(95vh - 45px);
-  flex-direction: column;
-  gap: 10px;
-  overflow: scroll;
-}
-.createordermain .addclassorderchoice {
-  width: 100%;
-  background-color: #ffffff;
-  padding: 1em;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  border-radius: 10px;
-  border: 1px solid #0d1b2a;
-  flex-grow: 1;
-}
-.createordermain .createorderchoiceheader {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-}
-.createordermain .createorderchoiceheader1 {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-weight: 600;
-}
-.createordermain .createorderchoiceheader2 {
-  color: white;
-  background-color: #0d1b2a;
-  padding: 5px 10px;
-  border-radius: 10px;
-  font-family: Inter;
-  font-size: small;
-  font-weight: 400;
-  cursor: pointer;
-  border: 1px solid #0d1b2a;
-  outline: none;
-}
-
-/*for fake table by display flex*/
-.createordermain .toorder {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  height: 30vh;
-  overflow-y: scroll;
-}
-.createordermain .toorderheader {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  background-color: #e5e7eb;
-  padding: 10px;
-}
-.createordermain .toorderheader :first-child {
-  text-align: left;
-  width: 40%;
-}
-.createordermain .toorderheader :nth-child(2) {
-  text-align: center;
-  width: 30%;
-}
-.createordermain .toorderheader :last-child {
-  text-align: right;
-  width: 30%;
-  padding-right: 24px;
-}
-.createordermain .toorderbody {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 5px;
-  border-bottom: 1px solid rgba(128, 128, 128, 0.281);
-}
-.createordermain .toorderchild {
-  width: 40%;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.createordermain .toorderbody p {
-  font-family: Work Sans;
-  font-size: small;
-}
-.createordermain .toorderchild1 {
-  width: 30%;
-  text-align: center;
-  display: flex;
-  gap: 3px;
-  align-items: center;
-  justify-content: center;
-}
-.createordermain .toorderchild1 * {
-  outline: none;
-  padding: 1px 7px;
-}
-.createordermain .toorderchild1 button {
-  height: 20px;
-  display: flex;
-  align-items: center;
-  border: 1px solid #0d1b2a4b;
-  border-radius: 4px;
-}
-.createordermain .toorderchild2 {
-  width: 30%;
-  text-align: right;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-  font-size: small;
-  padding-right: 5px;
-}
-.createordermain .toorderchild2 button {
-  outline: none;
-  border: none;
-  background-color: initial;
-}
-.createordermain .orderprint {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 10px;
-  border-radius: 10px;
-  justify-content: space-between;
-  height: 80%;
-}
-.createordermain .orderprint1 {
-  width: 100%;
-  border: 1px solid #0d1b2a;
-  border-radius: 10px;
-  height: 90%;
-  background-color: #ffffff;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.createordermain .orderprintheader {
-  display: flex;
-  width: 100%;
-  align-items: center;
-}
-.createordermain .ssx {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  width: 100%;
-}
-.createordermain .ssx select {
-  width: 100%;
-  padding: 7px 10px;
-  border-radius: 5px;
-  outline: none;
-  border: 1px solid rgba(128, 128, 128, 0.548);
-  font-family: Work Sans;
-}
-.createordermain .receipet {
-  width: 100%;
+  width: 62%;
+  gap: 14px;
   height: 100%;
-  border-radius: 10px;
 }
-.createordermain .paymentmain {
+
+/* Receipt Card */
+.createorderreciept {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  width: 100%;
-}
-.createordermain .paymentwarper {
-  border: 1px solid rgba(128, 128, 128, 0.548);
-  padding: 7px;
-  border-radius: 10px;
-}
-.createordermain .paymentwarper span {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-}
-.createordermain .paymentwarper span p {
-  padding: 5px;
-  font-size: small;
-  font-family: Inter;
-}
-.createorderreceipet {
-  width: 100%;
-  height: 44%;
-  border-radius: 10px;
-  border: 1px dashed gray;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: space-between;
+  border-radius: 10px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 12px 18px;
 }
-.createorderbtn {
-  display: flex;
-  gap: 10px;
-  align-self: flex-end;
+
+.reciept-label {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
 }
-.createorderbtn button {
-  padding: 10px 2em;
-  border-radius: 5px;
-  border: 1px solid #0d1b2a;
-  outline: none;
+
+.reciept-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0d1b2a;
+  background-color: #f1f5f9;
+  padding: 6px 14px;
+  border-radius: 6px;
 }
-.createorderbtn button:disabled {
-  opacity: 0.4;
-}
-/*________________*/
-/* new added ui*/
+
+/* Venue & Court Info Box */
 .createorderselect {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  padding: 1em;
+  padding: 16px;
   border-radius: 10px;
-  border: 1px solid #1b263b;
-  gap: 10px;
   background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  gap: 12px;
 }
 
 .aos1 {
   display: flex;
-  gap: 5px;
-  font-family: Work Sans;
-  padding: 0;
-  font-size: medium;
   align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0d1b2a;
 }
+
+.section-icon {
+  color: #3b82f6;
+  font-size: 20px !important;
+}
+
 .aos2 {
-  width: 100%;
   display: flex;
-  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
 }
+
 .aos2 span {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  width: 30%;
-}
-.aos2 h5,
-.timeslottitle {
-  font-family: Work Sans;
-  font-size: x-small;
-  color: #5e5e5e;
-  padding: 4px 2px;
-}
-.ccnb {
-  font-family: Work Sans;
-  padding: 7px;
-  border-radius: 3px;
-  font-size: smaller;
-  border: 1px solid #c4c7c7;
-}
-.aos3 {
-  width: 100%;
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: scroll;
-  gap: 7px;
-}
-.aos3 p {
-  padding: 10px 15px;
-  border: 1px solid #c4c7c7;
-  border-radius: 5px;
-  font-family: Work Sans;
-  font-size: small;
-  background-color: #fafafa;
-  white-space: nowrap;
+  gap: 4px;
+  flex: 1;
 }
 
-/* for show amount*/
+.aos2 h5,
+.timeslottitle {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.ccnb {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+}
+
+.aos3 {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.timeslot-badge {
+  margin: 0;
+  padding: 8px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background-color: #ffffff;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.timeslot-badge:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.timeslot-badge.selected {
+  background-color: #0d1b2a;
+  color: #ffffff;
+  border-color: #0d1b2a;
+}
+
+.no-slot {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+/* Equipment Choice Section */
+.addclassorderchoice {
+  background-color: #ffffff;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.createorderchoiceheader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.createorderchoiceheader1 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0d1b2a;
+}
+
+.createorderchoiceheader2 {
+  color: #ffffff;
+  background-color: #0d1b2a;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s ease;
+}
+
+.createorderchoiceheader2:hover {
+  opacity: 0.9;
+}
+
+/* Rental Table Area */
+.toorder {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  flex: 1;
+}
+
+.toorderheader {
+  display: flex;
+  background-color: #f1f5f9;
+  padding: 10px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.toorderheader p {
+  margin: 0;
+}
+.toorderheader :nth-child(1) {
+  flex: 2;
+}
+.toorderheader :nth-child(2) {
+  flex: 1;
+  text-align: center;
+}
+.toorderheader :nth-child(3) {
+  flex: 1;
+  text-align: right;
+}
+
+.toorderlist {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.toorderbody {
+  display: flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.85rem;
+}
+
+.toorderchild {
+  flex: 2;
+}
+.toorderchild p {
+  margin: 0;
+  font-weight: 500;
+}
+
+.toorderchild1 {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.toorderchild1 button {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.toorderchild2 {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.toorderchild2 p {
+  margin: 0;
+}
+
+.toorderchild2 button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+}
+
+.empty-cart-text {
+  text-align: center;
+  color: #94a3b8;
+  padding: 30px 0;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+/* Right Column */
+.addclassorderbody2 {
+  display: flex;
+  width: 38%;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+}
+
+/* Summary Card */
 .orderamount {
   display: flex;
   flex-direction: column;
-  background-color: #fdf8f8;
+  background-color: #ffffff;
   border-radius: 10px;
+  border: 1px solid #e2e8f0;
   border-left: 5px solid #0d1b2a;
-  padding: 10px;
-  gap: 4px;
+  padding: 16px;
+  gap: 8px;
 }
+
 .orderamount h3 {
-  font-family: Work Sans;
-  color: #1b263b;
-  font-size: medium;
+  margin: 0 0 4px 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
 }
+
 .orderamount span {
   display: flex;
-  width: 100%;
   justify-content: space-between;
+  font-size: 0.85rem;
+  color: #475569;
 }
-.orderamount > :nth-child(2) {
-  border-top: 1px solid #f1edec;
-  padding-top: 10px;
-}
-.orderamount > :nth-child(3) {
-  border-bottom: 1px solid #1b263bcb;
-  padding-bottom: 15px;
-}
+
 .orderamount span p {
-  font-family: Work Sans;
-  color: #5e5e5e;
-  font-size: small;
+  margin: 0;
 }
+
+.total-divider {
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 4px 0;
+}
+
 .orderamount h2 {
-  font-family: Work Sans;
-  color: #5e5e5e;
-  font-size: large;
-  align-self: flex-end;
+  margin: 4px 0 0 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #059669;
+  text-align: right;
+}
+
+/* Payment Form Container */
+.orderprint {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  gap: 12px;
+}
+
+.orderprint1 {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.orderprintheader {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0d1b2a;
+}
+
+.payment-icon {
+  color: #ef4444;
+  font-size: 20px !important;
+}
+
+.ssx {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ssx label,
+.paymentmain label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.ssx select {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  outline: none;
+  font-size: 0.85rem;
+  background-color: #ffffff;
+  color: #1e293b;
+}
+
+.paymentmain {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.paymentwarper {
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.paymentwarper span {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+
+.paymentwarper span p {
+  margin: 2px 0;
+  color: #334155;
+}
+
+.createorderreceipet {
+  flex: 1;
+  min-height: 100px;
+  border-radius: 8px;
+  border: 2px dashed #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+  padding: 10px;
+  text-align: center;
+}
+
+.createorderreceipet:hover:not(.disabled) {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.createorderreceipet.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #e2e8f0;
+}
+
+.upload-icon {
+  color: #64748b;
+  font-size: 28px !important;
+}
+
+.createorderreceipet p {
+  margin: 4px 0 0 0;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.receipet {
+  max-width: 100%;
+  max-height: 110px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+/* Action Buttons */
+.createorderbtn {
+  display: flex;
+  gap: 10px;
+}
+
+.createorderbtn button {
+  flex: 1;
+  padding: 10px 5px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s ease;
+  margin-bottom: 20px;
+}
+
+.cancel-btn {
+  background-color: #e2e8f0;
+  color: #475569;
+}
+
+.confirm-btn {
+  background-color: #0d1b2a;
+  color: #ffffff;
+}
+
+.confirm-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   DARK MODE STYLES
+   ========================================== */
+.createordermain.dark-mode {
+  background-color: #1a1c1e;
+  color: #ffffff;
+}
+
+.createordermain.dark-mode .createorderreciept,
+.createordermain.dark-mode .createorderselect,
+.createordermain.dark-mode .addclassorderchoice,
+.createordermain.dark-mode .orderamount,
+.createordermain.dark-mode .orderprint1 {
+  background-color: #27292d;
+  border-color: #3a3d40;
+}
+
+.createordermain.dark-mode .reciept-label,
+.createordermain.dark-mode .aos1,
+.createordermain.dark-mode .createorderchoiceheader1,
+.createordermain.dark-mode .orderprintheader {
+  color: #ffffff;
+}
+
+.createordermain.dark-mode .reciept-value {
+  background-color: #1e2023;
+  color: #38bdf8;
+}
+
+.createordermain.dark-mode .ccnb {
+  background-color: #1e2023;
+  border-color: #3a3d40;
+  color: #ffffff;
+}
+
+.createordermain.dark-mode .timeslot-badge {
+  background-color: #1e2023;
+  border-color: #3a3d40;
+  color: #ffffff;
+}
+
+.createordermain.dark-mode .timeslot-badge.selected {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+.createordermain.dark-mode .toorder {
+  border-color: #3a3d40;
+}
+
+.createordermain.dark-mode .toorderheader {
+  background-color: #1e2023;
+  color: #9ca3af;
+}
+
+.createordermain.dark-mode .toorderbody {
+  border-bottom-color: #3a3d40;
+}
+
+.createordermain.dark-mode .toorderchild1 button {
+  background-color: #1e2023;
+  border-color: #3a3d40;
+  color: #ffffff;
+}
+
+.createordermain.dark-mode .orderamount h3 {
+  color: #9ca3af;
+}
+
+.createordermain.dark-mode .orderamount span {
+  color: #d1d5db;
+}
+
+.createordermain.dark-mode .total-divider {
+  background-color: #3a3d40;
+}
+
+.createordermain.dark-mode .orderamount h2 {
+  color: #34d399;
+}
+
+.createordermain.dark-mode .ssx select {
+  background-color: #1e2023;
+  border-color: #3a3d40;
+  color: #ffffff;
+}
+
+.createordermain.dark-mode .paymentwarper {
+  background-color: #1e2023;
+  border-color: #3a3d40;
+}
+
+.createordermain.dark-mode .paymentwarper span p {
+  color: #d1d5db;
+}
+
+.createordermain.dark-mode .createorderreceipet {
+  background-color: #1e2023;
+  border-color: #3a3d40;
+}
+
+.createordermain.dark-mode .cancel-btn {
+  background-color: #3a3d40;
+  color: #ffffff;
+}
+
+.createordermain.dark-mode .confirm-btn {
+  background-color: #3b82f6;
+  color: #ffffff;
 }

@@ -1,25 +1,24 @@
-import CustomerLoading from "../Components/loadingcustomer";
 import BackIcon from "@mui/icons-material/ArrowCircleLeftRounded";
-import FoodIcon from "@mui/icons-material/LocalDiningRounded";
-import "./classcreatenewbooking.css";
-import { useContext, useEffect, useRef, useState } from "react";
-import AddorderProduct from "../Components/addorderproudct";
 import PaymentIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
-import RentalIcon from "@mui/icons-material/Inventory2Outlined";
 import RemoveIcon from "@mui/icons-material/RemoveShoppingCartRounded";
+import RentalIcon from "@mui/icons-material/Inventory2Outlined";
+import StadiumIcon from "@mui/icons-material/StadiumOutlined";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import toast, { Toaster } from "react-hot-toast";
+import { useContext, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Context } from "../Hooks/context";
 import { useNavigate } from "react-router-dom";
 import { useGetOrder, useGetPayment } from "../Api_Call";
-import StadiumIcon from "@mui/icons-material/StadiumOutlined";
 import { useGetClassVenue } from "../ClassApi";
 import { useNoti } from "../Hooks/alert";
+import { Context } from "../Hooks/context";
 import ClassEquipmentOrder from "./classequipmentorder";
 import { useClassReceipt } from "./ClassReceipt";
+import "./classcreatenewbooking.css";
 
 function ClassCreateBooking({ data }) {
+  const { classBackColor } = useContext(Context);
+  const isDark = classBackColor?.toLowerCase() === "#1a1c1e";
+
   const [reciept, setreciept] = useState();
   const [amount, setamount] = useState(0);
   const [total, settotal] = useState(0);
@@ -29,24 +28,18 @@ function ClassCreateBooking({ data }) {
   const [childdata, setchilddata] = useState([]);
   const [file, setfile] = useState(null);
   const [filetosend, setfiletosend] = useState(null);
-  const [allow, setallow] = useState(true);
 
   const [payment, setpayment] = useState("Cash");
   const [name, setname] = useState("-------");
   const [number, setnumber] = useState("-------");
 
-  //for select box
-  const [index, setindex] = useState(0);
-
   const imgref = useRef();
   const paymentref = useRef();
-  const { Token } = useContext(Context);
-  const { Payment, Products, GetPayment, Tax, GetTax } = useGetPayment();
-  const { GetVenue, Venue, GetCourts } = useGetClassVenue();
+  const { Payment, GetPayment, Tax, GetTax } = useGetPayment();
+  const { GetVenue, Courts } = useGetClassVenue();
   const { Loading, openerror, openloading, opensuccess, close } = useNoti();
   const { GetLocalOrders } = useGetOrder();
   const { open, ClassReceipetJsx } = useClassReceipt();
-  const navigate = useNavigate();
 
   const {
     venue_name,
@@ -55,7 +48,6 @@ function ClassCreateBooking({ data }) {
     remainbooking,
     targettime,
     settargettime,
-    Courts,
     venue_id,
     targettimeid,
     settargettimeid,
@@ -70,23 +62,15 @@ function ClassCreateBooking({ data }) {
   }, []);
 
   useEffect(() => {
-    let totalamout = Number(amount) + Number(info?.hourly_price);
+    let totalamout = Number(amount) + Number(info?.hourly_price || 0);
     settotal(totalamout);
   }, [amount, info]);
 
-  useEffect(() => {
-    if (childdata.length > 0 && filetosend) {
-      setallow(false);
-    } else {
-      setallow(true);
-    }
-  }, [childdata, filetosend]);
-
-  // function to get radom recepit number
   function randomNum() {
     let random = Date.now();
     setreciept(random);
   }
+
   useEffect(() => {
     randomNum();
   }, [childdata]);
@@ -103,7 +87,7 @@ function ClassCreateBooking({ data }) {
 
   useEffect(() => {
     if (Array.isArray(Payment.result) && Payment.result.length > 0) {
-      let result = Payment.result.find((a) => a.payment_method == payment);
+      let result = Payment.result.find((a) => a.payment_method === payment);
       if (result) {
         setname(result.payment_name || "-----");
         setnumber(result.payment_number || "------");
@@ -111,32 +95,21 @@ function ClassCreateBooking({ data }) {
     }
   }, [Payment.result, payment]);
 
-  function updateQty(id, amount) {
+  function updateQty(id, amt) {
     setCart((prev) => {
       let curqty = prev[id] || 1;
-      let newqty = curqty + amount;
+      let newqty = curqty + amt;
 
       if (newqty <= 0) {
-        let newqty = { ...prev };
-        delete newqty[id];
-        return newqty;
+        let updated = { ...prev };
+        delete updated[id];
+        return updated;
       }
       return { ...prev, [id]: newqty };
     });
   }
 
-  //function to show receipet
   function show_receipet() {
-    let TAX = Tax.result[0].tax || 1;
-    let curtax = (amount / 100) * Number(TAX);
-    let newchildData = childdata.map((item) => {
-      let qty = cart[item.id] !== undefined ? cart[item.id] : 1;
-      return {
-        ...item,
-        quantity: qty,
-      };
-    });
-
     open({
       order_no: reciept,
       payment: paymentref.current.value,
@@ -149,9 +122,7 @@ function ClassCreateBooking({ data }) {
   }
 
   function remove_item(id) {
-    let result = childdata.filter((item) => {
-      return item.id != id;
-    });
+    let result = childdata.filter((item) => item.id !== id);
     setchilddata(result);
   }
 
@@ -164,7 +135,6 @@ function ClassCreateBooking({ data }) {
     }
   };
 
-  //function to add order
   async function add_order() {
     let delta = childdata.map((item) => {
       let qty = cart[item.id] !== undefined ? cart[item.id] : 1;
@@ -176,7 +146,7 @@ function ClassCreateBooking({ data }) {
     if (filetosend) {
       formData.append("payment_image", filetosend);
     }
-    if (payment != "Cash") {
+    if (payment !== "Cash") {
       formData.append("payment_method", payment);
     }
     formData.append("venue_id", venue_id);
@@ -189,7 +159,7 @@ function ClassCreateBooking({ data }) {
     if (childdata.length > 0) {
       formData.append("items", JSON.stringify(delta));
     }
-    console.log(Object.fromEntries(formData));
+
     try {
       openloading();
       let response = await fetch(import.meta.env.VITE_CLASS_ADD_LOCAL_BOOKING, {
@@ -210,128 +180,102 @@ function ClassCreateBooking({ data }) {
         openerror("Something went wrong");
       }
     } catch (err) {
-      openerror("Cannot connect with sever");
+      openerror("Cannot connect with server");
       console.log(err);
     }
   }
 
-  //payment change
   function paymentchange(event) {
     setpayment(event.target.value);
   }
 
-  //index change
-  function timeslotchange(event) {
-    setindex(event.target.value);
-  }
-
-  //court change
-  async function courtchange(event) {
-    openloading();
-    try {
-      await GetCourts(event.target.value);
-      close();
-    } catch (err) {
-      close();
-      console.log(err);
-    }
-  }
   return createPortal(
-    <div className="createordermain">
+    <div className={`createordermain ${isDark ? "dark-mode" : ""}`}>
       {Loading}
       {ClassReceipetJsx}
+
+      {/* Top Navbar Header */}
       <div className="createordernav">
-        <button
-          style={{ border: "none", outline: "none", background: "initial" }}
-          onClick={() => setshowCreate(false)}
-        >
-          <BackIcon
-            sx={{ color: "white", margin: "7px", marginLeft: "15px" }}
-          />
+        <button className="back-nav-btn" onClick={() => setshowCreate(false)}>
+          <BackIcon className="back-icon" />
         </button>
+        <h3 className="createordertitle">Create New Booking</h3>
       </div>
-      <h3 className="createordertitle">Create New Booking</h3>
 
       <div className="addclassorderbody">
+        {/* Left Column (Details, Time Slots, Rental Table) */}
         <div className="addclassorderbody1">
+          {/* Receipt Info Box */}
           <div className="createorderreciept">
-            <p>Receipt No</p>
-            <span>{reciept}</span>
+            <p className="reciept-label">Receipt Number</p>
+            <span className="reciept-value">{reciept}</span>
           </div>
+
+          {/* Court & Time Slot Selection */}
           <div className="createorderselect">
             <h3 className="aos1">
-              {" "}
-              <StadiumIcon sx={{ fontSize: "20px" }} />
-              Select Venue/Court
+              <StadiumIcon className="section-icon" />
+              Venue & Court Details
             </h3>
 
             <div className="aos2">
               <span>
                 <h5>SPORT TYPE</h5>
-                <p className="ccnb">{venue_name}</p>
+                <p className="ccnb">{venue_name || "---"}</p>
               </span>
               <span>
                 <h5>COURT NAME</h5>
-                <p className="ccnb">{info?.court_name}</p>
+                <p className="ccnb">{info?.court_name || "---"}</p>
               </span>
               <span>
                 <h5>DATE</h5>
-                <p className="ccnb">{date}</p>
+                <p className="ccnb">{date || "---"}</p>
               </span>
             </div>
-            <h5 className="timeslottitle">TIME SLOT</h5>
+
+            <h5 className="timeslottitle">AVAILABLE TIME SLOTS</h5>
             <div className="aos3">
               {Array.isArray(remainbooking.data) ? (
                 remainbooking.data.length > 0 ? (
-                  remainbooking.data.map((item, index) => {
+                  remainbooking.data.map((item, idx) => {
+                    const slotText = `${item.start_time.slice(0, 5)} - ${item.end_time.slice(0, 5)}`;
+                    const isSelected = targettime === slotText;
                     return (
                       <p
-                        key={index}
-                        style={{
-                          background:
-                            targettime ==
-                            `${item.start_time.slice(0, 5)}-${item.end_time.slice(0, 5)}`
-                              ? "#1B263B"
-                              : " initial",
-                          color:
-                            targettime ==
-                            `${item.start_time.slice(0, 5)}-${item.end_time.slice(0, 5)}`
-                              ? "white"
-                              : "initial",
-                        }}
+                        key={idx}
+                        className={`timeslot-badge ${isSelected ? "selected" : ""}`}
                         onClick={() => {
                           settargettimeid(item.id);
-                          settargettime(
-                            `${item.start_time.slice(0, 5)}-${item.end_time.slice(0, 5)}`,
-                          );
+                          settargettime(slotText);
                         }}
                       >
-                        {item.start_time.slice(0, 5)} -{" "}
-                        {item.end_time.slice(0, 5)}
+                        {slotText}
                       </p>
                     );
                   })
                 ) : (
-                  <p disabled>no data</p>
+                  <p className="no-slot">No available slots</p>
                 )
               ) : (
-                <p disabled>Loading...</p>
+                <p className="no-slot">Loading slots...</p>
               )}
             </div>
           </div>
+
+          {/* Rental Equipment Section */}
           <div className="addclassorderchoice">
-            <span className="createorderchoiceheader">
+            <div className="createorderchoiceheader">
               <p className="createorderchoiceheader1">
-                <RentalIcon sx={{ strokeWidth: 1, fontSize: "20px" }} />
+                <RentalIcon className="section-icon" />
                 Rental Items
               </p>
               <button
                 className="createorderchoiceheader2"
                 onClick={() => setshow(true)}
               >
-                + select items form Equipment
+                + Select Equipment
               </button>
-            </span>
+            </div>
 
             <div className="toorder">
               <div className="toorderheader">
@@ -339,105 +283,109 @@ function ClassCreateBooking({ data }) {
                 <p>Qty</p>
                 <p>Price</p>
               </div>
-              {childdata?.length > 0 ? (
-                childdata.map((item, index) => {
-                  return (
-                    <div className="toorderbody" key={index}>
-                      <span className="toorderchild">
-                        <p>{item.product_name}</p>
-                      </span>
-                      <span className="toorderchild1">
-                        <button onClick={() => updateQty(item.id, -1)}>
-                          -
-                        </button>
-                        <p>{cart[item.id] || 1}</p>
-                        <button onClick={() => updateQty(item.id, 1)}>+</button>
-                      </span>
-                      <p className="toorderchild2">
-                        {item.rental_price} Ks
-                        <button onClick={() => remove_item(item.id)}>
-                          <RemoveIcon sx={{ fontSize: "20px" }} />
-                        </button>
-                      </p>
-                    </div>
-                  );
-                })
-              ) : (
-                <p
-                  style={{ width: "100%", textAlign: "center", padding: "1em" }}
-                >
-                  No Product Choose Yet...
-                </p>
-              )}
+              <div className="toorderlist">
+                {childdata?.length > 0 ? (
+                  childdata.map((item, index) => {
+                    return (
+                      <div className="toorderbody" key={index}>
+                        <div className="toorderchild">
+                          <p>{item.product_name}</p>
+                        </div>
+                        <div className="toorderchild1">
+                          <button onClick={() => updateQty(item.id, -1)}>
+                            -
+                          </button>
+                          <span>{cart[item.id] || 1}</span>
+                          <button onClick={() => updateQty(item.id, 1)}>
+                            +
+                          </button>
+                        </div>
+                        <div className="toorderchild2">
+                          <p>{item.rental_price * (cart[item.id] || 1)} Ks</p>
+                          <button onClick={() => remove_item(item.id)}>
+                            <RemoveIcon className="remove-icon" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="empty-cart-text">No Equipment Selected Yet</p>
+                )}
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Right Column (Total & Payment Details) */}
         <div className="addclassorderbody2">
+          {/* Total Breakdown */}
           <div className="orderamount">
-            <h3>TOTAL AMOUNT</h3>
+            <h3>PAYMENT SUMMARY</h3>
             <span>
-              <p>Court Fee(1 hour)</p>
-              <p>{info?.hourly_price}-KS</p>
+              <p>Court Fee (1 hour)</p>
+              <p>{info?.hourly_price || 0} Ks</p>
             </span>
             <span>
-              <p>Rental Fees</p>
-              <p>{amount}-KS</p>
+              <p>Rental Items Fee</p>
+              <p>{amount} Ks</p>
             </span>
-            <h2>{total}-KS</h2>
+            <div className="total-divider"></div>
+            <h2>Total: {total} Ks</h2>
           </div>
+
+          {/* Payment Method & Receipt Upload */}
           <div className="orderprint">
             <div className="orderprint1">
               <p className="orderprintheader">
-                <PaymentIcon sx={{ color: "red" }} />
-                Payment Details
+                <PaymentIcon className="payment-icon" />
+                Payment Options
               </p>
+
               <div className="ssx">
-                <label htmlFor="input">Payment Method</label>
-                <select ref={paymentref} onChange={paymentchange}>
+                <label>Payment Method</label>
+                <select
+                  ref={paymentref}
+                  value={payment}
+                  onChange={paymentchange}
+                >
                   <option value="Cash">Cash</option>
                   {Array.isArray(Payment.result) &&
-                  Payment.result.length > 0 ? (
-                    Payment.result.map((item, index) => {
-                      return (
-                        <option key={index} value={item.payment_method}>
-                          {item.payment_method}
-                        </option>
-                      );
-                    })
-                  ) : (
-                    <option value="no data" disabled>
-                      No Data....
-                    </option>
-                  )}
+                    Payment.result.map((item, index) => (
+                      <option key={index} value={item.payment_method}>
+                        {item.payment_method}
+                      </option>
+                    ))}
                 </select>
               </div>
-              <span className="paymentmain">
-                <label style={{ padding: "5px" }}>Payment Details</label>
-                <div className="paymentwarper">
-                  <span>
-                    <p>{payment == "Cash" ? "--------" : `${payment} name`}</p>
-                    <p>{payment == "Cash" ? "----------" : name}</p>
-                  </span>
-                  <span>
-                    <p>
-                      {payment == "Cash" ? "---------" : `${payment} number`}
-                    </p>
-                    <p>{payment == "Cash" ? "----------" : number}</p>
-                  </span>
+
+              {payment !== "Cash" && (
+                <div className="paymentmain">
+                  <label>Account Details</label>
+                  <div className="paymentwarper">
+                    <span>
+                      <p>{payment} Name</p>
+                      <p>{name}</p>
+                    </span>
+                    <span>
+                      <p>{payment} Number</p>
+                      <p>{number}</p>
+                    </span>
+                  </div>
                 </div>
-              </span>
+              )}
+
               <div
-                className="createorderreceipet"
-                onClick={() => imgref.current.click()}
+                className={`createorderreceipet ${payment === "Cash" ? "disabled" : ""}`}
+                onClick={() => payment !== "Cash" && imgref.current.click()}
               >
                 {file ? (
-                  <img src={file} alt="paymentrecepit" className="receipet" />
+                  <img src={file} alt="payment receipt" className="receipet" />
                 ) : (
                   <>
-                    <UploadFileIcon />
+                    <UploadFileIcon className="upload-icon" />
                     <p>
-                      Click to Upload <br />
-                      receipet
+                      Click to Upload <br /> Receipt Image
                     </p>
                   </>
                 )}
@@ -446,23 +394,32 @@ function ClassCreateBooking({ data }) {
                   style={{ display: "none" }}
                   ref={imgref}
                   onChange={handleFileChange}
-                  disabled={payment == "Cash"}
+                  disabled={payment === "Cash"}
                 />
               </div>
             </div>
-            <span className="createorderbtn">
-              <button onClick={() => setshowCreate(false)}>cancel</button>
+
+            {/* Action Buttons */}
+            <div className="createorderbtn">
               <button
-                style={{ background: "#0D1B2A", color: "white" }}
+                className="cancel-btn"
+                onClick={() => setshowCreate(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="confirm-btn"
                 onClick={add_order}
                 disabled={targettime == null}
+                style={{ padding: "12px 60px" }}
               >
-                Create
+                Create Booking
               </button>
-            </span>
+            </div>
           </div>
         </div>
       </div>
+
       {show && (
         <ClassEquipmentOrder
           data={{
@@ -477,4 +434,5 @@ function ClassCreateBooking({ data }) {
     document.body,
   );
 }
+
 export default ClassCreateBooking;

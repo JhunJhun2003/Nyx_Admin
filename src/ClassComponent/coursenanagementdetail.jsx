@@ -1,7 +1,4 @@
-import React, { useState, useEffect } from "react";
-import "../classCss/coursemanagementdetail.css";
-
-// Material UI Icons
+import React, { useState, useEffect, useContext } from "react";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
@@ -10,10 +7,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import PersonIcon from "@mui/icons-material/Person";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import SaveIcon from "@mui/icons-material/Save";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutlined";
+import { Context } from "../Hooks/context"; // Context Import
 
 const API_BASE = "http://130.94.99.9:5000";
 
@@ -63,6 +61,10 @@ const parseApiError = (responseText, responseData) => {
 };
 
 const CourseManagementDetail = ({ courseId, onBack }) => {
+  // Context မှ classBackColor ရယူပြီး True Dark Mode စစ်ဆေးခြင်း
+  const { classBackColor } = useContext(Context);
+  const isDark = classBackColor === "#1A1C1E";
+
   const [training, setTraining] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -236,7 +238,6 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
     return JSON.stringify(editableData) !== JSON.stringify(originalData);
   };
 
-  // Handle learning image upload with preview
   const handleLearningImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -246,7 +247,6 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
     }
   };
 
-  // Save coach information separately
   const handleSaveCoachInfo = async () => {
     if (!activeLevel?.id) {
       return false;
@@ -257,7 +257,7 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
       !editableData.biography &&
       !coachFile
     ) {
-      return true; // Nothing to update
+      return true;
     }
 
     const formData = new FormData();
@@ -278,7 +278,6 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
     }
 
     try {
-      // Try to update coach info - if endpoint doesn't exist, just log and continue
       const response = await fetch(
         `${API_BASE}/api/coursemanagement/update_coach/${activeLevel.id}`,
         {
@@ -291,7 +290,6 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
         const data = await response.json();
         return data.success === true;
       }
-      // If endpoint doesn't exist, just return true (coach info will be handled by main endpoint if columns exist)
       return true;
     } catch (err) {
       console.log(
@@ -301,7 +299,6 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
     }
   };
 
-  // Save level data
   const handleSaveLevel = async () => {
     if (!activeLevel?.id) {
       alert("No training level selected");
@@ -323,7 +320,6 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
     setSaveMessage("");
     const formData = new FormData();
 
-    // Add all text fields including coach fields if they exist in database
     if (editableData.title_level && editableData.title_level.trim() !== "") {
       formData.append("title_level", editableData.title_level.trim());
     }
@@ -349,7 +345,6 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
       );
     }
 
-    // Handle discount fields
     if (isDiscountEnabled) {
       if (editableData.main_title && editableData.main_title.trim() !== "") {
         formData.append("main_title", editableData.main_title.trim());
@@ -365,7 +360,6 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
       }
     }
 
-    // Add coach fields - they will be ignored by backend if columns don't exist
     if (
       editableData.instructor_name &&
       editableData.instructor_name.trim() !== ""
@@ -377,7 +371,6 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
       formData.append("biography", editableData.biography.trim());
     }
 
-    // Add images if selected
     if (categoryCardImage)
       formData.append("category_card_image", categoryCardImage);
     if (learningImage) formData.append("learning_image", learningImage);
@@ -405,7 +398,6 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
       }
 
       if (response.ok && responseData?.success) {
-        // Also try to save coach info separately if the main endpoint didn't handle it
         await handleSaveCoachInfo();
 
         setCategoryCardImage(null);
@@ -426,7 +418,6 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
           parsedError || `Save failed (status ${response.status})`;
         setSaveMessage(errorMessage);
         setTimeout(() => setSaveMessage(""), 8000);
-        console.error("Server error response:", responseText);
       }
     } catch (err) {
       console.error("Error saving:", err);
@@ -437,7 +428,6 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
     }
   };
 
-  // Handle image uploads
   const handleCategoryImageUpload = (file) => {
     if (file) setCategoryCardImage(file);
   };
@@ -610,22 +600,66 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
 
   const activeLevelSchedules = getSchedulesForActiveLevel();
 
+  // Color Constants for True Dark / Light Theme
+  const theme = {
+    bg: isDark ? "#121212" : "#f8fafc",
+    cardBg: isDark ? "#1e1e1e" : "#ffffff",
+    cardBorder: isDark ? "#333333" : "#e2e8f0",
+    textPrimary: isDark ? "#ffffff" : "#111827",
+    textSecondary: isDark ? "#a1a1aa" : "#64748b",
+    inputBg: isDark ? "#121212" : "#ffffff",
+    inputBorder: isDark ? "#333333" : "#cbd5e1",
+    tabActiveBg: isDark ? "#282828" : "#ffffff",
+    topBarBg: isDark ? "#1e1e1e" : "#0f172a",
+    buttonBg: isDark ? "#282828" : "#f1f5f9",
+  };
+
   if (loading) {
     return (
-      <div className="loading-screen">
+      <div
+        style={{
+          width: "100%",
+          minHeight: "100vh",
+          backgroundColor: theme.bg,
+          color: theme.textPrimary,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <h2>Loading Course Data...</h2>
-        <div className="loading-spinner"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="loading-screen">
-        <h2>Error</h2>
-        <p>{error}</p>
+      <div
+        style={{
+          width: "100%",
+          minHeight: "100vh",
+          backgroundColor: theme.bg,
+          color: "#ef4444",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "16px",
+        }}
+      >
+        <h2>Error: {error}</h2>
         {onBack && (
-          <button className="back-btn-detail" onClick={onBack}>
+          <button
+            onClick={onBack}
+            style={{
+              padding: "10px 20px",
+              backgroundColor: theme.cardBg,
+              color: theme.textPrimary,
+              border: `1px solid ${theme.cardBorder}`,
+              borderRadius: "6px",
+              cursor: "pointer",
+            }}
+          >
             Go Back to Courses
           </button>
         )}
@@ -635,10 +669,32 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
 
   if (!training) {
     return (
-      <div className="loading-screen">
+      <div
+        style={{
+          width: "100%",
+          minHeight: "100vh",
+          backgroundColor: theme.bg,
+          color: theme.textPrimary,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "16px",
+        }}
+      >
         <h2>No Training Course Found</h2>
         {onBack && (
-          <button className="back-btn-detail" onClick={onBack}>
+          <button
+            onClick={onBack}
+            style={{
+              padding: "10px 20px",
+              backgroundColor: theme.cardBg,
+              color: theme.textPrimary,
+              border: `1px solid ${theme.cardBorder}`,
+              borderRadius: "6px",
+              cursor: "pointer",
+            }}
+          >
             Go Back to Courses
           </button>
         )}
@@ -646,95 +702,225 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
     );
   }
 
+  const commonInputStyle = {
+    width: "100%",
+    padding: "8px 12px",
+    borderRadius: "6px",
+    border: `1px solid ${theme.inputBorder}`,
+    backgroundColor: theme.inputBg,
+    color: theme.textPrimary,
+    boxSizing: "border-box",
+    outline: "none",
+    fontSize: "14px",
+  };
+
   return (
-    <div className="class-management-container">
-      {/* Top Navigation Dark Bar */}
-      <div className="top-dark-bar">
+    <div
+      style={{
+        width: "100%",
+        minHeight: "100vh",
+        backgroundColor: theme.bg,
+        color: theme.textPrimary,
+        display: "flex",
+        flexDirection: "column",
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+      }}
+    >
+      {/* Top Navigation Bar */}
+      <div
+        style={{
+          backgroundColor: theme.topBarBg,
+          padding: "16px 24px",
+          display: "flex",
+          alignItems: "center",
+          gap: "16px",
+          borderBottom: `1px solid ${theme.cardBorder}`,
+        }}
+      >
         {onBack && (
-          <button className="back-btn" onClick={onBack}>
-            <ArrowBackIosNewIcon />
+          <button
+            onClick={onBack}
+            style={{
+              background: "none",
+              border: "none",
+              color: isDark ? "#ffffff" : "white",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <ArrowBackIosNewIcon fontSize="small" />
           </button>
         )}
-        <span className="nav-title">
+        <span
+          style={{
+            fontSize: "18px",
+            fontWeight: 700,
+            color: theme.textPrimary,
+          }}
+        >
           {training.course_name || "Training Course"}
         </span>
       </div>
 
       {/* Tabs Navigation - Level Titles */}
-      <div className="tabs-navigation">
+      <div
+        style={{
+          display: "flex",
+          gap: "8px",
+          padding: "16px 24px 0 24px",
+          borderBottom: `1px solid ${theme.cardBorder}`,
+          overflowX: "auto",
+        }}
+      >
         {training.levels &&
-          training.levels.map((level) => (
-            <button
-              key={level.id}
-              className={`tab-item ${activeLevel?.id === level.id ? "active" : ""}`}
-              onClick={() => handleLevelChange(level)}
-            >
-              {level.title_level || "Level"}
-            </button>
-          ))}
+          training.levels.map((level) => {
+            const isActive = activeLevel?.id === level.id;
+            return (
+              <button
+                key={level.id}
+                onClick={() => handleLevelChange(level)}
+                style={{
+                  padding: "10px 20px",
+                  border: "none",
+                  borderBottom: isActive
+                    ? "3px solid #0284c7"
+                    : "3px solid transparent",
+                  backgroundColor: isActive ? theme.tabActiveBg : "transparent",
+                  color: isActive ? theme.textPrimary : theme.textSecondary,
+                  fontWeight: isActive ? 700 : 500,
+                  fontSize: "14px",
+                  cursor: "pointer",
+                  borderRadius: "6px 6px 0 0",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                {level.title_level || "Level"}
+              </button>
+            );
+          })}
       </div>
 
-      {/* Main Container Wrapper */}
-      <div className="main-content-wrapper">
-        <h1 className="page-main-title">
-          <MenuBookOutlinedIcon className="title-icon" /> Class Management
+      {/* Main Content Area */}
+      <div style={{ padding: "24px", flexGrow: 1 }}>
+        <h1
+          style={{
+            fontSize: "24px",
+            fontWeight: 800,
+            marginBottom: "20px",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            color: theme.textPrimary,
+          }}
+        >
+          <MenuBookOutlinedIcon /> Class Management
         </h1>
 
-        <div className="two-column-layout">
-          {/* LEFT SIDE AREA */}
-          <div className="left-column">
-            {/* CARD 1: Training Levels Card */}
-            <div className="ui-card">
-              <div className="card-header space-between">
-                <h3>Training Levels</h3>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr",
+            gap: "24px",
+            alignItems: "start",
+          }}
+        >
+          {/* Main Grid Layout: Responsive Two Columns */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+              gap: "24px",
+            }}
+          >
+            {/* LEFT COLUMN */}
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "24px" }}
+            >
+              {/* Training Levels Card */}
+              <div
+                style={{
+                  backgroundColor: theme.cardBg,
+                  border: `1px solid ${theme.cardBorder}`,
+                  borderRadius: "12px",
+                  padding: "20px",
+                  boxShadow: isDark
+                    ? "0 4px 12px rgba(0,0,0,0.5)"
+                    : "0 2px 4px rgba(0,0,0,0.05)",
+                }}
+              >
                 <div
-                  style={{ display: "flex", gap: "10px", alignItems: "center" }}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "16px",
+                  }}
                 >
-                  {saveMessage && (
-                    <span
-                      style={{
-                        fontSize: "12px",
-                        color: saveMessage.includes("success")
-                          ? "green"
-                          : "orange",
-                      }}
-                    >
-                      {saveMessage}
-                    </span>
-                  )}
-                  <button
-                    className="save-level-btn"
-                    onClick={handleSaveLevel}
-                    disabled={isSaving}
+                  <h3 style={{ margin: 0, fontSize: "18px" }}>
+                    Training Levels
+                  </h3>
+                  <div
                     style={{
-                      padding: "6px 12px",
-                      background: "#0D1B2A",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                      fontSize: "12px",
                       display: "flex",
+                      gap: "10px",
                       alignItems: "center",
-                      gap: "5px",
                     }}
                   >
-                    <SaveIcon style={{ fontSize: "16px" }} />
-                    {isSaving ? "Saving..." : "Save Changes"}
-                  </button>
-                </div>
-              </div>
-              <div className="levels-table">
-                <div className="table-row header-row">
-                  <span className="col-title">Level Title</span>
-                  <span className="col-desc">Description</span>
-                  <span className="col-price">Price</span>
-                  <span className="col-action"></span>
+                    {saveMessage && (
+                      <span
+                        style={{
+                          fontSize: "12px",
+                          color: saveMessage.toLowerCase().includes("success")
+                            ? "#0284c7"
+                            : "#f59e0b",
+                        }}
+                      >
+                        {saveMessage}
+                      </span>
+                    )}
+                    <button
+                      onClick={handleSaveLevel}
+                      disabled={isSaving}
+                      style={{
+                        padding: "8px 14px",
+                        backgroundColor: isDark ? "#0284c7" : "#0f1f3d",
+                        color: isDark ? "#ffffff" : "white",
+                        border: "none",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                      }}
+                    >
+                      <SaveIcon style={{ fontSize: "16px" }} />
+                      {isSaving ? "Saving..." : "Save Changes"}
+                    </button>
+                  </div>
                 </div>
 
                 {activeLevel && (
-                  <div className="table-row body-row">
-                    <div className="input-box col-title">
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "12px",
+                    }}
+                  >
+                    <div>
+                      <label
+                        style={{
+                          fontSize: "12px",
+                          color: theme.textSecondary,
+                          display: "block",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        Level Title
+                      </label>
                       <input
                         type="text"
                         value={editableData.title_level}
@@ -742,9 +928,20 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
                           handleFieldChange("title_level", e.target.value)
                         }
                         placeholder="Enter level title"
+                        style={commonInputStyle}
                       />
                     </div>
-                    <div className="input-box col-desc">
+                    <div>
+                      <label
+                        style={{
+                          fontSize: "12px",
+                          color: theme.textSecondary,
+                          display: "block",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        Description
+                      </label>
                       <textarea
                         value={editableData.description}
                         onChange={(e) =>
@@ -752,126 +949,240 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
                         }
                         rows="2"
                         placeholder="Enter description"
+                        style={{ ...commonInputStyle, resize: "vertical" }}
                       />
                     </div>
-                    <div className="input-box col-price">
-                      <input
-                        type="text"
-                        value={editableData.price}
-                        onChange={(e) =>
-                          handleFieldChange("price", e.target.value)
-                        }
-                        placeholder="Enter price"
-                      />
-                    </div>
-                    <div className="action-btn-cell col-action">
-                      <DeleteIcon
-                        className="icon-delete"
-                        onClick={() => openLevelDeleteModal(activeLevel.id)}
-                      />
+                    <div>
+                      <label
+                        style={{
+                          fontSize: "12px",
+                          color: theme.textSecondary,
+                          display: "block",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        Price
+                      </label>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "10px",
+                          alignItems: "center",
+                        }}
+                      >
+                        <input
+                          type="text"
+                          value={editableData.price}
+                          onChange={(e) =>
+                            handleFieldChange("price", e.target.value)
+                          }
+                          placeholder="Enter price"
+                          style={commonInputStyle}
+                        />
+                        <DeleteIcon
+                          onClick={() => openLevelDeleteModal(activeLevel.id)}
+                          style={{ cursor: "pointer", color: "#ef4444" }}
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
               </div>
-            </div>
 
-            {/* Training Schedule Card */}
-            <div className="ui-card">
-              <div className="card-header space-between">
-                <h3>
-                  <CalendarMonthOutlinedIcon className="header-inline-icon" />
-                  Training Schedule
-                </h3>
-                <span
-                  className="add-schedule-text"
-                  onClick={() => setIsAddScheduleOpen(true)}
+              {/* Training Schedule Card */}
+              <div
+                style={{
+                  backgroundColor: theme.cardBg,
+                  border: `1px solid ${theme.cardBorder}`,
+                  borderRadius: "12px",
+                  padding: "20px",
+                  boxShadow: isDark
+                    ? "0 4px 12px rgba(0,0,0,0.5)"
+                    : "0 2px 4px rgba(0,0,0,0.05)",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "16px",
+                  }}
                 >
-                  <AddIcon />
-                  Add Schedule
-                </span>
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: "18px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <CalendarMonthOutlinedIcon />
+                    Training Schedule
+                  </h3>
+                  <button
+                    onClick={() => setIsAddScheduleOpen(true)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#0284c7",
+                      cursor: "pointer",
+                      fontWeight: 600,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      fontSize: "13px",
+                    }}
+                  >
+                    <AddIcon fontSize="small" />
+                    Add Schedule
+                  </button>
+                </div>
+
+                {activeLevelSchedules.length > 0 ? (
+                  activeLevelSchedules.map((schedule) => (
+                    <div
+                      key={schedule.slot_id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        padding: "10px 0",
+                        borderBottom: `1px solid ${theme.cardBorder}`,
+                      }}
+                    >
+                      <div style={{ flex: 1 }}>
+                        <span
+                          style={{
+                            fontSize: "12px",
+                            color: theme.textSecondary,
+                            display: "block",
+                          }}
+                        >
+                          Day
+                        </span>
+                        <strong style={{ fontSize: "14px" }}>
+                          {schedule.day}
+                        </strong>
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <span
+                          style={{
+                            fontSize: "12px",
+                            color: theme.textSecondary,
+                            display: "block",
+                          }}
+                        >
+                          Start Time
+                        </span>
+                        <span style={{ fontSize: "13px" }}>
+                          {formatTime(schedule.start_time)}
+                        </span>
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <span
+                          style={{
+                            fontSize: "12px",
+                            color: theme.textSecondary,
+                            display: "block",
+                          }}
+                        >
+                          End Time
+                        </span>
+                        <span style={{ fontSize: "13px" }}>
+                          {formatTime(schedule.end_time)}
+                        </span>
+                      </div>
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        <EditIcon
+                          onClick={() =>
+                            openEditModal(
+                              schedule.slot_id,
+                              formatTime(schedule.start_time),
+                              formatTime(schedule.end_time),
+                            )
+                          }
+                          style={{
+                            cursor: "pointer",
+                            color: theme.textSecondary,
+                            fontSize: "18px",
+                          }}
+                        />
+                        <DeleteIcon
+                          onClick={() =>
+                            openScheduleDeleteModal(schedule.slot_id)
+                          }
+                          style={{
+                            cursor: "pointer",
+                            color: "#ef4444",
+                            fontSize: "18px",
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p
+                    style={{
+                      color: theme.textSecondary,
+                      fontSize: "14px",
+                      margin: 0,
+                    }}
+                  >
+                    No schedules available.
+                  </p>
+                )}
               </div>
 
-              {activeLevelSchedules.length > 0 ? (
-                activeLevelSchedules.map((schedule) => (
-                  <div className="schedule-form-row" key={schedule.slot_id}>
-                    <div className="form-group flex-2">
-                      <label>Date Selection</label>
-                      <select defaultValue={schedule.day} disabled>
-                        <option>{schedule.day}</option>
-                      </select>
-                    </div>
-                    <div className="form-group flex-1">
-                      <label>START TIME</label>
-                      <div className="time-input-wrapper">
-                        <AccessTimeIcon className="time-icon" />
-                        <input
-                          type="text"
-                          value={formatTime(schedule.start_time)}
-                          readOnly
-                        />
-                      </div>
-                    </div>
-                    <div className="form-group flex-1">
-                      <label>END TIME</label>
-                      <div className="time-input-wrapper">
-                        <AccessTimeIcon className="time-icon" />
-                        <input
-                          type="text"
-                          value={formatTime(schedule.end_time)}
-                          readOnly
-                        />
-                      </div>
-                    </div>
-                    <div className="schedule-row-actions">
-                      <EditIcon
-                        className="icon-edit"
-                        onClick={() =>
-                          openEditModal(
-                            schedule.slot_id,
-                            formatTime(schedule.start_time),
-                            formatTime(schedule.end_time),
-                          )
-                        }
-                      />
-                      <DeleteIcon
-                        className="icon-delete"
-                        onClick={() =>
-                          openScheduleDeleteModal(schedule.slot_id)
-                        }
-                      />
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="schedule-form-row">
-                  <div className="form-group">No schedules available</div>
-                </div>
-              )}
-            </div>
-
-            {/* Bottom 50/50 Row Split */}
-            <div className="bottom-two-cards">
               {/* Special Discount Box */}
-              <div className="ui-card flex-1">
-                <div className="card-header space-between">
-                  <h3>Special Discount</h3>
-                  <div className="header-actions">
-                    <label className="switch">
-                      <input
-                        type="checkbox"
-                        checked={isDiscountEnabled}
-                        onChange={() =>
-                          setIsDiscountEnabled(!isDiscountEnabled)
-                        }
-                      />
-                      <span className="slider round"></span>
-                    </label>
-                    <DeleteIcon className="icon-delete" />
-                  </div>
+              <div
+                style={{
+                  backgroundColor: theme.cardBg,
+                  border: `1px solid ${theme.cardBorder}`,
+                  borderRadius: "12px",
+                  padding: "20px",
+                  boxShadow: isDark
+                    ? "0 4px 12px rgba(0,0,0,0.5)"
+                    : "0 2px 4px rgba(0,0,0,0.05)",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "16px",
+                  }}
+                >
+                  <h3 style={{ margin: 0, fontSize: "18px" }}>
+                    Special Discount
+                  </h3>
+                  <input
+                    type="checkbox"
+                    checked={isDiscountEnabled}
+                    onChange={() => setIsDiscountEnabled(!isDiscountEnabled)}
+                    style={{ width: "18px", height: "18px", cursor: "pointer" }}
+                  />
                 </div>
-                <div className="vertical-form">
-                  <div className="form-group">
-                    <label>Main Discount Title</label>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                  }}
+                >
+                  <div>
+                    <label
+                      style={{
+                        fontSize: "12px",
+                        color: theme.textSecondary,
+                        display: "block",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      Main Discount Title
+                    </label>
                     <input
                       type="text"
                       value={editableData.main_title}
@@ -880,10 +1191,20 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
                       }
                       placeholder="Enter main discount title"
                       disabled={!isDiscountEnabled}
+                      style={commonInputStyle}
                     />
                   </div>
-                  <div className="form-group">
-                    <label>Title</label>
+                  <div>
+                    <label
+                      style={{
+                        fontSize: "12px",
+                        color: theme.textSecondary,
+                        display: "block",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      Title
+                    </label>
                     <input
                       type="text"
                       value={editableData.title}
@@ -892,10 +1213,20 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
                       }
                       placeholder="Enter title"
                       disabled={!isDiscountEnabled}
+                      style={commonInputStyle}
                     />
                   </div>
-                  <div className="form-group">
-                    <label>About Discount</label>
+                  <div>
+                    <label
+                      style={{
+                        fontSize: "12px",
+                        color: theme.textSecondary,
+                        display: "block",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      About Discount
+                    </label>
                     <input
                       type="text"
                       value={editableData.about_title}
@@ -904,10 +1235,20 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
                       }
                       placeholder="Enter about discount"
                       disabled={!isDiscountEnabled}
+                      style={commonInputStyle}
                     />
                   </div>
-                  <div className="form-group">
-                    <label>Details</label>
+                  <div>
+                    <label
+                      style={{
+                        fontSize: "12px",
+                        color: theme.textSecondary,
+                        display: "block",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      Details
+                    </label>
                     <textarea
                       value={editableData.details}
                       onChange={(e) =>
@@ -916,44 +1257,154 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
                       rows="3"
                       placeholder="Enter discount details"
                       disabled={!isDiscountEnabled}
+                      style={{ ...commonInputStyle, resize: "vertical" }}
                     />
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* What You'll Learn Box - WITH EDITABLE IMAGE */}
-              <div className="ui-card flex-1">
-                <div className="card-header">
-                  <h3>What You'll Learn</h3>
-                  <div className="image-edit-buttons">
-                    <label className="image-upload-label-small">
+            {/* RIGHT COLUMN */}
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "24px" }}
+            >
+              {/* Category Card Banner Image */}
+              <div
+                style={{
+                  backgroundColor: theme.cardBg,
+                  border: `1px solid ${theme.cardBorder}`,
+                  borderRadius: "12px",
+                  padding: "16px",
+                  boxShadow: isDark
+                    ? "0 4px 12px rgba(0,0,0,0.5)"
+                    : "0 2px 4px rgba(0,0,0,0.05)",
+                }}
+              >
+                <div
+                  style={{
+                    position: "relative",
+                    borderRadius: "8px",
+                    overflow: "hidden",
+                  }}
+                >
+                  <img
+                    src={
+                      activeLevel?.category_card_image_url ||
+                      training.category_card_image_url ||
+                      "https://via.placeholder.com/400x200?text=No+Image"
+                    }
+                    alt="Banner"
+                    style={{
+                      width: "100%",
+                      height: "180px",
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                  />
+                  <label
+                    style={{
+                      position: "absolute",
+                      bottom: "10px",
+                      right: "10px",
+                      backgroundColor: "rgba(0,0,0,0.7)",
+                      color: "#ffffff",
+                      padding: "6px 12px",
+                      borderRadius: "6px",
+                      fontSize: "12px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={(e) => {
+                        if (e.target.files[0]) {
+                          handleCategoryImageUpload(e.target.files[0]);
+                        }
+                      }}
+                    />
+                    <EditIcon fontSize="small" /> Edit Image
+                  </label>
+                </div>
+              </div>
+
+              {/* What You'll Learn Box */}
+              <div
+                style={{
+                  backgroundColor: theme.cardBg,
+                  border: `1px solid ${theme.cardBorder}`,
+                  borderRadius: "12px",
+                  padding: "20px",
+                  boxShadow: isDark
+                    ? "0 4px 12px rgba(0,0,0,0.5)"
+                    : "0 2px 4px rgba(0,0,0,0.05)",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "16px",
+                  }}
+                >
+                  <h3 style={{ margin: 0, fontSize: "18px" }}>
+                    What You'll Learn
+                  </h3>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <label
+                      style={{
+                        cursor: "pointer",
+                        color: "#0284c7",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "2px",
+                      }}
+                    >
                       <input
                         type="file"
                         accept="image/*"
                         style={{ display: "none" }}
                         onChange={handleLearningImageChange}
                       />
-                      <EditIcon fontSize="small" style={{ fontSize: "16px" }} />
+                      <EditIcon style={{ fontSize: "16px" }} />
                       <span>Change</span>
                     </label>
                     {learningImage && (
                       <button
-                        className="image-remove-btn"
                         onClick={() => {
                           setLearningImage(null);
                           setLearningImagePreview(
                             activeLevel?.learning_image_url || "",
                           );
                         }}
-                        title="Remove uploaded image"
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: "#ef4444",
+                          cursor: "pointer",
+                        }}
                       >
                         <CloseIcon fontSize="small" />
                       </button>
                     )}
                   </div>
                 </div>
-                <div className="learning-box-content">
-                  <div className="learning-img-container">
+
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                  }}
+                >
+                  <div style={{ position: "relative" }}>
                     <img
                       src={
                         learningImagePreview ||
@@ -961,138 +1412,196 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
                         "https://via.placeholder.com/200x150?text=No+Image"
                       }
                       alt="Learning"
-                    />
-                    <label className="image-upload-label overlay-upload">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        style={{ display: "none" }}
-                        onChange={handleLearningImageChange}
-                      />
-                      <PhotoCameraIcon />
-                      <span>Upload Image</span>
-                    </label>
-                  </div>
-                  <div className="learning-text-details">
-                    <textarea
-                      value={editableData.learning_description}
-                      onChange={(e) =>
-                        handleFieldChange(
-                          "learning_description",
-                          e.target.value,
-                        )
-                      }
-                      rows="4"
-                      placeholder="Enter learning description"
-                      className="learning-textarea"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT SIDE AREA */}
-          <div className="right-column">
-            {/* Banner Court Image */}
-            <div className="ui-card banner-image-card">
-              <div className="banner-img-wrapper">
-                <img
-                  src={
-                    activeLevel?.category_card_image_url ||
-                    training.category_card_image_url ||
-                    "https://via.placeholder.com/400x200?text=No+Image"
-                  }
-                  alt="Banner"
-                />
-                <label className="edit-image-overlay-btn">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: "none" }}
-                    onChange={(e) => {
-                      if (e.target.files[0]) {
-                        handleCategoryImageUpload(e.target.files[0]);
-                      }
-                    }}
-                  />
-                  <EditIcon fontSize="small" /> Edit Image
-                </label>
-              </div>
-            </div>
-
-            {/* Meet Your Coach Card */}
-            <div className="ui-card">
-              <div className="card-header">
-                <h3>
-                  <PersonIcon className="header-inline-icon" /> Meet Your Coach
-                </h3>
-              </div>
-              <div className="coach-profile-form">
-                <div className="coach-avatar-wrapper">
-                  <img
-                    src={
-                      activeLevel?.coach_image_url ||
-                      "https://via.placeholder.com/100x100?text=No+Image"
-                    }
-                    alt="Coach"
-                  />
-                  <label className="camera-badge">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      onChange={(e) => {
-                        if (e.target.files[0]) {
-                          handleCoachImageUpload(e.target.files[0]);
-                        }
+                      style={{
+                        width: "100%",
+                        height: "140px",
+                        objectFit: "cover",
+                        borderRadius: "8px",
                       }}
                     />
-                    <PhotoCameraIcon fontSize="inherit" />
-                  </label>
-                </div>
-                <div className="form-group">
-                  <label>Coach Name</label>
-                  <input
-                    type="text"
-                    value={editableData.instructor_name}
-                    onChange={(e) =>
-                      handleFieldChange("instructor_name", e.target.value)
-                    }
-                    placeholder="Enter coach name"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Coach Biography</label>
+                  </div>
                   <textarea
-                    value={editableData.biography}
+                    value={editableData.learning_description}
                     onChange={(e) =>
-                      handleFieldChange("biography", e.target.value)
+                      handleFieldChange("learning_description", e.target.value)
                     }
-                    rows="5"
-                    placeholder="Enter coach biography"
-                    className="learning-textarea"
+                    rows="4"
+                    placeholder="Enter learning description"
+                    style={{ ...commonInputStyle, resize: "vertical" }}
                   />
                 </div>
               </div>
-            </div>
 
-            {/* Bottom Form Action Buttons */}
-            <div className="page-action-buttons">
-              <button
-                className="btn-save"
-                onClick={handleSaveLevel}
-                disabled={isSaving}
+              {/* Meet Your Coach Card */}
+              <div
+                style={{
+                  backgroundColor: theme.cardBg,
+                  border: `1px solid ${theme.cardBorder}`,
+                  borderRadius: "12px",
+                  padding: "20px",
+                  boxShadow: isDark
+                    ? "0 4px 12px rgba(0,0,0,0.5)"
+                    : "0 2px 4px rgba(0,0,0,0.05)",
+                }}
               >
-                {isSaving ? "Saving..." : "Save Changes"}
-              </button>
-              <button
-                className="btn-discard"
-                onClick={handleDiscardChanges}
-                disabled={isSaving}
+                <div style={{ marginBottom: "16px" }}>
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: "18px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <PersonIcon /> Meet Your Coach
+                  </h3>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      position: "relative",
+                    }}
+                  >
+                    <div style={{ position: "relative" }}>
+                      <img
+                        src={
+                          activeLevel?.coach_image_url ||
+                          "https://via.placeholder.com/100x100?text=No+Image"
+                        }
+                        alt="Coach"
+                        style={{
+                          width: "80px",
+                          height: "80px",
+                          borderRadius: "50%",
+                          objectFit: "cover",
+                          border: `2px solid ${theme.cardBorder}`,
+                        }}
+                      />
+                      <label
+                        style={{
+                          position: "absolute",
+                          bottom: 0,
+                          right: 0,
+                          backgroundColor: "#0284c7",
+                          color: "#ffffff",
+                          borderRadius: "50%",
+                          padding: "4px",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{ display: "none" }}
+                          onChange={(e) => {
+                            if (e.target.files[0]) {
+                              handleCoachImageUpload(e.target.files[0]);
+                            }
+                          }}
+                        />
+                        <PhotoCameraIcon style={{ fontSize: "16px" }} />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label
+                      style={{
+                        fontSize: "12px",
+                        color: theme.textSecondary,
+                        display: "block",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      Coach Name
+                    </label>
+                    <input
+                      type="text"
+                      value={editableData.instructor_name}
+                      onChange={(e) =>
+                        handleFieldChange("instructor_name", e.target.value)
+                      }
+                      placeholder="Enter coach name"
+                      style={commonInputStyle}
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      style={{
+                        fontSize: "12px",
+                        color: theme.textSecondary,
+                        display: "block",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      Coach Biography
+                    </label>
+                    <textarea
+                      value={editableData.biography}
+                      onChange={(e) =>
+                        handleFieldChange("biography", e.target.value)
+                      }
+                      rows="4"
+                      placeholder="Enter coach biography"
+                      style={{ ...commonInputStyle, resize: "vertical" }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Page Action Buttons */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: "12px",
+                  justifyContent: "flex-end",
+                }}
               >
-                Discard
-              </button>
+                <button
+                  onClick={handleDiscardChanges}
+                  disabled={isSaving}
+                  style={{
+                    padding: "10px 20px",
+                    border: `1px solid ${theme.cardBorder}`,
+                    backgroundColor: theme.buttonBg,
+                    color: theme.textPrimary,
+                    borderRadius: "6px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Discard
+                </button>
+                <button
+                  onClick={handleSaveLevel}
+                  disabled={isSaving}
+                  style={{
+                    padding: "10px 24px",
+                    border: "none",
+                    backgroundColor: isDark ? "#0284c7" : "#0f1f3d",
+                    color: isDark ? "#ffffff" : "white",
+                    borderRadius: "6px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  {isSaving ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1100,54 +1609,129 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
 
       {/* EDIT TIME MODAL */}
       {isEditModalOpen && (
-        <div className="modal-backdrop">
-          <div className="edit-modal-card">
-            <div className="edit-modal-header">
-              <div className="edit-icon-badge">
-                <AccessTimeIcon fontSize="small" />
-              </div>
-              <h2>Edit Time Slot</h2>
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 999,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: theme.cardBg,
+              border: `1px solid ${theme.cardBorder}`,
+              borderRadius: "12px",
+              width: "380px",
+              padding: "24px",
+              boxShadow: "0 10px 25px rgba(0,0,0,0.5)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "20px",
+              }}
+            >
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: "18px",
+                  color: theme.textPrimary,
+                }}
+              >
+                Edit Time Slot
+              </h2>
               <CloseIcon
-                className="edit-modal-close"
                 onClick={() => setIsEditModalOpen(false)}
+                style={{ cursor: "pointer", color: theme.textSecondary }}
               />
             </div>
-            <div className="edit-modal-body">
-              <div className="edit-form-group">
-                <label>START TIME</label>
-                <div className="edit-time-input">
-                  <AccessTimeIcon className="edit-time-icon" />
-                  <input
-                    type="text"
-                    placeholder="8:00:00"
-                    value={editStartTime}
-                    onChange={(e) => setEditStartTime(e.target.value)}
-                  />
-                </div>
+
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+            >
+              <div>
+                <label
+                  style={{
+                    fontSize: "12px",
+                    color: theme.textSecondary,
+                    display: "block",
+                    marginBottom: "4px",
+                  }}
+                >
+                  START TIME
+                </label>
+                <input
+                  type="text"
+                  placeholder="8:00:00"
+                  value={editStartTime}
+                  onChange={(e) => setEditStartTime(e.target.value)}
+                  style={commonInputStyle}
+                />
               </div>
-              <div className="edit-form-group">
-                <label>END TIME</label>
-                <div className="edit-time-input">
-                  <AccessTimeIcon className="edit-time-icon" />
-                  <input
-                    type="text"
-                    placeholder="9:00:00"
-                    value={editEndTime}
-                    onChange={(e) => setEditEndTime(e.target.value)}
-                  />
-                </div>
+
+              <div>
+                <label
+                  style={{
+                    fontSize: "12px",
+                    color: theme.textSecondary,
+                    display: "block",
+                    marginBottom: "4px",
+                  }}
+                >
+                  END TIME
+                </label>
+                <input
+                  type="text"
+                  placeholder="9:00:00"
+                  value={editEndTime}
+                  onChange={(e) => setEditEndTime(e.target.value)}
+                  style={commonInputStyle}
+                />
               </div>
-              <div className="edit-modal-actions">
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: "12px",
+                  marginTop: "12px",
+                }}
+              >
                 <button
-                  className="edit-btn-cancel"
                   onClick={() => setIsEditModalOpen(false)}
+                  style={{
+                    padding: "8px 16px",
+                    border: `1px solid ${theme.cardBorder}`,
+                    backgroundColor: theme.buttonBg,
+                    color: theme.textPrimary,
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                  }}
                 >
                   Cancel
                 </button>
                 <button
-                  className="edit-btn-update"
                   onClick={handleUpdateTime}
                   disabled={isUpdatingTime}
+                  style={{
+                    padding: "8px 20px",
+                    border: "none",
+                    backgroundColor: "#0284c7",
+                    color: "#ffffff",
+                    borderRadius: "6px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
                 >
                   {isUpdatingTime ? "Updating..." : "Update"}
                 </button>
@@ -1159,27 +1743,96 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
 
       {/* DELETE CONFIRMATION MODAL */}
       {isDeleteModalOpen && (
-        <div className="modal-backdrop">
-          <div className="delete-modal-card">
-            <div className="modal-icon-circle">
-              <DeleteIcon className="modal-trash-icon" />
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 999,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: theme.cardBg,
+              border: `1px solid ${theme.cardBorder}`,
+              borderRadius: "16px",
+              padding: "28px",
+              width: "340px",
+              textAlign: "center",
+              boxShadow: "0 10px 25px rgba(0,0,0,0.5)",
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "rgba(239, 68, 68, 0.15)",
+                width: "50px",
+                height: "50px",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 16px auto",
+              }}
+            >
+              <ErrorOutlineIcon
+                style={{ color: "#ef4444", fontSize: "30px" }}
+              />
             </div>
-            <h2 className="modal-title">
+
+            <h2
+              style={{
+                margin: "0 0 8px 0",
+                fontSize: "20px",
+                color: theme.textPrimary,
+              }}
+            >
               Delete {deleteType === "level" ? "Level" : "Schedule"}?
             </h2>
-            <p className="modal-message">
-              Are you sure you want to delete this {deleteType}?
+            <p
+              style={{
+                color: theme.textSecondary,
+                fontSize: "14px",
+                margin: "0 0 24px 0",
+              }}
+            >
+              Are you sure you want to delete this {deleteType}? This action
+              cannot be undone.
             </p>
-            <div className="modal-action-buttons">
+
+            <div
+              style={{ display: "flex", justifyContent: "center", gap: "12px" }}
+            >
               <button
-                className="btn-modal-cancel"
                 onClick={() => setIsDeleteModalOpen(false)}
+                style={{
+                  padding: "10px 20px",
+                  border: `1px solid ${theme.cardBorder}`,
+                  backgroundColor: theme.buttonBg,
+                  color: theme.textPrimary,
+                  borderRadius: "6px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
               >
                 Cancel
               </button>
               <button
-                className="btn-modal-delete"
                 onClick={handleDeleteConfirm}
+                style={{
+                  padding: "10px 24px",
+                  border: "none",
+                  backgroundColor: "#ef4444",
+                  color: "#ffffff",
+                  borderRadius: "6px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
               >
                 Delete
               </button>
@@ -1190,19 +1843,68 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
 
       {/* ADD SCHEDULE MODAL */}
       {isAddScheduleOpen && (
-        <div className="modal-backdrop">
-          <div className="schedule-modal-card">
-            <div className="schedule-modal-header">
-              <div className="schedule-icon-badge">
-                <CalendarMonthOutlinedIcon fontSize="small" />
-              </div>
-              <h2>Add Training Schedule</h2>
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 999,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: theme.cardBg,
+              border: `1px solid ${theme.cardBorder}`,
+              borderRadius: "12px",
+              width: "400px",
+              padding: "24px",
+              boxShadow: "0 10px 25px rgba(0,0,0,0.5)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "20px",
+              }}
+            >
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: "18px",
+                  color: theme.textPrimary,
+                }}
+              >
+                Add Training Schedule
+              </h2>
+              <CloseIcon
+                onClick={() => setIsAddScheduleOpen(false)}
+                style={{ cursor: "pointer", color: theme.textSecondary }}
+              />
             </div>
-            <div className="schedule-modal-form">
-              <div className="modal-form-group">
-                <label>DATE SELECTION</label>
+
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+            >
+              <div>
+                <label
+                  style={{
+                    fontSize: "12px",
+                    color: theme.textSecondary,
+                    display: "block",
+                    marginBottom: "4px",
+                  }}
+                >
+                  DATE SELECTION
+                </label>
                 <select
-                  className="day-select-dropdown"
                   value={selectedDayId}
                   onChange={(e) => {
                     const dayId = e.target.value;
@@ -1210,6 +1912,7 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
                     setSelectedDayId(dayId);
                     setSelectedDay(day?.name || "");
                   }}
+                  style={commonInputStyle}
                 >
                   <option value="">Select Day</option>
                   {daysList.map((day) => (
@@ -1220,36 +1923,55 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
                 </select>
               </div>
 
-              <div className="modal-time-inputs-row">
-                <div className="modal-form-group flex-1">
-                  <label>START TIME</label>
-                  <div className="modal-input-with-icon">
-                    <AccessTimeIcon className="input-inner-icon" />
-                    <input
-                      type="text"
-                      placeholder="1:00:00"
-                      value={startTime}
-                      onChange={(e) => setStartTime(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="modal-form-group flex-1">
-                  <label>END TIME</label>
-                  <div className="modal-input-with-icon">
-                    <AccessTimeIcon className="input-inner-icon" />
-                    <input
-                      type="text"
-                      placeholder="3:00:00"
-                      value={endTime}
-                      onChange={(e) => setEndTime(e.target.value)}
-                    />
-                  </div>
-                </div>
+              <div>
+                <label
+                  style={{
+                    fontSize: "12px",
+                    color: theme.textSecondary,
+                    display: "block",
+                    marginBottom: "4px",
+                  }}
+                >
+                  START TIME
+                </label>
+                <input
+                  type="text"
+                  placeholder="1:00:00"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                  style={commonInputStyle}
+                />
               </div>
 
-              <div className="schedule-modal-actions">
+              <div>
+                <label
+                  style={{
+                    fontSize: "12px",
+                    color: theme.textSecondary,
+                    display: "block",
+                    marginBottom: "4px",
+                  }}
+                >
+                  END TIME
+                </label>
+                <input
+                  type="text"
+                  placeholder="3:00:00"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                  style={commonInputStyle}
+                />
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: "12px",
+                  marginTop: "12px",
+                }}
+              >
                 <button
-                  className="btn-schedule-cancel"
                   onClick={() => {
                     setIsAddScheduleOpen(false);
                     setSelectedDay("");
@@ -1257,13 +1979,29 @@ const CourseManagementDetail = ({ courseId, onBack }) => {
                     setStartTime("");
                     setEndTime("");
                   }}
+                  style={{
+                    padding: "8px 16px",
+                    border: `1px solid ${theme.cardBorder}`,
+                    backgroundColor: theme.buttonBg,
+                    color: theme.textPrimary,
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                  }}
                 >
                   Cancel
                 </button>
                 <button
-                  className="btn-schedule-create"
                   onClick={handleAddSchedule}
                   disabled={isAddingSchedule}
+                  style={{
+                    padding: "8px 20px",
+                    border: "none",
+                    backgroundColor: isDark ? "#282828" : "#0f1f3d",
+                    color: isDark ? "#ffffff" : "white",
+                    borderRadius: "6px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
                 >
                   {isAddingSchedule ? "Creating..." : "Create"}
                 </button>

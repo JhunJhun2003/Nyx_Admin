@@ -1,21 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useGetClassVenue } from "../ClassApi";
 import "../classCss/classvenuemanagement.css";
 import StadiumIcon from "@mui/icons-material/StadiumOutlined";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useOutletContext } from "react-router-dom";
 import AddIcon from "@mui/icons-material/AddOutlined";
 import EditIcon from "@mui/icons-material/ModeEditOutlineOutlined";
-import Switch from "@mui/material/Switch";
 import DotIcon from "@mui/icons-material/FiberManualRecord";
 import ClassVenueAdd from "../ClassComponent/classvenueadd";
 import { useNoti } from "../Hooks/alert";
+import { Context } from "../Hooks/context";
 
 function VenueManagement() {
+  const contextData = useContext(Context);
+  const outletContext = useOutletContext();
+  const isDark =
+    outletContext?.isDark ?? contextData?.classBackColor === "#1A1C1E";
+
   const [venue_id, setvenue_id] = useState(null);
   const [index, setindex] = useState(0);
-  const [venue_index, setvenue_index] = useState(0);
 
-  //for popup box
+  // for popup box
   const [show, setshow] = useState(false);
   const [info, setinfo] = useState(null);
 
@@ -54,29 +58,29 @@ function VenueManagement() {
         await GetCourts(venue_id);
         opensuccess(
           "Action Successful",
-          `The Court is successfully ${item.court_active == true ? "Closed" : "Opened"}`,
+          `The Court is successfully ${
+            item.court_active === true ? "Closed" : "Opened"
+          }`,
         );
       } else {
         openerror("Something went wrong");
       }
     } catch (err) {
-      openerror("Cannot connect with sever");
+      openerror("Cannot connect with server");
       console.log(err);
     }
   }
 
-  //venue change
+  // venue change
   async function venue_change(id) {
-    console.log("function work p");
     setvenue_id(id);
     openloading();
     await GetCourts(id);
     close();
-    console.log(Courts);
   }
 
   return (
-    <div className="venuemain">
+    <div className={`venuemain ${isDark ? "dark-mode" : ""}`}>
       {show && (
         <ClassVenueAdd
           data={{
@@ -93,29 +97,28 @@ function VenueManagement() {
       )}
       {Loading}
       <div className="venueheader">
-        <StadiumIcon className="venueicon" />
-        <h1>Venue Management</h1>
+        <StadiumIcon
+          className="venueicon"
+          style={{ fontSize: "35px", marginRight: "5px" }}
+        />
+        <h1 style={{ fontSize: "30px" }}>Venue Management</h1>
       </div>
+
       <div className="venuebody">
         <span className="venuebodyheader">
           <p>Existing Courts</p>
-          <p style={{ fontWeight: 500 }}>Veiw All 🠢</p>
+          <p className="view-all-btn">View All 🠢</p>
         </span>
         <div className="venuebodycourt">
           {Array.isArray(Venue.data) ? (
             Venue.data.length > 0 ? (
               Venue.data.map((item, index) => {
+                const isSelected = venue_id === item.id;
                 return (
                   <div
-                    className="venuecourt"
+                    className={`venuecourt ${isSelected ? "selected-court" : ""}`}
                     key={index}
-                    onClick={() => {
-                      venue_change(item.id);
-                    }}
-                    style={{
-                      borderBottom:
-                        venue_id == item.id ? "1px solid #8a2be2" : "",
-                    }}
+                    onClick={() => venue_change(item.id)}
                   >
                     {item.available ? (
                       <p className="available">
@@ -128,7 +131,7 @@ function VenueManagement() {
                         INACTIVE
                       </p>
                     )}
-                    <img src={item.venue_image_url} />
+                    <img src={item.venue_image_url} alt={item.venue_name} />
                     <div className="venuecourttext">
                       <span className="venuecourtdetail">
                         <h3>{item.venue_name}</h3>
@@ -143,10 +146,9 @@ function VenueManagement() {
                             setinfo(item);
                             setshow(true);
                           }}
+                          title="Edit Venue"
                         >
-                          <EditIcon
-                            sx={{ color: "#000000", fontSize: "15px" }}
-                          />
+                          <EditIcon className="edit-icon" />
                         </button>
                       </span>
                     </div>
@@ -168,6 +170,7 @@ function VenueManagement() {
           ) : (
             <h3>Loading..</h3>
           )}
+
           <div
             className="addvenuecourt"
             onClick={() => {
@@ -176,10 +179,11 @@ function VenueManagement() {
             }}
           >
             <AddIcon />
-            <p style={{ color: "#5E5E5E" }}>Add New Venue</p>
+            <p>Add New Venue</p>
           </div>
         </div>
       </div>
+
       <div className="venuefooter">
         <div className="venuefooterheader">
           <h3>Active Courts</h3>
@@ -237,9 +241,7 @@ function VenueManagement() {
             ) : (
               <div
                 className="addcourt"
-                onClick={() => {
-                  navigate("classaddcourt");
-                }}
+                onClick={() => navigate("classaddcourt")}
               >
                 <AddIcon />
                 <p>Add New Court</p>
@@ -250,6 +252,7 @@ function VenueManagement() {
           )}
         </div>
       </div>
+
       <div>
         <Outlet
           context={{
@@ -257,10 +260,12 @@ function VenueManagement() {
             index: index,
             venue_id: venue_id,
             GetCourts: GetCourts,
+            isDark: isDark,
           }}
         />
       </div>
     </div>
   );
 }
+
 export default VenueManagement;

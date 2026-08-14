@@ -197,7 +197,7 @@ function AddOrder() {
         </button>
       </div>
       <div className="addorderbody">
-        <h3 className="addordertitle">Create New Order</h3>
+        <h3 className="addordertitle">Create New Orderr</h3>
         <div className="addorderbody1">
           <div className="addorderreciept">
             <p>Receipt No</p>

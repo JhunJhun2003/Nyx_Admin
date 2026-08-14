@@ -1,195 +1,258 @@
+/* Base Container */
 .cbsmain {
-  padding: 1em;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: "Work Sans", "Segoe UI", sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
+
+/* Header */
 .cbsheader {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
+  font-family: Belanosima;
+  font-size: 20px;
+  font-family: "Work Sans", sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  margin: 0;
 }
-.cbsheader h2 {
-  font-family: Work Sans;
-  font-weight: 600;
-  font-size: 25px;
-}
-.cbstitle {
-  display: flex;
-  width: 100%;
-  flex-wrap: nowrap;
-  gap: 10px;
-  overflow-x: scroll;
-}
-.cbstitle h3 {
-  font-family: Work Sans;
-  /* color: #000000; */
-  text-transform: uppercase;
-  font-size: smaller;
-  font-weight: 500;
-  padding: 5px 10px;
-  color: #1b263b;
-}
-.activevenue {
-  color: #000000;
-  font-weight: bold !important;
-  border-bottom: 2px solid black;
-  font-size: small !important;
-}
-.cbsbody1 {
-  width: 100%;
-}
-.cbsbody {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(30%, 30%));
-  gap: 10px;
-}
-.cbscontent {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  padding-bottom: 2em;
-  height: 170px;
-  gap: 5px;
-  border-radius: 5px;
-  background-color: #ffffff;
-  border: 1px solid rgba(27, 38, 59, 0.281);
-}
-.cbscontenttext {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-}
-.cbscontenttext h4 {
-  color: #4ade80;
-  font-family: Work Sans;
-  font-size: 13px;
-  padding: 5px;
-}
-.cbscontenttext p {
-  background-color: #22c55e50;
-  font-family: Work Sans;
-  font-size: 13px;
-  color: #4ade80;
-  font-weight: 500;
-  border-radius: 3px;
-  padding: 5px;
-}
-.cbscontentimg {
-  width: 100%;
-  align-self: center;
-  height: 100px;
-  border: 1px solid #f7f3f2;
-  border-radius: 3px;
-}
-.cbscontentimg img {
-  width: 100%;
-  height: 100%;
-  border-radius: 3px;
-}
-/* for side bar*/
 
 .cbslayout {
   display: flex;
   width: 100%;
-  gap: 10px;
+  gap: 20px;
 }
-.cbsside {
-  width: 400px;
-  height: 90vh;
-  background-color: #ffffff;
-  border-radius: 10px;
-  border: 1px solid #1b263b;
-  padding: 1em;
+
+.cbsbody1 {
+  flex: 1;
+  width: 100%;
+}
+
+/* Venue Tabs */
+.cbstitle {
+  display: flex;
+  width: 100%;
+  flex-wrap: nowrap;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.cbstitle::-webkit-scrollbar {
+  height: 4px;
+}
+
+.cbstitle::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+.cbstitle h3 {
+  font-family: "Work Sans", sans-serif;
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  color: #64748b;
+  cursor: pointer;
+  border-radius: 6px;
+  margin: 0;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.cbstitle h3:hover {
+  color: #0f172a;
+  background-color: #f1f5f9;
+}
+
+.activevenue {
+  color: #2563eb !important;
+  font-weight: 700 !important;
+  background-color: #eff6ff !important;
+  border-bottom: 2px solid #2563eb;
+}
+
+/* Responsive Cards Grid */
+.cbsbody {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 16px;
+}
+
+/* Modern Card Design */
+.cbscontent {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 15px;
+  padding: 16px;
+  height: 220px;
+  gap: 12px;
+  border-radius: 14px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.04),
+    0 2px 4px -2px rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
 }
+
+.cbscontent:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 12px 20px -4px rgba(0, 0, 0, 0.08),
+    0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  border-color: #3b82f6;
+}
+
+/* Card Header Text & Status Badge */
+.cbscontenttext {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cbscontenttext h4 {
+  color: #0f172a;
+  font-family: "Work Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.cbscontenttext p {
+  background-color: #dcfce7;
+  font-family: "Work Sans", sans-serif;
+  font-size: 11px;
+  color: #16a34a;
+  font-weight: 700;
+  border-radius: 20px;
+  padding: 4px 10px;
+  margin: 0;
+  letter-spacing: 0.5px;
+  border: 1px solid #bbf7d0;
+}
+
+/* Card Image Wrapper & Zoom Effect */
+.cbscontentimg {
+  width: 100%;
+  height: 140px;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #f1f5f9;
+}
+
+.cbscontentimg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ပုံရိပ် မတွန့်ဘဲ အဆင်ပြေစွာ ကွက်တိဝင်စေရန် */
+  transition: transform 0.3s ease;
+}
+
+.cbscontent:hover .cbscontentimg img {
+  transform: scale(1.05);
+}
+
+/* Side Drawer Schedule */
+.cbsside {
+  width: 380px;
+  height: calc(100vh - 120px);
+  position: sticky;
+  top: 20px;
+  background-color: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
 .cbssideheader {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .cbssideheader h3 {
-  font-family: Work Sans;
-  font-size: 16px;
+  font-family: "Work Sans", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
 }
+
 .cbssideheader button {
   border: none;
   outline: none;
-  background-color: initial;
-}
-.cbssidebody {
-  width: 100%;
+  background: #f1f5f9;
+  color: #64748b;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.ordernow {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  background-color: #f7f3f2;
-  border-radius: 5px;
-  padding: 10px 7px;
-  border: 1px solid #1b263b52;
-}
-.ordernow button {
-  background-color: initial;
-  border: none;
-  outline: none;
-  font-family: Work Sans;
-  font-size: 12px;
-  font-weight: 500;
-}
-.ordernow h4 {
-  font-family: Work Sans;
-  font-size: 14px;
-  font-weight: 500;
-}
-.unorder {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  background-color: #e3061523;
-  border-radius: 5px;
-  padding: 10px 7px;
-  border: 1px solid #e30613;
-}
-.unorder button {
-  background-color: initial;
-  border: none;
-  outline: none;
-}
-.unorder h4 {
-  font-family: Work Sans;
-  font-size: 14px;
-  font-weight: 500;
-  color: #e30615c9;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
-/*for date picker*/
+.cbssideheader button:hover {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Date Picker Component */
 .datepicker {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ecf5fe;
+  background-color: #eff6ff;
   border-radius: 10px;
-  padding: 12px 16px;
+  padding: 10px 14px;
   width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #dbeafe;
 }
+
 .dpbtn {
-  background: none;
-  border: none;
+  background: #ffffff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
   cursor: pointer;
-  color: #0058be;
+  color: #2563eb;
   display: flex;
   align-items: center;
-  padding: 8px;
-  transition: opacity 0.2s;
+  justify-content: center;
+  padding: 6px;
+  transition: all 0.2s ease;
 }
+
+.dpbtn:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
 .dpdiv {
   display: flex;
   flex-direction: column;
@@ -197,19 +260,266 @@
   text-align: center;
   user-select: none;
 }
+
 .dbtoday {
-  font-size: 0.65rem;
-  color: #94a3b8;
-  font-weight: 700;
+  font-size: 10px;
+  color: #2563eb;
+  font-weight: 800;
   letter-spacing: 0.08em;
-  margin-bottom: 2px;
   text-transform: uppercase;
-  font-family: Work Sans;
 }
+
 .dbtoday2 {
-  font-size: 15px;
-  color: #141d23;
+  font-size: 14px;
+  color: #1e293b;
   margin: 0;
-  font-weight: 500;
-  font-family: Work Sans;
+  font-weight: 600;
+}
+
+/* Side Body Slots */
+.cbssidebody {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.cbssidebody::-webkit-scrollbar {
+  width: 4px;
+}
+
+.cbssidebody::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+/* Time Slot Item - Available */
+.ordernow {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8fafc;
+  border-radius: 10px;
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.ordernow:hover {
+  border-color: #cbd5e1;
+}
+
+.ordernow h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  margin: 0;
+}
+
+.ordernowbtn {
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  outline: none;
+  font-family: "Work Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.ordernowbtn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Time Slot Item - Locked / Booked */
+.unorder {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fef2f2;
+  border-radius: 10px;
+  padding: 10px 14px;
+  border: 1px solid #fecaca;
+  box-sizing: border-box;
+}
+
+.unorder h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #dc2626;
+  margin: 0;
+}
+
+.lock {
+  background: transparent;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================
+   DARK MODE STYLES (.dark-mode Class ပါလာပါက)
+   ========================================== */
+
+.cbsmain.dark-mode,
+.dark-mode .cbsmain {
+  background-color: #0b1329;
+  color: #f8fafc;
+}
+
+.cbsmain.dark-mode .cbsheader,
+.dark-mode .cbsheader {
+  color: #f8fafc;
+}
+
+/* Dark Mode Venue Tabs */
+.cbsmain.dark-mode .cbstitle,
+.dark-mode .cbstitle {
+  border-bottom-color: #1e293b;
+}
+
+.cbsmain.dark-mode .cbstitle h3,
+.dark-mode .cbstitle h3 {
+  color: #94a3b8;
+}
+
+.cbsmain.dark-mode .cbstitle h3:hover,
+.dark-mode .cbstitle h3:hover {
+  color: #ffffff;
+  background-color: #1e293b;
+}
+
+.cbsmain.dark-mode .activevenue,
+.dark-mode .activevenue {
+  color: #38bdf8 !important;
+  background-color: #0f172a !important;
+  border-bottom-color: #38bdf8;
+}
+
+/* Dark Mode Cards */
+.cbsmain.dark-mode .cbscontent,
+.dark-mode .cbscontent {
+  background-color: #1e1e1e;
+  border-color: #1e293b;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+.cbsmain.dark-mode .cbscontent:hover,
+.dark-mode .cbscontent:hover {
+  border-color: #38bdf8;
+  box-shadow: 0 10px 20px -4px rgba(0, 0, 0, 0.5);
+}
+
+.cbsmain.dark-mode .cbscontenttext h4,
+.dark-mode .cbscontenttext h4 {
+  color: #f8fafc;
+}
+
+.cbsmain.dark-mode .cbscontenttext p,
+.dark-mode .cbscontenttext p {
+  background-color: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.cbsmain.dark-mode .cbscontentimg,
+.dark-mode .cbscontentimg {
+  background-color: #1e293b;
+}
+
+/* Dark Mode Side Schedule */
+.cbsmain.dark-mode .cbsside,
+.dark-mode .cbsside {
+  background-color: #1e1e1e;
+  border-color: #1e293b;
+}
+
+.cbsmain.dark-mode .cbssideheader h3,
+.dark-mode .cbssideheader h3 {
+  color: #f8fafc;
+}
+
+.cbsmain.dark-mode .cbssideheader button,
+.dark-mode .cbssideheader button {
+  background-color: #1e293b;
+  color: #94a3b8;
+}
+
+.cbsmain.dark-mode .cbssideheader button:hover,
+.dark-mode .cbssideheader button:hover {
+  background-color: #334155;
+  color: #ffffff;
+}
+
+/* Dark Mode Date Picker */
+.cbsmain.dark-mode .datepicker,
+.dark-mode .datepicker {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+.cbsmain.dark-mode .dpbtn,
+.dark-mode .dpbtn {
+  background-color: #0f172a;
+  border-color: #334155;
+  color: #38bdf8;
+}
+
+.cbsmain.dark-mode .dpbtn:hover,
+.dark-mode .dpbtn:hover {
+  background-color: #38bdf8;
+  color: #0f172a;
+}
+
+.cbsmain.dark-mode .dbtoday,
+.dark-mode .dbtoday {
+  color: #38bdf8;
+}
+
+.cbsmain.dark-mode .dbtoday2,
+.dark-mode .dbtoday2 {
+  color: #f8fafc;
+}
+
+/* Dark Mode Time Slots */
+.cbsmain.dark-mode .ordernow,
+.dark-mode .ordernow {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+.cbsmain.dark-mode .ordernow h4,
+.dark-mode .ordernow h4 {
+  color: #e2e8f0;
+}
+
+.cbsmain.dark-mode .ordernowbtn,
+.dark-mode .ordernowbtn {
+  background-color: #0284c7;
+}
+
+.cbsmain.dark-mode .ordernowbtn:hover,
+.dark-mode .ordernowbtn:hover {
+  background-color: #0369a1;
+}
+
+.cbsmain.dark-mode .unorder,
+.dark-mode .unorder {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.cbsmain.dark-mode .unorder h4,
+.dark-mode .unorder h4 {
+  color: #f87171;
 }

@@ -2,14 +2,23 @@ import SearchIcon from "@mui/icons-material/SearchSharp";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import "../classCss/classbookinglist.css";
 import { useGetClassBooking } from "../ClassApi";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import Default from "../images/Vector.png";
 import { useClassReceipt } from "./ClassReceipt";
 import { useNoti } from "../Hooks/alert";
 import * as XLSX from "xlsx";
 import Swal from "sweetalert2";
 import { useTableFooter } from "../Hooks/tablefooter";
+import { useOutletContext } from "react-router-dom";
+import { Context } from "../Hooks/context";
 
 function ClassLoaclBooking() {
+  // Theme context နှင့် outlet context ယူခြင်း
+  const contextData = useContext(Context);
+  const outletContext = useOutletContext();
+  const isDark =
+    outletContext?.isDark ?? contextData?.classBackColor === "#1A1C1E";
+
   const [text, settext] = useState("");
   const [filtered, setfiltered] = useState(null);
 
@@ -22,7 +31,6 @@ function ClassLoaclBooking() {
   useEffect(() => {
     GetLocalBooking();
   }, []);
-  console.log(ClassLocalBookings);
 
   useEffect(() => {
     let result = ClassLocalBookings?.data;
@@ -30,9 +38,9 @@ function ClassLoaclBooking() {
       if (text.trim() != "") {
         result = result.filter((item) => {
           return (
-            item.venue_name.toLowerCase().includes(text.toLowerCase()) ||
-            item.court_name.toLowerCase().includes(text.toLowerCase()) ||
-            item.payment_method.toLowerCase().includes(text.toLowerCase())
+            item.venue_name?.toLowerCase().includes(text.toLowerCase()) ||
+            item.court_name?.toLowerCase().includes(text.toLowerCase()) ||
+            item.payment_method?.toLowerCase().includes(text.toLowerCase())
           );
         });
       }
@@ -40,7 +48,7 @@ function ClassLoaclBooking() {
     setfiltered(result);
   }, [text, ClassLocalBookings?.data]);
 
-  //for img preview
+  // Image preview function
   const showImagePreview = (imageUrl) => {
     if (!imageUrl) return;
     Swal.fire({
@@ -48,7 +56,7 @@ function ClassLoaclBooking() {
       imageAlt: "Payment Proof",
       showConfirmButton: false,
       showCloseButton: false,
-      background: "transparent",
+      background: isDark ? "#1e1e1e" : "#ffffff",
       customClass: {
         image: "preview-image-style",
       },
@@ -56,48 +64,40 @@ function ClassLoaclBooking() {
   };
 
   function show_reciept(item) {
-    console.log(item);
     let rental_fee = 0;
     if (Array.isArray(item.items) && item.items.length > 0) {
       rental_fee = item.items.reduce((total, current) => {
         return total + Number(current.price) * Number(current.quantity);
       }, 0);
     }
-    open({
-      order_no: item.id.toString().padStart(4, "0"),
-      payment: item?.payment_method || "Cash",
-      Date: item?.date,
-      Time: new Date(item.create_at).toLocaleTimeString(),
-      court_fee: item?.Court_Fee || 0,
-      rental_fee: rental_fee,
-      total_amount: item?.Total || 0,
-    });
+
+    // open ခေါ်ယူခြင်း (isDark သေချာစွာ ဖြတ်ပေးထားပါသည်)
+    open(
+      {
+        order_no: item.id.toString().padStart(4, "0"),
+        payment: item?.payment_method || "Cash",
+        Date: item?.date,
+        Time: item?.create_at
+          ? new Date(item.create_at).toLocaleTimeString()
+          : "------------",
+        court_fee: item?.Court_Fee || 0,
+        rental_fee: rental_fee,
+        total_amount: item?.Total || 0,
+      },
+      isDark,
+    );
   }
 
   async function ExportTable() {
     alert("Please Read the documentation(document.txt) or comment");
     if (!filtered) return;
-    return; // here,the row and cell are different according to customer wish.,so , ask him first and modify here;
-    let formattedData = filtered.map((item) => ({
-      "Order Id": item.order_id,
-      Customer: item.customer_name,
-      Amount: item.Total,
-      Date: item.Date,
-      Time: item.Time,
-      Payment: item.payment_method,
-      "Order Status": item.order_status,
-    }));
-    const worksheet = XLSX.utils.json_to_sheet(formattedData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sales Report");
-    XLSX.writeFile(workbook, "sales-report.xlsx");
+    return;
   }
 
   const changetext = (e) => {
     settext(e.target.value);
   };
 
-  //delete booking function
   async function delete_booking(id) {
     let isconfirm = await openconfirm();
     if (!isconfirm) return;
@@ -116,39 +116,63 @@ function ClassLoaclBooking() {
         openerror("Something went wrong");
       }
     } catch (err) {
-      openerror("Cannot connect with sever");
+      openerror("Cannot connect with server");
     }
   }
 
   return (
-    <div className="mbmain">
+    <div className={`mbmain ${isDark ? "dark-mode" : ""}`}>
       {ClassReceipetJsx}
       {Loading}
       <div className="mb1">
-        <h2>Top Booking</h2>
-        <div className="mb2">
-          <input type="search" placeholder="Search..." onChange={changetext} />
-          <SearchIcon sx={{ color: "white" }} />
+        <h2 style={{ color: isDark ? "#ffffff" : "#111827" }}>Top Booking</h2>
+        <div
+          className="mb2"
+          style={{
+            backgroundColor: isDark ? "#2a2d32" : "#ffffff",
+            border: `1px solid ${isDark ? "#3f444e" : "#ccc"}`,
+          }}
+        >
+          <input
+            type="search"
+            placeholder="Search..."
+            onChange={changetext}
+            style={{
+              color: isDark ? "#ffffff" : "#000000",
+              backgroundColor: "transparent",
+            }}
+          />
+          <SearchIcon sx={{ color: isDark ? "#94a3b8" : "gray" }} />
         </div>
-        <button onClick={ExportTable}>
+        <button
+          onClick={ExportTable}
+          style={{ background: isDark ? "#2563eb" : "#0D1B2A", color: "#fff" }}
+        >
           <SaveAltIcon sx={{ fontSize: "20px" }} />
           Export
         </button>
       </div>
-      <div className="mobilebookingtablewaper ">
+      <div className="mobilebookingtablewaper">
         <div className="mb3">
-          <table className="mb4">
-            <thead>
+          <table
+            className="mb4"
+            style={{ color: isDark ? "#e2e8f0" : "#111827" }}
+          >
+            <thead
+              style={{
+                backgroundColor: isDark ? "#1e293b" : "#f1f5f9",
+                color: isDark ? "#f8fafc" : "#000000",
+              }}
+            >
               <tr>
                 <th>
                   Booking <br />
                   No
                 </th>
-                <th>Reciept</th>
+                <th>Receipt</th>
                 <th>
                   Venue /<br /> Court
                 </th>
-
                 <th>Equipment</th>
                 <th>Date</th>
                 <th>Time</th>
@@ -169,7 +193,7 @@ function ClassLoaclBooking() {
                     return (
                       <tr key={index}>
                         <td>#{item.id.toString().padStart(4, "0")}</td>
-                        <td>{item.reciept_no}</td>
+                        <td>{item.reciept_no || "---"}</td>
                         <td>
                           {item.venue_name}/ <br />
                           {item.court_name}
@@ -177,17 +201,21 @@ function ClassLoaclBooking() {
                         <td className="specialrow">
                           {Array.isArray(item.items) && item.items.length > 0
                             ? item.items
-                                .map((childitem, index) => {
-                                  return childitem.equipment
-                                    ? childitem.equipment || "--------------"
-                                    : "-----------------";
-                                })
+                                .map((childitem) =>
+                                  childitem.equipment
+                                    ? childitem.equipment
+                                    : "-----------------",
+                                )
                                 .join(", ")
                             : "--------------"}
                         </td>
                         <td>{item.date}</td>
-                        <td>{new Date(item.create_at).toLocaleTimeString()}</td>
-                        <td>{item.Total || "00000"} ks</td>
+                        <td>
+                          {item.create_at
+                            ? new Date(item.create_at).toLocaleTimeString()
+                            : "------------"}
+                        </td>
+                        <td>{item.Total || "0"} ks</td>
                         <td>{item.payment_method}</td>
                         <td>
                           <div className="specialdiv">
@@ -196,16 +224,23 @@ function ClassLoaclBooking() {
                               onClick={() =>
                                 showImagePreview(item.payment_image_url)
                               }
+                              alt="proof"
                             />
                           </div>
                         </td>
                         <td>
                           <div className="specialdiv1">
-                            <button onClick={() => show_reciept(item)}>
+                            <button
+                              onClick={() => show_reciept(item)}
+                              style={{
+                                border: "1.5px solid #16a34a",
+                                background: "transparent",
+                                color: "#16a34a",
+                                borderRadius: "6px",
+                                cursor: "pointer",
+                              }}
+                            >
                               view
-                            </button>
-                            <button onClick={() => delete_booking(item.id)}>
-                              cancel
                             </button>
                           </div>
                         </td>
@@ -226,9 +261,6 @@ function ClassLoaclBooking() {
                   </td>
                 </tr>
               )}
-              <tr>
-                <td colSpan={10}></td>
-              </tr>
             </tbody>
           </table>
         </div>
@@ -237,4 +269,5 @@ function ClassLoaclBooking() {
     </div>
   );
 }
+
 export default ClassLoaclBooking;

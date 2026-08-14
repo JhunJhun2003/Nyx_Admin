@@ -12,6 +12,10 @@
   gap: 3px;
   font-family: Belanosima;
   font-size: 20px;
+  font-family: "Work Sans", sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  margin: 0;
 }
 .bltitle {
   display: flex;
@@ -26,7 +30,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  border-radius: 5px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 .bltitle div span {
   width: 100%;
@@ -45,33 +50,28 @@
   font-family: Work Sans;
 }
 .blswitch {
-  width: 600px;
-  border-radius: 10px;
-  margin-top: 10px;
+  border-radius: 8px;
+  margin-top: 5px;
   width: 240px;
   display: flex;
+  background-color: #e2e8f0;
+  padding: 3px;
 }
 .blswitch a {
-  padding: 10px 10px;
+  padding: 8px 10px;
   width: 50% !important;
   text-align: center;
-  background-color: #ffffff;
   text-decoration: none;
-  color: #0d1b2a;
+  color: #475569;
   font-size: small;
   font-family: Inter;
-}
-.blswitch :first-child {
-  border-top-left-radius: 7px;
-  border-bottom-left-radius: 7px;
-}
-.blswitch :last-child {
-  border-top-right-radius: 7px;
-  border-bottom-right-radius: 7px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
 }
 .blswitch a.active {
   background-color: #0d1b2a;
   color: white;
+  font-weight: 600;
 }
 
 /*for mobile order and local order*/
@@ -80,10 +80,12 @@
   flex-direction: column;
   border-radius: 10px;
   background-color: #ffffff;
-  padding: 10px;
+  padding: 15px;
   width: 100%;
-  height: 62vh;
+  height: auto;
+  min-height: 62vh;
   overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 .mb1 {
   display: flex;
@@ -100,11 +102,10 @@
   display: flex;
   align-items: center;
   margin-left: auto;
-  border-radius: 10px;
-  padding: 5px 15px;
+  border-radius: 8px;
+  padding: 6px 12px;
   background-color: #0d1b2a;
-  padding-right: 5px;
-  gap: 5px;
+  gap: 8px;
   width: 230px;
   justify-content: space-between;
   color: white;
@@ -112,27 +113,28 @@
 .mb2 input {
   border: none;
   outline: none;
-  background-color: initial;
+  background-color: transparent;
   color: white;
   font-family: Work Sans;
+  width: 100%;
 }
 .mb1 button {
   border: none;
   outline: none;
-  padding: 5px 15px;
+  padding: 6px 20px;
   display: flex;
   align-items: center;
   color: white;
   background-color: #0d1b2a;
-  border-radius: 10px;
+  border-radius: 8px;
   gap: 5px;
+  cursor: pointer;
 }
 .mb3 {
   width: 100%;
   margin-top: 15px;
-  height: 60vh;
-  overflow: scroll;
-  max-height: 80vh;
+  height: 55vh;
+  overflow-y: auto;
 }
 .mb4 {
   width: 100%;
@@ -142,70 +144,141 @@
   position: sticky;
   top: 0;
   background-color: #ffffff;
-  border-bottom: 1px solid #71717a;
+  z-index: 2;
 }
 .mb4 th {
   color: #000000;
   font-weight: 600;
   font-family: Work Sans;
-  font-size: 14px;
-  border-bottom: 1px solid #71717a;
-  text-overflow: clip;
-  padding: 10px;
+  font-size: 13px;
+  border-bottom: 2px solid #e2e8f0;
+  padding: 12px 10px;
   text-align: left;
-  word-break: keep-all;
 }
-
 .mb4 td {
-  padding: 15px 10px !important;
-  text-overflow: ellipsis;
-  line-break: anywhere;
-  height: 20px;
+  padding: 12px 10px !important;
   font-family: Inter;
   color: #52525b;
-  font-size: 12px;
-  border-bottom: 1px solid #71717a;
+  font-size: 13px;
+  border-bottom: 1px solid #f1f5f9;
 }
 .specialdiv {
   width: 50px;
   height: 30px;
-  border-radius: 3px;
-  background-color: rgb(122, 114, 114);
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
 }
 .specialdiv img {
   width: 100%;
   height: 100%;
-  border-radius: 3px;
+  object-fit: cover;
 }
 .specialdiv1 {
   display: flex;
   justify-content: center;
-  gap: 5px;
+  gap: 6px;
 }
 .specialdiv1 button {
   text-align: center;
-  padding: 5px 5px;
+  padding: 5px 8px;
   font-size: 11px;
   font-family: Work Sans;
   border: none;
   outline: none;
-  border-radius: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
 }
 .specialdiv1 :first-child {
-  background-color: #16f90e44;
+  background-color: #10b98122;
+  color: #059669;
   width: 50px;
 }
 .specialdiv1 :last-child {
-  background-color: #c80808be;
-  color: #ffffff;
+  background-color: #ef444422;
+  color: #dc2626;
   width: 50px;
 }
 .mobilebookingtablewaper {
   width: 100%;
   display: flex;
   flex-direction: column;
-  position: relative;
-  height: 60vh;
-  max-height: 80vh;
-  overflow: scroll;
+}
+
+/* =========================================================
+   DARK MODE STYLES (Clean Theme Implementation)
+   ========================================================= */
+
+.blmain.dark-mode {
+  background-color: #1a1c1e;
+  color: #f8fafc;
+}
+
+/* 1. Header Cards Dark Theme */
+.dark-mode .bltitle div {
+  background-color: #242629;
+  border: 1px solid #2e3238;
+}
+.dark-mode .bltitle div span h4 {
+  color: #94a3b8;
+}
+.dark-mode .bltitle div h3 {
+  color: #ffffff;
+}
+
+/* 2. Switch Buttons Dark Theme */
+.dark-mode .blswitch {
+  background-color: #242629;
+  border: 1px solid #2e3238;
+}
+.dark-mode .blswitch a {
+  color: #94a3b8;
+}
+.dark-mode .blswitch a.active {
+  background-color: #0d1b2a;
+  color: #ffffff;
+}
+
+/* 3. Main Container Dark Theme */
+.dark-mode .mbmain {
+  background-color: #242629;
+  border: 1px solid #2e3238;
+}
+
+/* 4. Search and Export Buttons */
+.dark-mode .mb2 {
+  background-color: #1a1c1e;
+  border: 1px solid #333c4d;
+}
+.dark-mode .mb1 button {
+  background-color: #0d1b2a;
+  border: 1px solid #2e3238;
+}
+
+/* 5. Table Dark Theme */
+.dark-mode .mb4 thead {
+  background-color: #1a1c1e;
+}
+.dark-mode .mb4 th {
+  color: #f8fafc;
+  border-bottom: 1px solid #333c4d;
+  background-color: #1a1c1e;
+}
+.dark-mode .mb4 td {
+  color: #cbd5e1;
+  border-bottom: 1px solid #2e3238;
+}
+.dark-mode .mb4 tbody tr:hover {
+  background-color: #2d3138;
+}
+
+/* 6. Status Action Buttons in Dark Mode */
+.dark-mode .specialdiv1 :first-child {
+  background-color: #05966933;
+  color: #34d399;
+}
+.dark-mode .specialdiv1 :last-child {
+  background-color: #dc262633;
+  color: #f87171;
 }

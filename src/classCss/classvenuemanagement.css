@@ -1,220 +1,339 @@
+/* 1. Theme Variables Definition */
 .venuemain {
+  --vm-bg: #f8fafc;
+  --vm-card-bg: #ffffff;
+  --vm-card-border: #e2e8f0;
+  --vm-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --vm-text-primary: #0f172a;
+  --vm-text-secondary: #64748b;
+  --vm-text-muted: #94a3b8;
+  --vm-container-bg: rgba(0, 0, 0, 0.03);
+  --vm-btn-border: #cbd5e1;
+  --vm-btn-hover: #f1f5f9;
+  --vm-add-bg: #ffffff;
+  --vm-add-border: #cbd5e1;
+  --vm-add-text: #64748b;
+  --vm-badge-bg: #ffffff;
+  --vm-switch-off: #cbd5e1;
+  --vm-switch-on: #16a34a;
+  --vm-selected-border: #8a2be2;
+
   display: flex;
   flex-direction: column;
-  padding: 10px 1em;
+  padding: 16px 20px;
   width: 100%;
-  height: 100vh;
-  gap: 1em;
-  background-color: #f0f0f0;
+  min-height: 100vh;
+  gap: 1.2em;
+  background-color: var(--vm-bg);
+  color: var(--vm-text-primary);
+  box-sizing: border-box;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
+
+/* Dark Mode Overrides */
+.venuemain.dark-mode {
+  --vm-bg: #121212;
+  --vm-card-bg: #242629;
+  --vm-card-border: #334155;
+  --vm-card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --vm-text-primary: #f8fafc;
+  --vm-text-secondary: #cbd5e1;
+  --vm-text-muted: #94a3b8;
+  --vm-container-bg: rgba(255, 255, 255, 0.03);
+  --vm-btn-border: #475569;
+  --vm-btn-hover: #334155;
+  --vm-add-bg: rgba(30, 41, 59, 0.5);
+  --vm-add-border: #475569;
+  --vm-add-text: #94a3b8;
+  --vm-badge-bg: #0f172a;
+  --vm-switch-off: #475569;
+  --vm-switch-on: #22c55e;
+  --vm-selected-border: #a855f7;
+}
+
+/* Header */
 .venueheader {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
+}
+.venueicon {
+  color: var(--vm-text-primary);
 }
 .venueheader h1 {
   font-weight: 800;
-  font-size: larger;
+  font-size: 1.25rem;
+  color: var(--vm-text-primary);
+  margin: 0;
 }
+
+/* Body Header */
 .venuebody {
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 5px;
+  gap: 8px;
 }
 .venuebodyheader {
   display: flex;
   width: 100%;
   justify-content: space-between;
+  align-items: center;
 }
 .venuebodyheader p {
-  font-family: Inter;
-  font-weight: 800;
-  font-size: medium;
-  color: #000000;
-  padding: 5px;
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--vm-text-primary);
+  margin: 0;
+  padding: 4px 0;
 }
+.venuebodyheader p.view-all-btn {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--vm-text-secondary);
+  cursor: pointer;
+}
+
+/* Venue Horizontal List */
 .venuebodycourt {
   display: flex;
   width: 100%;
-  gap: 10px;
+  gap: 12px;
   overflow-x: auto;
   flex-wrap: nowrap;
-  background-color: #5e5e5e0e;
-  flex-shrink: 0;
-  padding: 5px 0;
+  background-color: var(--vm-container-bg);
+  border-radius: 12px;
+  padding: 8px;
+  box-sizing: border-box;
 }
-.addvenuecourt {
-  display: flex;
-  width: 180px;
-  height: 190px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  border: 1px dashed #c4c6cc;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 10px;
-  cursor: pointer;
-  flex-shrink: 0;
-  position: sticky;
-  right: 0;
-  z-index: 20;
-}
+
+/* Venue Card */
 .venuecourt {
   display: flex;
   flex-direction: column;
   width: 180px;
-  height: 190px;
-  background-color: #ffffff;
+  height: 195px;
+  background-color: var(--vm-card-bg);
   position: relative;
   border-radius: 10px;
-  box-shadow:
-    1px 1px 1px 1px #c4c6cc,
-    -1px 1px 1px #c4c6cc;
+  border: 1px solid var(--vm-card-border);
+  box-shadow: var(--vm-card-shadow);
   flex-shrink: 0;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    border-color 0.2s ease;
 }
+.venuecourt:hover {
+  transform: translateY(-2px);
+}
+.venuecourt.selected-court {
+  border: 2px solid var(--vm-selected-border) !important;
+}
+
 .venuecourt img {
-  width: 180px;
-  height: 130px;
-  border-bottom: 1px solid black;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  width: 100%;
+  height: 125px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--vm-card-border);
+  border-top-left-radius: 9px;
+  border-top-right-radius: 9px;
+}
+
+/* Available/Inactive Badge */
+.available,
+.unavailable {
+  font-size: 10px;
+  position: absolute;
+  z-index: 10;
+  top: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  background-color: var(--vm-badge-bg);
+  border-radius: 12px;
+  font-family: "Work Sans", sans-serif;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 .available {
-  color: green;
-  font-size: 10px;
-  position: absolute;
-  z-index: 10;
-  top: 5%;
-  right: 5%;
-  padding: 5px 10px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  font-family: Work Sans;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
+  color: #16a34a;
 }
 .unavailable {
-  color: red;
-  font-size: 10px;
-  position: absolute;
-  z-index: 10;
-  top: 5%;
-  right: 5%;
-  padding: 5px 10px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  font-family: Work Sans;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
+  color: #ef4444;
 }
+
+/* Venue Card Footer */
 .venuecourttext {
   display: flex;
+  height: 68px;
+  padding: 6px 10px;
+  box-sizing: border-box;
 }
 .venuecourtdetail {
   display: flex;
   flex-direction: column;
-  padding: 10px;
-  gap: 5px;
-  align-items: flex-start;
-  width: 70%;
-  height: 100%;
-}
-.venuecourtbtn {
-  display: flex;
-  width: 30%;
-  height: 100%;
   justify-content: center;
-  align-items: center;
+  gap: 2px;
+  width: 75%;
+}
+.venuecourtdetail h3 {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--vm-text-primary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .venuecourtdetail p {
-  font-family: Inter;
+  font-family: "Inter", sans-serif;
   font-weight: 500;
-  font-size: small;
-  color: #5e5e5e;
+  font-size: 12px;
+  color: var(--vm-text-secondary);
+  margin: 0;
 }
-.venuecourt h3 {
-  font-family: Inter;
-  font-weight: 600;
-  font-size: smaller;
+.venuecourtdetail b {
+  color: var(--vm-text-primary);
+}
+
+.venuecourtbtn {
+  display: flex;
+  width: 25%;
+  justify-content: center;
+  align-items: center;
 }
 .venuecourt button {
-  border: 1px solid #c4c7c7;
+  border: 1px solid var(--vm-btn-border);
   outline: none;
-  background-color: initial;
+  background-color: transparent;
   cursor: pointer;
-  height: 25px;
-  width: 25px;
-  border-radius: 3px;
+  height: 28px;
+  width: 28px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--vm-text-primary);
+  transition: background-color 0.2s ease;
+}
+.venuecourt button:hover {
+  background-color: var(--vm-btn-hover);
+}
+.edit-icon {
+  color: var(--vm-text-primary) !important;
+  font-size: 16px !important;
 }
 
-/*venuecourt footer*/
+/* Add Venue Card */
+.addvenuecourt {
+  display: flex;
+  width: 180px;
+  height: 195px;
+  background-color: var(--vm-add-bg);
+  border-radius: 10px;
+  border: 1.5px dashed var(--vm-add-border);
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: var(--vm-add-text);
+  transition: all 0.2s ease;
+}
+.addvenuecourt:hover {
+  border-color: var(--vm-selected-border);
+  color: var(--vm-text-primary);
+}
+.addvenuecourt p {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  margin: 0;
+  color: inherit;
+}
+
+/* Venue Footer Section (Active Courts) */
 .venuefooter {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 10px;
 }
 .venuefooterheader h3 {
-  font-family: Inter;
+  font-family: "Inter", sans-serif;
   font-weight: 700;
-  padding: 3px 5px;
+  font-size: 1rem;
+  color: var(--vm-text-primary);
+  margin: 0;
 }
 .venuefootercourt {
   display: flex;
   width: 100%;
   flex-wrap: wrap;
-  overflow-y: scroll;
-  gap: 10px;
+  gap: 12px;
 }
+
+/* Court Card */
 .court {
-  padding: 1em 10px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   width: 200px;
-  height: 150px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  border: 1px solid #1b263b;
-  gap: 5px;
+  height: 155px;
+  background-color: var(--vm-card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--vm-card-border);
+  box-shadow: var(--vm-card-shadow);
+  gap: 6px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    border-color 0.2s ease;
+}
+.court:hover {
+  transform: translateY(-2px);
 }
 .court span {
   display: flex;
   width: 100%;
   justify-content: space-between;
-  gap: 3px;
+  align-items: center;
 }
+
 .court1 h3 {
-  font-family: Inter;
+  font-family: "Inter", sans-serif;
   font-weight: 600;
-  font-size: small;
-  color: #a1a1aa;
-  width: 170px;
+  font-size: 13px;
+  color: var(--vm-text-secondary);
+  width: 130px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  margin: 0;
 }
-/*for switch*/
+
+/* Toggle Switch Styling */
 .switch {
   position: relative;
   display: inline-block;
-  width: 35px;
-  height: 18px;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
 }
-
 .switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
-
 .slider {
   position: absolute;
   cursor: pointer;
@@ -222,75 +341,85 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
+  background-color: var(--vm-switch-off);
+  transition: 0.3s;
   border-radius: 20px;
 }
-
 .slider:before {
   position: absolute;
   content: "";
-  height: 12px;
-  width: 12px;
-  left: 2px;
+  height: 14px;
+  width: 14px;
+  left: 3px;
   bottom: 3px;
-  background-color: white;
-  transition: 0.4s;
+  background-color: #ffffff;
+  transition: 0.3s;
   border-radius: 50%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
-
 input:checked + .slider {
-  background-color: #f44336;
+  background-color: var(--vm-switch-on);
+}
+input:checked + .slider:before {
+  transform: translateX(16px);
 }
 
-input:checked + .slider:before {
-  transform: translateX(14px);
-}
-/*________________________________________*/
+/* Court Details Text */
 .court2 h3 {
-  font-family: Inter;
-  font-weight: 400;
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
   font-size: 13px;
-  color: #000000;
+  color: var(--vm-text-primary);
+  margin: 0;
 }
 .court3 {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 .court4 {
-  margin-top: 7px;
+  margin-top: 4px;
 }
 .court3 p,
 .court4 p {
-  font-family: Work Sans;
+  font-family: "Work Sans", sans-serif;
   font-weight: 600;
-  font-size: smaller;
-  color: #000000;
+  font-size: 11px;
+  color: var(--vm-text-secondary);
+  margin: 0;
 }
 .court3 h4,
 .court4 h4 {
-  font-family: Inter;
+  font-family: "Inter", sans-serif;
   font-weight: 600;
-  font-size: small;
-  color: #000000;
+  font-size: 12px;
+  color: var(--vm-text-primary);
+  margin: 0;
 }
+
+/* Add Court Card */
 .addcourt {
   display: flex;
-  width: 150px;
-  height: 150px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  border: 1px dashed #c4c6cc;
+  width: 200px;
+  height: 155px;
+  background-color: var(--vm-add-bg);
+  border-radius: 12px;
+  border: 1.5px dashed var(--vm-add-border);
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
-  z-index: 20;
+  color: var(--vm-add-text);
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+.addcourt:hover {
+  border-color: var(--vm-selected-border);
+  color: var(--vm-text-primary);
 }
 .addcourt p {
-  font-family: Inter;
+  font-family: "Inter", sans-serif;
   font-weight: 500;
-  font-size: small;
-  color: #5e5e5e;
+  font-size: 13px;
+  margin: 0;
+  color: inherit;
 }

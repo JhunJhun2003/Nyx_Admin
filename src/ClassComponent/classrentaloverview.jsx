@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useOutletContext } from "react-router-dom";
 import * as XLSX from "xlsx";
 import html2canvas from "html2canvas";
 
@@ -22,16 +23,25 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import PrintIcon from "@mui/icons-material/Print";
 import CloseIcon from "@mui/icons-material/Close";
 
-// Training Overview ပုံစံအတိုင်း သန့်ရှင်းသပ်ရပ်သော StatCard Component
-const StatCard = ({ title, value, change, icon, iconColor, isCurrent }) => (
+// Dynamic Dark/Light Mode 支持သည့် StatCard Component
+const StatCard = ({
+  title,
+  value,
+  change,
+  icon,
+  iconColor,
+  isCurrent,
+  isDark,
+}) => (
   <div
     style={{
-      background: "#fff",
-      border: "1px solid #e5e7eb",
+      background: isDark ? "#1a1c1e" : "#ffffff",
+      border: `1px solid ${isDark ? "#2e3238" : "#e5e7eb"}`,
       borderRadius: "12px",
       padding: "20px 24px",
       flex: 1,
       minWidth: 0,
+      transition: "all 0.2s ease",
     }}
   >
     <div
@@ -42,15 +52,21 @@ const StatCard = ({ title, value, change, icon, iconColor, isCurrent }) => (
         marginBottom: "8px",
       }}
     >
-      <span style={{ fontSize: "13px", color: "#6b7280", fontWeight: 500 }}>
+      <span
+        style={{
+          fontSize: "13px",
+          color: isDark ? "#94a3b8" : "#6b7280",
+          fontWeight: 500,
+        }}
+      >
         {title}
       </span>
       {isCurrent ? (
         <span
           style={{
             fontSize: "12px",
-            color: "#6b7280",
-            background: "#f3f4f6",
+            color: isDark ? "#94a3b8" : "#6b7280",
+            background: isDark ? "#2a2d32" : "#f3f4f6",
             padding: "2px 8px",
             borderRadius: "4px",
           }}
@@ -67,7 +83,7 @@ const StatCard = ({ title, value, change, icon, iconColor, isCurrent }) => (
       style={{
         fontSize: "22px",
         fontWeight: 700,
-        color: "#111827",
+        color: isDark ? "#f8fafc" : "#111827",
         marginBottom: "6px",
       }}
     >
@@ -92,10 +108,22 @@ const formatDateToDMY = (dateStr) => {
   const parts = dateStr.split("-");
   if (parts.length !== 3) return dateStr;
   const [year, month, day] = parts;
-  return `${day}-${month}-${year}`; // ရက်-လ-နှစ် ပုံစံ ပြောင်းလဲခြင်း
+  return `${day}-${month}-${year}`;
 };
 
-export default function Dashboard() {
+export default function ClassRentalOverview() {
+  // const isDark = true
+  // Parent (ClassOverview/Outlet) ထဲမှ isDark State ကို ယူသုံးခြင်း
+  const outletContext = useOutletContext();
+  const isDark = outletContext?.isDark ?? false;
+
+  // Theme Variables
+  const cardBg = isDark ? "#1a1c1e" : "#ffffff";
+  const borderColor = isDark ? "#2e3238" : "#e5e7eb";
+  const textColor = isDark ? "#f8fafc" : "#111827";
+  const subTextColor = isDark ? "#94a3b8" : "#6b7280";
+  const inputBg = isDark ? "#242629" : "#ffffff";
+
   const [transactions, setTransactions] = useState([]);
   const [overviewData, setOverviewData] = useState({
     totalCourtBooking: 0,
@@ -111,14 +139,13 @@ export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [typeFilter, setTypeFilter] = useState("Mobile"); // Default ကို Mobile သို့မဟုတ် Local ဖြင့် စတင်ရန် ပြင်ဆင်
+  const [typeFilter, setTypeFilter] = useState("Mobile");
   const [currentPage, setCurrentPage] = useState(1);
 
   const [chartStartDate, setChartStartDate] = useState("");
   const [chartEndDate, setChartEndDate] = useState("");
 
-  const itemsPerPage = 5; // Training Overview အတိုင်း Row ၅ ခု စီပြသရန်
-  const proofRef = useRef(null);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     const mobileApiUrl =
@@ -224,7 +251,7 @@ export default function Dashboard() {
   // Filter Transactions Logic
   const filteredRows = useMemo(() => {
     return transactions.filter((item) => {
-      if (item.type !== typeFilter) return false; // Mobile / Local switch အတွက်
+      if (item.type !== typeFilter) return false;
 
       const matchesSearch =
         item.id.toLowerCase().includes(search.toLowerCase()) ||
@@ -288,7 +315,6 @@ export default function Dashboard() {
   };
 
   const handleTriggerPrint = () => {
-    // printable-receipt-content ID ကို ယူရပါမယ်
     const printContent = document.getElementById("printable-receipt-content");
     if (!printContent) return;
 
@@ -305,7 +331,7 @@ export default function Dashboard() {
         <head>
           <title>Print Receipt</title>
           <style>
-            body { font-family: 'Inter', sans-serif; margin: 20px; padding: 0; }
+            body { font-family: 'Inter', sans-serif; margin: 20px; padding: 0; background: #fff; color: #111827; }
             div { display: flex; }
           </style>
         </head>
@@ -326,13 +352,11 @@ export default function Dashboard() {
   };
 
   const handleTriggerDownloadPNG = () => {
-    // ၁။ invoice-modal-content နေရာတွင် printable-receipt-content ဟု ပြောင်းပါ
     const modalElement = document.getElementById("printable-receipt-content");
     if (!modalElement) return;
 
     html2canvas(modalElement, { useCORS: true }).then((canvas) => {
       const link = document.createElement("a");
-      // ၂။ selectedTransaction နေရာတွင် previewImage ဟု ပြောင်းပါ
       link.download = `Invoice_${previewImage?.id || "receipt"}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
@@ -343,10 +367,11 @@ export default function Dashboard() {
     <div
       style={{
         fontFamily: "'Segoe UI', sans-serif",
-        background: "#f3f4f6",
+        background: isDark ? "#121212" : "#f3f4f6",
         minHeight: "100vh",
         padding: "24px",
-        color: "#111827",
+        color: textColor,
+        transition: "background-color 0.2s ease",
       }}
     >
       {/* Stat Cards Row */}
@@ -357,6 +382,7 @@ export default function Dashboard() {
           change="+12%"
           icon={<CalendarMonthIcon sx={{ fontSize: "24px" }} />}
           iconColor="#3b82f6"
+          isDark={isDark}
         />
         <StatCard
           title="RENTAL REVENUE"
@@ -364,6 +390,7 @@ export default function Dashboard() {
           change="+5%"
           icon={<WalletIcon sx={{ fontSize: "24px" }} />}
           iconColor="#10b981"
+          isDark={isDark}
         />
         <StatCard
           title="EQUIPMENT RENTAL"
@@ -371,6 +398,7 @@ export default function Dashboard() {
           change="-3%"
           icon={<LocalMallIcon sx={{ fontSize: "24px" }} />}
           iconColor="#6366f1"
+          isDark={isDark}
         />
         <StatCard
           title="CANTEEN SNACKS"
@@ -378,14 +406,15 @@ export default function Dashboard() {
           change="+4%"
           icon={<LocalMallIcon sx={{ fontSize: "24px" }} />}
           iconColor="#f59e0b"
+          isDark={isDark}
         />
       </div>
 
       {/* Chart Section */}
       <div
         style={{
-          background: "#fff",
-          border: "1px solid #e5e7eb",
+          background: cardBg,
+          border: `1px solid ${borderColor}`,
           borderRadius: "12px",
           padding: "24px",
           marginBottom: "24px",
@@ -399,7 +428,14 @@ export default function Dashboard() {
             marginBottom: "20px",
           }}
         >
-          <h2 style={{ fontSize: "20px", fontWeight: 700, margin: 0 }}>
+          <h2
+            style={{
+              fontSize: "20px",
+              fontWeight: 700,
+              margin: 0,
+              color: textColor,
+            }}
+          >
             Court Booking Trends
           </h2>
           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -409,9 +445,11 @@ export default function Dashboard() {
               onChange={(e) => setChartStartDate(e.target.value)}
               style={{
                 padding: "6px 12px",
-                border: "1px solid #e5e7eb",
+                border: `1px solid ${borderColor}`,
                 borderRadius: "6px",
                 fontSize: "14px",
+                background: inputBg,
+                color: textColor,
               }}
             />
             <input
@@ -420,15 +458,17 @@ export default function Dashboard() {
               onChange={(e) => setChartEndDate(e.target.value)}
               style={{
                 padding: "6px 12px",
-                border: "1px solid #e5e7eb",
+                border: `1px solid ${borderColor}`,
                 borderRadius: "6px",
                 fontSize: "14px",
+                background: inputBg,
+                color: textColor,
               }}
             />
             <button
               onClick={exportToExcel}
               style={{
-                background: "#1e293b",
+                background: isDark ? "#2563eb" : "#0D1B2A",
                 color: "#fff",
                 border: "none",
                 borderRadius: "8px",
@@ -457,24 +497,26 @@ export default function Dashboard() {
                 <CartesianGrid
                   strokeDasharray="0"
                   vertical={false}
-                  stroke="#e5e7eb"
+                  stroke={isDark ? "#2e3238" : "#e5e7eb"}
                 />
                 <XAxis
                   dataKey="shortName"
-                  tick={{ fontSize: 12, fill: "#9ca3af" }}
+                  tick={{ fontSize: 12, fill: subTextColor }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
                   domain={[0, "auto"]}
-                  tick={{ fontSize: 12, fill: "#9ca3af" }}
+                  tick={{ fontSize: 12, fill: subTextColor }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <Tooltip
                   contentStyle={{
                     borderRadius: "8px",
-                    border: "1px solid #e5e7eb",
+                    background: isDark ? "#242629" : "#ffffff",
+                    border: `1px solid ${borderColor}`,
+                    color: textColor,
                     fontSize: "13px",
                   }}
                 />
@@ -490,7 +532,11 @@ export default function Dashboard() {
             </ResponsiveContainer>
           ) : (
             <div
-              style={{ textAlign: "center", padding: "40px", color: "#9ca3af" }}
+              style={{
+                textAlign: "center",
+                padding: "40px",
+                color: subTextColor,
+              }}
             >
               No trend data available
             </div>
@@ -501,8 +547,8 @@ export default function Dashboard() {
       {/* Recent Rental Payments Table Section */}
       <div
         style={{
-          background: "#fff",
-          border: "1px solid #e5e7eb",
+          background: cardBg,
+          border: `1px solid ${borderColor}`,
           borderRadius: "12px",
           padding: "24px",
         }}
@@ -518,7 +564,14 @@ export default function Dashboard() {
             gap: "10px",
           }}
         >
-          <h2 style={{ fontSize: "20px", fontWeight: 700, margin: 0 }}>
+          <h2
+            style={{
+              fontSize: "20px",
+              fontWeight: 700,
+              margin: 0,
+              color: textColor,
+            }}
+          >
             Recent Rental Payments
           </h2>
           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -533,7 +586,7 @@ export default function Dashboard() {
                   setCurrentPage(1);
                 }}
                 style={{
-                  background: "#1e293b",
+                  background: isDark ? "#242629" : "#1e293b",
                   color: "#fff",
                   border: "none",
                   borderRadius: "8px",
@@ -561,7 +614,7 @@ export default function Dashboard() {
             <button
               onClick={exportToExcel}
               style={{
-                background: "#1e293b",
+                background: isDark ? "#2563eb" : "#0D1B2A",
                 color: "#fff",
                 border: "none",
                 borderRadius: "8px",
@@ -593,10 +646,10 @@ export default function Dashboard() {
           <div
             style={{
               display: "inline-flex",
-              background: "#f1f5f9",
+              background: isDark ? "#242629" : "#f1f5f9",
               padding: "4px",
               borderRadius: "8px",
-              border: "1px solid #e2e8f0",
+              border: `1px solid ${borderColor}`,
             }}
           >
             {["Mobile", "Local"].map((mode) => (
@@ -614,8 +667,8 @@ export default function Dashboard() {
                   border: "none",
                   cursor: "pointer",
                   transition: "all 0.2s",
-                  background: typeFilter === mode ? "#1e293b" : "transparent",
-                  color: typeFilter === mode ? "#fff" : "#64748b",
+                  background: typeFilter === mode ? "#2563eb" : "transparent",
+                  color: typeFilter === mode ? "#fff" : subTextColor,
                 }}
               >
                 {mode}
@@ -634,9 +687,11 @@ export default function Dashboard() {
               }}
               style={{
                 padding: "6px 12px",
-                border: "1px solid #e5e7eb",
+                border: `1px solid ${borderColor}`,
                 borderRadius: "6px",
                 fontSize: "14px",
+                background: inputBg,
+                color: textColor,
               }}
             />
             <input
@@ -648,9 +703,11 @@ export default function Dashboard() {
               }}
               style={{
                 padding: "6px 12px",
-                border: "1px solid #e5e7eb",
+                border: `1px solid ${borderColor}`,
                 borderRadius: "6px",
                 fontSize: "14px",
+                background: inputBg,
+                color: textColor,
               }}
             />
           </div>
@@ -660,7 +717,7 @@ export default function Dashboard() {
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
-              <tr style={{ borderBottom: "2px solid #f3f4f6" }}>
+              <tr style={{ borderBottom: `2px solid ${borderColor}` }}>
                 {[
                   "RENTAL ID",
                   "CUSTOMER NAME",
@@ -679,7 +736,7 @@ export default function Dashboard() {
                       padding: "10px 12px",
                       fontSize: "11px",
                       fontWeight: 700,
-                      color: "#374151",
+                      color: subTextColor,
                       letterSpacing: "0.5px",
                       whiteSpace: "nowrap",
                     }}
@@ -694,7 +751,11 @@ export default function Dashboard() {
                 <tr>
                   <td
                     colSpan={9}
-                    style={{ textAlign: "center", padding: "24px" }}
+                    style={{
+                      textAlign: "center",
+                      padding: "24px",
+                      color: subTextColor,
+                    }}
                   >
                     Loading data...
                   </td>
@@ -706,7 +767,7 @@ export default function Dashboard() {
                     style={{
                       textAlign: "center",
                       padding: "24px",
-                      color: "#6b7280",
+                      color: subTextColor,
                     }}
                   >
                     No matching rental records found.
@@ -717,7 +778,7 @@ export default function Dashboard() {
                   <tr
                     key={index}
                     style={{
-                      borderBottom: "1px solid #f3f4f6",
+                      borderBottom: `1px solid ${borderColor}`,
                       height: "53px",
                     }}
                   >
@@ -725,7 +786,7 @@ export default function Dashboard() {
                       style={{
                         padding: "14px 12px",
                         fontSize: "14px",
-                        color: "#374151",
+                        color: textColor,
                       }}
                     >
                       {item.id}
@@ -735,7 +796,7 @@ export default function Dashboard() {
                         padding: "14px 12px",
                         fontSize: "14px",
                         fontWeight: 600,
-                        color: "#111827",
+                        color: textColor,
                       }}
                     >
                       {item.name}
@@ -744,7 +805,7 @@ export default function Dashboard() {
                       style={{
                         padding: "14px 12px",
                         fontSize: "14px",
-                        color: "#6b7280",
+                        color: subTextColor,
                       }}
                     >
                       {item.venue}
@@ -753,7 +814,7 @@ export default function Dashboard() {
                       style={{
                         padding: "14px 12px",
                         fontSize: "14px",
-                        color: "#374151",
+                        color: textColor,
                       }}
                     >
                       {item.court}
@@ -763,7 +824,7 @@ export default function Dashboard() {
                         padding: "14px 12px",
                         fontSize: "14px",
                         fontWeight: 600,
-                        color: "#111827",
+                        color: textColor,
                       }}
                     >
                       {item.amount.toLocaleString()} Ks
@@ -772,7 +833,7 @@ export default function Dashboard() {
                       style={{
                         padding: "14px 12px",
                         fontSize: "14px",
-                        color: "#374151",
+                        color: textColor,
                       }}
                     >
                       {formatDateToDMY(item.date)}
@@ -781,7 +842,7 @@ export default function Dashboard() {
                       style={{
                         padding: "14px 12px",
                         fontSize: "14px",
-                        color: "#374151",
+                        color: textColor,
                       }}
                     >
                       {item.method}
@@ -798,7 +859,7 @@ export default function Dashboard() {
                             borderRadius: "4px",
                             objectFit: "cover",
                             cursor: "pointer",
-                            border: "1px solid #e5e7eb",
+                            border: `1px solid ${borderColor}`,
                           }}
                           onError={(e) => {
                             e.target.src =
@@ -806,7 +867,7 @@ export default function Dashboard() {
                           }}
                         />
                       ) : (
-                        <span style={{ fontSize: "13px", color: "#9ca3af" }}>
+                        <span style={{ fontSize: "13px", color: subTextColor }}>
                           No Image
                         </span>
                       )}
@@ -843,10 +904,12 @@ export default function Dashboard() {
             alignItems: "center",
             marginTop: "16px",
             paddingTop: "12px",
-            borderTop: "1px solid #f3f4f6",
+            borderTop: `1px solid ${borderColor}`,
           }}
         >
-          <span style={{ fontSize: "14px", color: "#4b5563", fontWeight: 500 }}>
+          <span
+            style={{ fontSize: "14px", color: subTextColor, fontWeight: 500 }}
+          >
             Showing Page {currentPage} of {totalPages}
           </span>
           <div style={{ display: "flex", gap: "6px" }}>
@@ -858,9 +921,9 @@ export default function Dashboard() {
                 width: "32px",
                 height: "32px",
                 borderRadius: "6px",
-                border: "1.5px solid #e5e7eb",
-                background: "#fff",
-                color: currentPage === 1 ? "#9ca3af" : "#374151",
+                border: `1.5px solid ${borderColor}`,
+                background: cardBg,
+                color: currentPage === 1 ? subTextColor : textColor,
                 fontWeight: 600,
                 fontSize: "14px",
                 cursor: currentPage === 1 ? "not-allowed" : "pointer",
@@ -871,7 +934,6 @@ export default function Dashboard() {
             >
               ‹
             </button>
-
             {Array.from({ length: totalPages }).map((_, idx) => {
               const pageNum = idx + 1;
               return (
@@ -882,9 +944,9 @@ export default function Dashboard() {
                     width: "32px",
                     height: "32px",
                     borderRadius: "6px",
-                    border: "1.5px solid #e5e7eb",
-                    background: currentPage === pageNum ? "#1e293b" : "#fff",
-                    color: currentPage === pageNum ? "#fff" : "#374151",
+                    border: `1.5px solid ${borderColor}`,
+                    background: currentPage === pageNum ? "#2563eb" : cardBg,
+                    color: currentPage === pageNum ? "#fff" : textColor,
                     fontWeight: 600,
                     fontSize: "14px",
                     cursor: "pointer",
@@ -907,9 +969,9 @@ export default function Dashboard() {
                 width: "32px",
                 height: "32px",
                 borderRadius: "6px",
-                border: "1.5px solid #e5e7eb",
-                background: "#fff",
-                color: currentPage === totalPages ? "#9ca3af" : "#374151",
+                border: `1.5px solid ${borderColor}`,
+                background: cardBg,
+                color: currentPage === totalPages ? subTextColor : textColor,
                 fontWeight: 600,
                 fontSize: "14px",
                 cursor: currentPage === totalPages ? "not-allowed" : "pointer",
@@ -925,17 +987,23 @@ export default function Dashboard() {
       </div>
 
       {/* Modern Proof Receipt Modal Popup */}
-      {/* Receipt Dialog Modal Box */}
       <Dialog
         open={Boolean(previewImage)}
         onClose={() => setPreviewImage(null)}
         maxWidth="xs"
         fullWidth
+        PaperProps={{
+          style: {
+            backgroundColor: cardBg,
+            color: textColor,
+            borderRadius: "12px",
+          },
+        }}
       >
         {previewImage && (
           <div
             style={{
-              background: "#fff",
+              background: cardBg,
               borderRadius: "12px",
               padding: "24px",
               position: "relative",
@@ -956,7 +1024,7 @@ export default function Dashboard() {
                   background: "transparent",
                   border: "none",
                   cursor: "pointer",
-                  color: "#6b7280",
+                  color: subTextColor,
                 }}
               >
                 <CloseIcon fontSize="small" />
@@ -979,19 +1047,19 @@ export default function Dashboard() {
                     fontSize: "20px",
                     fontWeight: 700,
                     margin: "0 0 4px 0",
-                    color: "#111827",
+                    color: textColor,
                   }}
                 >
                   Booking Successfully!
                 </h1>
-                <p style={{ fontSize: "13px", color: "#6b7280", margin: 0 }}>
+                <p style={{ fontSize: "13px", color: subTextColor, margin: 0 }}>
                   Thank you for booking with us
                 </p>
               </div>
 
               <div
                 style={{
-                  borderBottom: "1px dashed #e5e7eb",
+                  borderBottom: `1px dashed ${borderColor}`,
                   marginBottom: "16px",
                 }}
               ></div>
@@ -1007,35 +1075,35 @@ export default function Dashboard() {
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span style={{ color: subTextColor, fontWeight: 500 }}>
                     RENTAL ID
                   </span>
-                  <span style={{ fontWeight: 700, color: "#111827" }}>
+                  <span style={{ fontWeight: 700, color: textColor }}>
                     {previewImage.id || "—"}
                   </span>
                 </div>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span style={{ color: subTextColor, fontWeight: 500 }}>
                     NAME
                   </span>
-                  <span style={{ color: "#111827", fontWeight: 500 }}>
+                  <span style={{ color: textColor, fontWeight: 500 }}>
                     {previewImage.name}
                   </span>
                 </div>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span style={{ color: subTextColor, fontWeight: 500 }}>
                     VENUE
                   </span>
-                  <span style={{ color: "#111827" }}>{previewImage.venue}</span>
+                  <span style={{ color: textColor }}>{previewImage.venue}</span>
                 </div>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span style={{ color: subTextColor, fontWeight: 500 }}>
                     COURT
                   </span>
                   <span style={{ color: "#2563eb", fontWeight: 600 }}>
@@ -1045,21 +1113,21 @@ export default function Dashboard() {
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span style={{ color: subTextColor, fontWeight: 500 }}>
                     DATE
                   </span>
-                  <span style={{ color: "#111827" }}>
+                  <span style={{ color: textColor }}>
                     {formatDateToDMY(previewImage.date)}
                   </span>
                 </div>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span style={{ color: subTextColor, fontWeight: 500 }}>
                     METHOD
                   </span>
                   <span
-                    style={{ color: "#111827", textTransform: "uppercase" }}
+                    style={{ color: textColor, textTransform: "uppercase" }}
                   >
                     {previewImage.method}
                   </span>
@@ -1072,17 +1140,17 @@ export default function Dashboard() {
                     justifyContent: "space-between",
                     marginTop: "8px",
                     paddingTop: "8px",
-                    borderTop: "1px solid #f3f4f6",
+                    borderTop: `1px solid ${borderColor}`,
                   }}
                 >
-                  <span style={{ color: "#111827", fontWeight: 700 }}>
+                  <span style={{ color: textColor, fontWeight: 700 }}>
                     AMOUNT
                   </span>
                   <span
                     style={{
                       fontSize: "16px",
                       fontWeight: 700,
-                      color: "#111827",
+                      color: textColor,
                     }}
                   >
                     {previewImage.amount?.toLocaleString()} Ks
@@ -1091,52 +1159,10 @@ export default function Dashboard() {
 
                 <div
                   style={{
-                    borderBottom: "1px dashed #e5e7eb",
+                    borderBottom: `1px dashed ${borderColor}`,
                     margin: "16px 0",
                   }}
                 ></div>
-
-                {/* Payment Proof Image Section 
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "6px",
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "#6b7280",
-                      fontWeight: 500,
-                      fontSize: "12px",
-                    }}
-                  >
-                    PAYMENT PROOF IMAGE
-                  </span>
-                  {previewImage.paymentImage ? (
-                    <div
-                      style={{
-                        border: "1px solid #e5e7eb",
-                        borderRadius: "6px",
-                        overflow: "hidden",
-                        background: "#f9fafb",
-                      }}
-                    >
-                      <img
-                        src={previewImage.paymentImage}
-                        alt="View Modal Proof"
-                        style={{
-                          width: "100%",
-                          maxHeight: "180px", // ဆံ့သွားအောင် height လျှော့ထားပါတယ်
-                          objectFit: "contain",
-                          display: "block",
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <span style={{ color: "#9ca3af" }}>—</span>
-                  )}
-                </div> */}
               </div>
             </div>
 
@@ -1145,13 +1171,14 @@ export default function Dashboard() {
               className="modal-actions-hide-on-print"
               style={{ display: "flex", gap: "8px", marginTop: "24px" }}
             >
-              {/* Download Button (Icon သီးသန့်၊ စာသားမပါ) */}
+              {/* Download Button */}
               {previewImage.paymentImage && (
                 <button
                   onClick={handleTriggerDownloadPNG}
                   style={{
-                    background: "#f3f4f6",
-                    border: "1px solid #d1d5db",
+                    background: isDark ? "#242629" : "#f3f4f6",
+                    border: `1px solid ${borderColor}`,
+                    color: textColor,
                     borderRadius: "6px",
                     padding: "8px",
                     cursor: "pointer",
@@ -1165,7 +1192,7 @@ export default function Dashboard() {
                 </button>
               )}
 
-              {/* Print Button (စာသားသီးသန့်၊ Icon မပါ) */}
+              {/* Print Button */}
               <button
                 onClick={handleTriggerPrint}
                 style={{
@@ -1182,13 +1209,13 @@ export default function Dashboard() {
                 Print
               </button>
 
-              {/* Cancel Button (Cancel စာသား၊ Icon မပါ) */}
+              {/* Cancel Button */}
               <button
                 onClick={() => setPreviewImage(null)}
                 style={{
-                  background: "#fff",
-                  border: "1px solid #d1d5db",
-                  color: "#4b5563",
+                  background: cardBg,
+                  border: `1px solid ${borderColor}`,
+                  color: subTextColor,
                   borderRadius: "6px",
                   padding: "8px 16px",
                   fontWeight: 500,

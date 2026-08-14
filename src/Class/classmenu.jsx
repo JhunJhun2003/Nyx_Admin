@@ -1,70 +1,39 @@
+import React, { useEffect, useState, useContext } from "react";
 import "../classCss/classmenu.css";
 import MenuIcon from "@mui/icons-material/Inventory2Outlined";
-import { orderheadingdata } from "../DataExport";
-import { useEffect, useState } from "react";
-import { useGetClassMenu } from "../ClassApi";
 import FoodIcon from "@mui/icons-material/Flatware";
 import DotIcon from "@mui/icons-material/FiberManualRecord";
+import AddIcon from "@mui/icons-material/Add";
+import { Restaurant, MonetizationOn, CalendarToday } from "@mui/icons-material";
+import { useGetClassMenu } from "../ClassApi";
 import AddMenuPopUp from "../ClassComponent/AddMenupopup";
 import { useNoti } from "../Hooks/alert";
-import { Restaurant, MonetizationOn, CalendarToday } from "@mui/icons-material";
+import { Context } from "../Hooks/context";
 
-const StatCard = ({ title, value, change, icon, iconColor, isCurrent }) => (
-  <div
-    style={{
-      background: "#fff",
-      border: "1px solid #e5e7eb",
-      borderRadius: "12px",
-      padding: "20px 24px",
-      flex: 1,
-      minWidth: 0,
-    }}
-  >
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-        marginBottom: "8px",
-      }}
-    >
-      <span style={{ fontSize: "13px", color: "#6b7280", fontWeight: 500 }}>
-        {title}
-      </span>
+// Theme Aware Stat Card Component
+const StatCard = ({
+  title,
+  value,
+  change,
+  icon,
+  iconColor,
+  isCurrent,
+  isDark,
+}) => (
+  <div className={`menu-stat-card ${isDark ? "dark-card" : ""}`}>
+    <div className="menu-stat-card-header">
+      <span className="menu-stat-card-title">{title}</span>
       {isCurrent ? (
-        <span
-          style={{
-            fontSize: "12px",
-            color: "#6b7280",
-            background: "#f3f4f6",
-            padding: "2px 8px",
-            borderRadius: "4px",
-          }}
-        >
-          Today
-        </span>
+        <span className="menu-stat-card-badge">Today</span>
       ) : (
-        <span style={{ fontSize: "20px", color: iconColor || "#3b82f6" }}>
+        <span className="menu-stat-card-icon" style={{ color: iconColor }}>
           {icon}
         </span>
       )}
     </div>
+    <div className="menu-stat-card-value">{value}</div>
     <div
-      style={{
-        fontSize: "22px",
-        fontWeight: 700,
-        color: "#111827",
-        marginBottom: "6px",
-      }}
-    >
-      {value}
-    </div>
-    <div
-      style={{
-        fontSize: "12px",
-        color: change.includes("-") ? "#ef4444" : "#16a34a",
-        fontWeight: 500,
-      }}
+      className={`menu-stat-card-change ${change.includes("-") ? "negative" : "positive"}`}
     >
       {change.includes("vs") || change.includes("-") || change.includes("+")
         ? `↗ ${change}`
@@ -74,9 +43,11 @@ const StatCard = ({ title, value, change, icon, iconColor, isCurrent }) => (
 );
 
 function ClassMenu() {
+  const { classBackColor } = useContext(Context);
+  const isDark = classBackColor === "#1A1C1E";
+
   const [show, setshow] = useState(false);
   const [info, setinfo] = useState(null);
-
   const [category, setcategory] = useState("All");
   const [purfiedData, setpurfiedData] = useState(null);
 
@@ -89,42 +60,33 @@ function ClassMenu() {
   }, []);
 
   useEffect(() => {
-    if (Array.isArray(ClassMenu.data)) {
+    if (Array.isArray(ClassMenu?.data)) {
       setpurfiedData(ClassMenu.data);
 
       if (ClassMenu.data.length > 0) {
-        if (category != "All") {
+        if (category !== "All") {
           let filtered = ClassMenu.data.filter((item) => {
-            return category.toLowerCase() == item.category_name.toLowerCase();
+            return category.toLowerCase() === item.category_name?.toLowerCase();
           });
           setpurfiedData(filtered);
         }
       }
     }
-  }, [category, ClassMenu.data]);
+  }, [category, ClassMenu?.data]);
 
   const classcategory = [
-    {
-      category: "All",
-    },
-    {
-      category: "Snack",
-    },
-    {
-      category: "Meal",
-    },
-    {
-      category: "Drink",
-    },
+    { category: "All" },
+    { category: "Snack" },
+    { category: "Meal" },
+    { category: "Drink" },
   ];
 
-  //category change
   function categorychange(item) {
     setcategory(item);
   }
 
   return (
-    <div className="classmenumain">
+    <div className={`classmenumain ${isDark ? "dark-mode" : ""}`}>
       {Loading}
       {show && (
         <AddMenuPopUp
@@ -140,42 +102,53 @@ function ClassMenu() {
           }}
         />
       )}
-      <h2 className="classmenuheader">
-        <MenuIcon />
-        Menus
-      </h2>
+
+      {/* Header Title */}
+      <div className="classmenuheader-container">
+        <h2 className="classmenuheader">
+          <MenuIcon className="menu-header-icon" style={{ fontSize: "40px" }} />
+          <span style={{ fontSize: "30px" }}>Menus Management</span>
+        </h2>
+      </div>
+
       {/* Stat Cards Row */}
-      <div style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
+      <div className="stat-cards-container">
         <StatCard
           title="TODAY ORDERS"
           value="12 orders"
           change="7"
-          icon={<CalendarToday sx={{ fontSize: "24px" }} />}
+          icon={<CalendarToday sx={{ fontSize: "20px" }} />}
           iconColor="#ef4444"
           isCurrent={true}
+          isDark={isDark}
         />
         <StatCard
           title="TOTAL ORDERS"
           value="250"
           change="+12"
-          icon={<MonetizationOn sx={{ fontSize: "24px" }} />}
+          icon={<MonetizationOn sx={{ fontSize: "20px" }} />}
           iconColor="#3b82f6"
+          isDark={isDark}
         />
         <StatCard
           title="TOP SELLING MENU"
-          value="Dinnerr"
+          value="Dinner"
           change="45"
-          icon={<Restaurant sx={{ fontSize: "24px" }} />}
+          icon={<Restaurant sx={{ fontSize: "20px" }} />}
           iconColor="#f59e0b"
+          isDark={isDark}
         />
         <StatCard
           title="TOTAL REVENUE"
           value="250,000 Ks"
           change="5"
-          icon={<MonetizationOn sx={{ fontSize: "24px" }} />}
+          icon={<MonetizationOn sx={{ fontSize: "20px" }} />}
           iconColor="#10b981"
+          isDark={isDark}
         />
       </div>
+
+      {/* Filter Tabs & Add Menu Action Row */}
       <div className="classmenubody">
         <div className="classmenubody1">
           {classcategory.map((item, index) => {
@@ -183,7 +156,7 @@ function ClassMenu() {
               <p
                 key={index}
                 onClick={() => categorychange(item.category)}
-                className={category == item.category ? "menu_active" : ""}
+                className={category === item.category ? "menu_active" : ""}
               >
                 {item.category}
               </p>
@@ -191,13 +164,19 @@ function ClassMenu() {
           })}
         </div>
         <button className="addmenubtn" onClick={() => setshow(true)}>
-          + Add Menu
+          <AddIcon sx={{ fontSize: "18px" }} />
+          Add Menu
         </button>
       </div>
+
+      {/* Menu Cards Grid Section */}
       <div className="classmenufooter">
         {Array.isArray(purfiedData) ? (
           purfiedData.length > 0 ? (
             purfiedData.map((item, index) => {
+              const isAvailable =
+                item.available === "true" || item.available === true;
+
               return (
                 <div
                   className="singlemenuproduct"
@@ -208,59 +187,42 @@ function ClassMenu() {
                   }}
                 >
                   <div className="menuimg">
-                    <img src={item.image_url} />
+                    <img src={item.image_url} alt={item.name} />
                   </div>
                   <div className="singlemenutext">
-                    <span className="singlemenutext1">
-                      <p style={{ color: "#0d1b2ab4", fontWeight: "bold" }}>
-                        {item.name}
-                      </p>
-                      <h3>{item.price} ks</h3>
-                    </span>
-                    <span className="singlemenutext2">
+                    <div className="singlemenutext1">
+                      <p className="product-title">{item.name}</p>
+                      <h3 className="product-price">{item.price} Ks</h3>
+                    </div>
+
+                    <div className="singlemenutext2">
                       <div className="singlemenutext21">
-                        <FoodIcon
-                          sx={{
-                            color: "#0d1b2ace",
-                            fontSize: "25px",
-                            borderRadius: "50%",
-                          }}
-                        />
-                        <p style={{ color: "#0d1b2ac2" }}>
-                          {item.category_name}
-                        </p>
+                        <FoodIcon className="category-icon" />
+                        <p>{item.category_name}</p>
                       </div>
-                      <div className="singlemenutext22">
-                        <DotIcon
-                          sx={{
-                            color: item.available == "true" ? "green" : "red",
-                            fontSize: "5px",
-                            padding: "0px",
-                          }}
-                        />
-                        <p
-                          style={{
-                            color: item.available == "true" ? "green" : "red",
-                          }}
-                        >
-                          {item.available == "true"
-                            ? "Availiable"
-                            : "out of stock"}
-                        </p>
+
+                      <div
+                        className={`status-pill ${isAvailable ? "status-available" : "status-out-of-stock"}`}
+                      >
+                        <DotIcon className="dot-icon" />
+                        <span>
+                          {isAvailable ? "Available" : "Out of stock"}
+                        </span>
                       </div>
-                    </span>
+                    </div>
                   </div>
                 </div>
               );
             })
           ) : (
-            <p>no product</p>
+            <div className="no-product-box">No products found...</div>
           )
         ) : (
-          <p>Loaing...</p>
+          <div className="no-product-box">Loading menus...</div>
         )}
       </div>
     </div>
   );
 }
+
 export default ClassMenu;

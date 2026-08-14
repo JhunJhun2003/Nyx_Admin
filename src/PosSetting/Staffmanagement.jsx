@@ -19,10 +19,9 @@ function StaffManagement() {
   const { backcolor } = useContext(Context);
   const { Staff, GetStaff } = useGetStaff();
   const { ReturnJsx, openbox } = useSecurityCheck();
-
-  const Font_Color = Boolean(backcolor == "#1A1C1E");
+  const Font_Color = Boolean(backcolor === "#1A1C1E");
   const FontStyle = {
-    color: Font_Color ? "white" : "#0D1B2A",
+    color: Font_Color ? "#E1E1E1" : "#0D1B2A",
   };
   const ButtonStyle = {
     color: Font_Color && "#0D1B2A",
@@ -98,7 +97,13 @@ function StaffManagement() {
       <Toaster />
       <div className="SMB1">
         <h3 style={FontStyle}>Staff Management</h3>
-        <button style={ButtonStyle} onClick={() => setshow(true)}>
+        <button
+          style={{
+            color: Font_Color ? "#0D1B2A" : "white",
+            background: Font_Color ? "white" : "#0D1B2A",
+          }}
+          onClick={() => setshow(true)}
+        >
           + Add New Staff
         </button>
       </div>

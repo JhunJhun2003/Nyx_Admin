@@ -1,13 +1,35 @@
 import { createPortal } from "react-dom";
 import "./classaddcourt.css";
 import BackIcon from "@mui/icons-material/ArrowBackIosNew";
-import { useRef, useState } from "react";
+import { useRef, useState, useContext } from "react";
 import UploadIcon from "@mui/icons-material/CloudUploadOutlined";
-import { useFetcher, useNavigate, useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { useNoti } from "../Hooks/alert";
 import ClassEquipmentPopup from "./classequipmentpopup";
+import { Context } from "../Hooks/context";
+import Swal from "sweetalert2";
 
 function ClassAddCourt() {
+  const contextData = useContext(Context);
+  const outletContext = useOutletContext() || {};
+  const {
+    venue_id,
+    GetCourts,
+    Courts,
+    index,
+    isDark: parentIsDark,
+  } = outletContext;
+
+  // 🎯 Context သို့မဟုတ် Outlet မှ isDark တန်ဖိုးကို Case-Insensitive စစ်ဆေးခြင်း
+  const isDark =
+    parentIsDark ?? contextData?.classBackColor?.toLowerCase() === "#1a1c1e";
+
+  // 🎯 Dynamic Light / Dark Theme Helper
+  const getSwalTheme = () => ({
+    background: isDark ? "#1A1C1E" : "#ffffff",
+    color: isDark ? "#E1E1E1" : "#0f172a",
+  });
+
   const [file, setfile] = useState(null);
   const [filepath, setfilepath] = useState(null);
   const [show, setshow] = useState(false);
@@ -26,10 +48,7 @@ function ClassAddCourt() {
   const rulebodyref = useRef(null);
 
   const navigate = useNavigate();
-
-  const { venue_id, GetCourts, Courts, index } = useOutletContext();
-  const { Loading, openerror, openloading, opensuccess, openconfirm } =
-    useNoti();
+  const { Loading } = useNoti();
 
   function showimg(e) {
     let img = e.target.files[0];
@@ -39,7 +58,6 @@ function ClassAddCourt() {
       setfilepath(url);
     }
   }
-  console.log(Courts.data?.[index]);
 
   //add rule
   async function add_rule(rule) {
@@ -135,19 +153,12 @@ function ClassAddCourt() {
     let formData = new FormData();
     formData.append("court_id", id);
     formData.append("court_gallery", fileref.current.files[0]);
-    console.log("gallery loading....");
+
     try {
       let response = await fetch(import.meta.env.VITE_CLASS_ADD_COURT_GALLERY, {
         method: "POST",
         body: formData,
       });
-      if (response.ok) {
-        console.log("child gallery fun ok p");
-      } else {
-        let daa = await response.json();
-        console.log(daa);
-        console.log("child gallery ma ok par");
-      }
       return response;
     } catch (err) {
       console.log(err);
@@ -165,11 +176,11 @@ function ClassAddCourt() {
       court_name: court_nameref.current.value,
       hourly_price: Number(court_priceref.current.value),
       open_at: open_timeref.current.value,
-      close_at: close_timeref.current.value, //need to change the time format according to backend
+      close_at: close_timeref.current.value,
       about_court: about_courtref.current.value,
-      court_active: "true", //this is default
+      court_active: "true",
     };
-    openloading();
+
     try {
       let response = await fetch(import.meta.env.VITE_CLASS_ADD_COURT, {
         method: "POST",
@@ -178,11 +189,11 @@ function ClassAddCourt() {
         },
         body: JSON.stringify(court_detail),
       });
+
       if (response.ok) {
-        console.log("main fun ok");
         let data = await response.json();
         let id = data.data;
-        // await add_gallery(data.data);
+
         let pro = proref.current.value;
         let con = conref.current.value;
         let service = serviceref.current.value;
@@ -198,10 +209,18 @@ function ClassAddCourt() {
           add_service(service),
           add_rule(rule),
         ]);
+
         let issuccess = results.every((res) => res && res.ok);
         if (issuccess) {
-          console.log("child fun ok");
-          opensuccess("Success", "Court and details are added successfully");
+          await Swal.fire({
+            title: "Success",
+            text: "Court and details are added successfully",
+            icon: "success",
+            confirmButtonText: "Great, Thanks!",
+            confirmButtonColor: "#3b82f6",
+            ...getSwalTheme(),
+          });
+
           court_nameref.current.value = "";
           court_priceref.current.value = "";
           open_timeref.current.value = "";
@@ -213,41 +232,92 @@ function ClassAddCourt() {
           ruletitleref.current.value = "";
           rulebodyref.current.value = "";
           await GetCourts(venue_id);
+          navigate(-1);
         } else {
-          openerror("Something went wrong");
+          await Swal.fire({
+            title: "Error",
+            text: "Something went wrong",
+            icon: "error",
+            confirmButtonColor: "#ef4444",
+            ...getSwalTheme(),
+          });
         }
       } else {
-        openerror("Something went wrong");
+        await Swal.fire({
+          title: "Error",
+          text: "Something went wrong",
+          icon: "error",
+          confirmButtonColor: "#ef4444",
+          ...getSwalTheme(),
+        });
       }
     } catch (err) {
-      openerror("Cannot Connect with sever");
       console.log(err);
+      await Swal.fire({
+        title: "Error",
+        text: "Cannot connect with server",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+        ...getSwalTheme(),
+      });
     }
   }
 
   async function delete_equipment(id) {
     if (!id) return;
-    let isConfirm = await openconfirm();
-    if (!isConfirm) return;
+
+    const result = await Swal.fire({
+      title: "Remove Equipment?",
+      text: "Are you sure to remove this equipment?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+      ...getSwalTheme(),
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
-      openloading();
       let response = await fetch(
         `${import.meta.env.VITE_CLASS_DELETE_EQUIPMENT}/${id}`,
         {
           method: "DELETE",
-          "Content-Type": "application/json",
+          headers: { "Content-Type": "application/json" },
         },
       );
+
       if (response.ok) {
         await GetCourts(venue_id);
-        opensuccess("success", "Item Removed from List");
+        await Swal.fire({
+          title: "Success",
+          text: "Item Removed from List",
+          icon: "success",
+          confirmButtonText: "Great, Thanks!",
+          confirmButtonColor: "#3b82f6",
+          ...getSwalTheme(),
+        });
         setshow(false);
       } else {
-        openerror("Something went wrong");
+        await Swal.fire({
+          title: "Error",
+          text: "Something went wrong",
+          icon: "error",
+          confirmButtonColor: "#ef4444",
+          ...getSwalTheme(),
+        });
       }
     } catch (err) {
       console.log(err);
-      openerror("Cannot connect with sever");
+      await Swal.fire({
+        title: "Error",
+        text: "Cannot connect with server",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+        ...getSwalTheme(),
+      });
     }
   }
 
@@ -258,16 +328,17 @@ function ClassAddCourt() {
           data={{
             info: null,
             setshowequipment: setshow,
-            openerror: openerror,
-            openloading: openloading,
-            opensuccess: opensuccess,
             GetCourts: GetCourts,
             venue_id: venue_id,
             delete_equipment: delete_equipment,
+            isDark: isDark,
           }}
         />
       )}
-      <form className="cacmain" onSubmit={add_court}>
+      <form
+        className={`cacmain ${isDark ? "dark-mode" : ""}`}
+        onSubmit={add_court}
+      >
         {Loading}
         <nav className="cacnav">
           <button type="button" onClick={() => navigate(-1)}>
@@ -287,7 +358,6 @@ function ClassAddCourt() {
                   setshow(true);
                 }}
               >
-                {" "}
                 + Add item
               </button>
             </div>
@@ -303,9 +373,9 @@ function ClassAddCourt() {
                 <tbody>
                   {Array.isArray(Courts.data?.[index]?.equipment) ? (
                     Courts.data?.[index]?.equipment.length > 0 ? (
-                      Courts.data?.[index]?.equipment.map((item, index) => {
+                      Courts.data?.[index]?.equipment.map((item, i) => {
                         return (
-                          <tr key={index}>
+                          <tr key={i}>
                             <td>{item.product_name}</td>
                             <td>{item.rental_price} KS/Hr</td>
                             <td>{item.qty_total}</td>
@@ -314,12 +384,12 @@ function ClassAddCourt() {
                       })
                     ) : (
                       <tr>
-                        <td>no equipment</td>
+                        <td colSpan={3}>no equipment</td>
                       </tr>
                     )
                   ) : (
                     <tr>
-                      <td>Loading...</td>
+                      <td colSpan={3}>Loading...</td>
                     </tr>
                   )}
                 </tbody>
@@ -364,7 +434,7 @@ function ClassAddCourt() {
                     />
                   </span>
                   <span>
-                    <p> Title Details</p>
+                    <p>Title Details</p>
                     <textarea
                       rows={2}
                       placeholder="Details"
@@ -377,7 +447,7 @@ function ClassAddCourt() {
           </section>
           <section className="cacsection2">
             <div className="cacsection21">
-              <h2 className="cacrheader">BASCI INFO</h2>
+              <h2 className="cacrheader">BASIC INFO</h2>
               <div className="cacr1">
                 <span>
                   <p>Court Name</p>
@@ -429,7 +499,7 @@ function ClassAddCourt() {
                 </div>
               </div>
               <div className="cacr3">
-                <p>Abour Court</p>
+                <p>About Court</p>
                 <textarea
                   rows={5}
                   placeholder="Describe the court surface, surroundings, and amenities..."
@@ -438,7 +508,7 @@ function ClassAddCourt() {
                 />
               </div>
               <div className="cacr4">
-                <h3>OPEATING HOURS</h3>
+                <h3>OPERATING HOURS</h3>
                 <p>Time Slot</p>
                 <div className="cacr41">
                   <input type="time" ref={open_timeref} required />
@@ -447,8 +517,27 @@ function ClassAddCourt() {
               </div>
             </div>
             <div className="cacr5">
-              <button>Create</button>
-              <button type="button" onClick={() => navigate(-1)}>
+              <button
+                type="submit"
+                style={{
+                  padding: "12px 160px",
+                  fontSize: "15px",
+                  fontWeight: "bold",
+                }}
+              >
+                Create
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                style={{
+                  background: isDark ? "#1A1C1E" : "#ffffff",
+                  color: isDark ? "#E1E1E1" : "#0f172a",
+                  padding: "12px 50px",
+                  fontSize: "15px",
+                  fontWeight: "bold",
+                }}
+              >
                 Cancel
               </button>
             </div>
@@ -459,4 +548,5 @@ function ClassAddCourt() {
     document.body,
   );
 }
+
 export default ClassAddCourt;

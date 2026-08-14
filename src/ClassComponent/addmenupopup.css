@@ -1,129 +1,457 @@
+/* ====================================================
+   ADD MENU POPUP MODAL - LIGHT & DARK MODE
+   ==================================================== */
+
 .addmenupopupwarper {
-  width: calc(100% - 230px);
-  height: 100vh;
-  background-color: rgba(128, 128, 128, 0.253);
-  position: absolute;
-  top: 0;
-  right: 0;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #0f172a;
 }
+
+.addmenupopupwarper.dark-mode {
+  color: #f1f5f9;
+}
+
+/* Semi-transparent Backdrop */
+.addmenu-backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+/* Modal Card Box */
 .addmenumain {
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border: 1px solid #1b263b63;
-  padding: 10px 1em;
-  width: 500px;
-  border-radius: 10px;
-  background-color: #f0f0f0;
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
-}
-.addmenuclose {
-  position: absolute;
-  top: 0;
-  right: 0;
-  border: none;
-  background-color: initial;
-  outline: none;
-}
-.addmenuheader {
-  font-family: Inter;
-}
-.addmenubody {
-  display: flex;
+  position: relative;
+  z-index: 1001;
   width: 100%;
-  justify-content: space-between;
-}
-.addmenubody span {
+  max-width: 480px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 20px 24px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 16px;
+  box-sizing: border-box;
+  animation: modalPopIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.addmenubody span p,
-p {
-  font-family: Inter;
-  font-weight: 400;
+
+.dark-mode .addmenumain {
+  background-color: #1a1c1e;
+  border-color: #2d3139;
+  box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.6);
 }
-.addmenubody span input,
-.addmenubody11 > input {
+
+@keyframes modalPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Header Section */
+.addmenu-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 12px;
+}
+
+.dark-mode .addmenu-modal-header {
+  border-bottom-color: #2b2e35;
+}
+
+.addmenuheader {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.dark-mode .addmenuheader {
+  color: #ffffff;
+}
+
+.addmenuclose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
   border: none;
-  outline: none;
-  padding: 7px 10px;
-  border-radius: 10px;
-  width: 200px;
-  background-color: #d9d9d9;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
-.addmenubody span select {
-  border: none;
-  outline: none;
-  width: 200px;
-  border-radius: 10px;
-  padding: 7px 0;
-  background-color: #d9d9d9;
+
+.dark-mode .addmenuclose {
+  color: #94a3b8;
 }
+
+.addmenuclose:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.dark-mode .addmenuclose:hover {
+  background-color: #2b2e35;
+  color: #ffffff;
+}
+
+/* Content Body Form Elements */
+.addmenu-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.addmenubody,
 .addmenubody1 {
   display: flex;
+  gap: 16px;
   width: 100%;
-  justify-content: space-between;
-  align-items: flex-start;
 }
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.form-field label,
+.addmenubody12 label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.dark-mode .form-field label,
+.dark-mode .addmenubody12 label {
+  color: #94a3b8;
+}
+
+.form-field input,
+.form-field select {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-size: 13px;
+  outline: none;
+  box-sizing: border-box;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.dark-mode .form-field input,
+.dark-mode .form-field select {
+  background-color: #24272b;
+  border-color: #383d44;
+  color: #f1f5f9;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.form-field input:disabled,
+.form-field select:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  background-color: #f8fafc;
+}
+
+.dark-mode .form-field input:disabled,
+.dark-mode .form-field select:disabled {
+  background-color: #1a1c1e;
+}
+
+/* Checkbox Style */
+.addmenucheckbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.addmenucheckbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+
+.addmenucheckbox span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+}
+
+.dark-mode .addmenucheckbox span {
+  color: #cbd5e1;
+}
+
+.addmenucheckbox input:disabled + span {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Image Upload Container */
 .addmenubody11 {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  flex: 1;
+  justify-content: space-between;
 }
+
 .addmenubody12 {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  width: 200px;
+  gap: 6px;
+  width: 140px;
 }
+
 .addmenupreimg {
-  width: 80px;
-  height: 70px;
-  border: 1px dashed black;
-  border-radius: 5px;
+  width: 100%;
+  height: 96px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #d9d9d9;
+  background-color: #f8fafc;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s ease;
 }
+
+.dark-mode .addmenupreimg {
+  background-color: #24272b;
+  border-color: #383d44;
+}
+
+.addmenupreimg:hover:not(.disabled-img) {
+  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.addmenupreimg.disabled-img {
+  cursor: default;
+  border-style: solid;
+}
+
 .addmenuhidden {
-  position: absolute;
-  opacity: 0;
-  z-index: -1;
-  left: 50%;
+  display: none;
 }
+
 .addmenupreimg img {
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
-.addmenuadd {
+
+.upload-placeholder {
   display: flex;
-  gap: 10px;
-  align-self: flex-end;
-  margin-top: 1em;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #64748b;
 }
+
+.dark-mode .upload-placeholder {
+  color: #94a3b8;
+}
+
+.upload-placeholder .upload-icon {
+  font-size: 22px !important;
+  color: #3b82f6;
+}
+
+.upload-placeholder span {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* Footer Buttons Styling */
+.addmenuadd,
 .addmenuupdate {
   display: flex;
-  gap: 10px;
-  margin-top: 1em;
-}
-.addmenucheckbox {
-  display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
   margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px solid #f1f5f9;
 }
+
+.dark-mode .addmenuadd,
+.dark-mode .addmenuupdate {
+  border-top-color: #2b2e35;
+}
+
+.addmenuadd {
+  justify-content: flex-end;
+}
+
 .addmenuadd button,
 .addmenuupdate button {
-  padding: 7px 2em;
-  border-radius: 10px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
   border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
 }
-.addmenuupdate button:disabled {
-  opacity: 0.3;
+
+/* Create Modal Buttons */
+.btn-modal-cancel {
+  background-color: transparent;
+  color: #64748b;
+  border: 1px solid #cbd5e1 !important;
+}
+
+.dark-mode .btn-modal-cancel {
+  color: #94a3b8;
+  border-color: #383d44 !important;
+}
+
+.btn-modal-cancel:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.dark-mode .btn-modal-cancel:hover {
+  background-color: #2b2e35;
+  color: #ffffff;
+}
+
+.btn-modal-submit {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+.btn-modal-submit:hover {
+  background-color: #2563eb;
+}
+
+/* Details/Update Modal Buttons */
+.btn-modal-delete {
+  background-color: #fee2e2;
+  color: #dc2626;
+  margin-right: auto; /* ညာဘက်သို့ ခလုတ်များကို တွန်းရန် */
+  border: none;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.dark-mode .btn-modal-delete {
+  background-color: rgba(220, 38, 38, 0.18);
+  color: #f87171;
+}
+
+.btn-modal-delete:hover {
+  background-color: #fca5a5;
+  color: #991b1b;
+}
+
+.btn-modal-edit {
+  background-color: #e2e8f0;
+  color: #334155;
+  border: none;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.dark-mode .btn-modal-edit {
+  background-color: #2b2e35;
+  color: #f1f5f9;
+}
+
+.btn-modal-edit:hover {
+  background-color: #e2e8f0;
+}
+
+.btn-modal-edit.active-editing {
+  background-color: #f59e0b !important;
+  color: #ffffff !important;
+}
+
+.btn-modal-save {
+  background-color: #3b82f6;
+  color: #ffffff;
+  border: none;
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-modal-save:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+/* Disabled State for Update Button */
+.btn-modal-save:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background-color: #94a3b8;
+}
+
+.dark-mode .btn-modal-save:disabled {
+  background-color: #383d44;
+  color: #64748b;
 }

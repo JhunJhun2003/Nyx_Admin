@@ -17,6 +17,7 @@ const formatDateToDMY = (dateStr) => {
 export default function RecentPaymentsTable({
   paymentMode,
   onPaymentModeChange,
+  isDark,
 }) {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,7 +31,15 @@ export default function RecentPaymentsTable({
 
   const itemsPerPage = 5;
 
-  // Fetch data from API
+  // Dynamic Theme Colors
+  const cardBg = isDark ? "#242629" : "#ffffff";
+  const borderColor = isDark ? "#334155" : "#e5e7eb";
+  const textColor = isDark ? "#f8fafc" : "#111827";
+  const subTextColor = isDark ? "#94a3b8" : "#6b7280";
+  const tableHeaderBg = isDark ? "#1e293b" : "#ffffff";
+  const rowBorder = isDark ? "#334155" : "#f3f4f6";
+  const inputBg = isDark ? "#1e293b" : "#ffffff";
+
   const fetchTrainingOverview = async () => {
     try {
       setLoading(true);
@@ -44,7 +53,6 @@ export default function RecentPaymentsTable({
       const jsonResult = await response.json();
 
       if (jsonResult.success && jsonResult.data) {
-        // Transform API data to match table structure
         const transformedData = jsonResult.data.map((item) => ({
           id: `#T-${item.id}`,
           studentName: item.name,
@@ -54,8 +62,8 @@ export default function RecentPaymentsTable({
           date: item.date,
           paymentMethod: item.payment_method,
           proof: item.payment_image_url,
-          mode: item.source || "mobile", // Use source from API (mobile/admin)
-          originalData: item, // Keep original data if needed
+          mode: item.source || "mobile",
+          originalData: item,
         }));
         setTransactions(transformedData);
       } else {
@@ -63,7 +71,6 @@ export default function RecentPaymentsTable({
       }
     } catch (err) {
       setError(err.message);
-      console.error("Error fetching training overview:", err);
     } finally {
       setLoading(false);
     }
@@ -117,7 +124,6 @@ export default function RecentPaymentsTable({
     const printContent = document.getElementById("invoice-modal-content");
     if (!printContent) return;
 
-    // ယာယီ iframe တစ်ခု ဆောက်မယ်
     const iframe = document.createElement("iframe");
     iframe.style.position = "absolute";
     iframe.style.width = "0px";
@@ -125,10 +131,8 @@ export default function RecentPaymentsTable({
     iframe.style.border = "none";
 
     document.body.appendChild(iframe);
-
     const doc = iframe.contentWindow.document;
 
-    // Slip ရဲ့ HTML နဲ့ ပုံစံလှပစေဖို့ Font Style ကိုပါ ထည့်ပေးရမယ်
     doc.write(`
     <html>
       <head>
@@ -138,8 +142,8 @@ export default function RecentPaymentsTable({
             font-family: 'Inter', sans-serif; 
             margin: 20px; 
             padding: 0;
+            color: #111827;
           }
-          /* Flexbox တွေ သေချာအလုပ်လုပ်အောင် style ပြန်ထည့်ပေးခြင်း */
           div { display: flex; }
         </style>
       </head>
@@ -153,11 +157,9 @@ export default function RecentPaymentsTable({
 
     doc.close();
 
-    // Font တွေ load တက်လာအောင် ခဏစောင့်ပြီး print ထုတ်မယ်
     setTimeout(() => {
       iframe.contentWindow.focus();
       iframe.contentWindow.print();
-      // Print ပြီးရင် ယာယီဆောက်ထားတဲ့ iframe ကို ပြန်ဖျက်မယ်
       document.body.removeChild(iframe);
     }, 500);
   };
@@ -189,15 +191,15 @@ export default function RecentPaymentsTable({
     return (
       <div
         style={{
-          background: "#fff",
-          border: "1px solid #e5e7eb",
+          background: cardBg,
+          border: `1px solid ${borderColor}`,
           borderRadius: "12px",
           padding: "24px",
           textAlign: "center",
         }}
       >
         <div className="st-spinner" style={{ margin: "20px auto" }}></div>
-        <p style={{ color: "#6b7280" }}>Loading training payments data...</p>
+        <p style={{ color: subTextColor }}>Loading training payments data...</p>
       </div>
     );
   }
@@ -206,8 +208,8 @@ export default function RecentPaymentsTable({
     return (
       <div
         style={{
-          background: "#fff",
-          border: "1px solid #e5e7eb",
+          background: cardBg,
+          border: `1px solid ${borderColor}`,
           borderRadius: "12px",
           padding: "24px",
           textAlign: "center",
@@ -235,8 +237,8 @@ export default function RecentPaymentsTable({
   return (
     <div
       style={{
-        background: "#fff",
-        border: "1px solid #e5e7eb",
+        background: cardBg,
+        border: `1px solid ${borderColor}`,
         borderRadius: "12px",
         padding: "24px",
       }}
@@ -251,7 +253,14 @@ export default function RecentPaymentsTable({
           gap: "10px",
         }}
       >
-        <h2 style={{ fontSize: "20px", fontWeight: 700, margin: 0 }}>
+        <h2
+          style={{
+            fontSize: "20px",
+            fontWeight: 700,
+            margin: 0,
+            color: textColor,
+          }}
+        >
           Recent Training Payments
         </h2>
 
@@ -293,7 +302,7 @@ export default function RecentPaymentsTable({
           <button
             onClick={handleExportToExcel}
             style={{
-              background: "#1e293b",
+              background: isDark ? "#2563eb" : "#0D1B2A",
               color: "#fff",
               border: "none",
               borderRadius: "8px",
@@ -312,7 +321,7 @@ export default function RecentPaymentsTable({
         </div>
       </div>
 
-      {/* Date Filter Row for Table */}
+      {/* Mode and Date Filters */}
       <div
         style={{
           display: "flex",
@@ -328,9 +337,9 @@ export default function RecentPaymentsTable({
               setCurrentPage(1);
             }}
             style={{
-              background: paymentMode === "mobile" ? "#1e293b" : "#fff",
-              color: paymentMode === "mobile" ? "#fff" : "#374151",
-              border: "1px solid #e5e7eb",
+              background: paymentMode === "mobile" ? "#1e293b" : cardBg,
+              color: paymentMode === "mobile" ? "#fff" : subTextColor,
+              border: `1px solid ${borderColor}`,
               borderRadius: "6px",
               padding: "8px 20px",
               fontWeight: 600,
@@ -346,9 +355,9 @@ export default function RecentPaymentsTable({
               setCurrentPage(1);
             }}
             style={{
-              background: paymentMode === "admin" ? "#1e293b" : "#fff",
-              color: paymentMode === "admin" ? "#fff" : "#374151",
-              border: "1px solid #e5e7eb",
+              background: paymentMode === "admin" ? "#1e293b" : cardBg,
+              color: paymentMode === "admin" ? "#fff" : subTextColor,
+              border: `1px solid ${borderColor}`,
               borderRadius: "6px",
               padding: "8px 20px",
               fontWeight: 600,
@@ -369,7 +378,9 @@ export default function RecentPaymentsTable({
             }}
             style={{
               padding: "6px 12px",
-              border: "1px solid #e5e7eb",
+              background: inputBg,
+              color: textColor,
+              border: `1px solid ${borderColor}`,
               borderRadius: "6px",
               fontSize: "14px",
               marginRight: "7px",
@@ -384,7 +395,9 @@ export default function RecentPaymentsTable({
             }}
             style={{
               padding: "6px 12px",
-              border: "1px solid #e5e7eb",
+              background: inputBg,
+              color: textColor,
+              border: `1px solid ${borderColor}`,
               borderRadius: "6px",
               fontSize: "14px",
             }}
@@ -396,7 +409,12 @@ export default function RecentPaymentsTable({
       <div style={{ overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
-            <tr style={{ borderBottom: "2px solid #f3f4f6" }}>
+            <tr
+              style={{
+                borderBottom: `2px solid ${rowBorder}`,
+                background: tableHeaderBg,
+              }}
+            >
               {[
                 "STUDENT ID",
                 "STUDENT NAME",
@@ -415,7 +433,7 @@ export default function RecentPaymentsTable({
                     padding: "10px 12px",
                     fontSize: "11px",
                     fontWeight: 700,
-                    color: "#374151",
+                    color: subTextColor,
                     letterSpacing: "0.5px",
                     whiteSpace: "nowrap",
                   }}
@@ -429,13 +447,16 @@ export default function RecentPaymentsTable({
             {currentItems.map((t, i) => (
               <tr
                 key={i}
-                style={{ borderBottom: "1px solid #f3f4f6", height: "53px" }}
+                style={{
+                  borderBottom: `1px solid ${rowBorder}`,
+                  height: "53px",
+                }}
               >
                 <td
                   style={{
                     padding: "14px 12px",
                     fontSize: "14px",
-                    color: "#374151",
+                    color: textColor,
                   }}
                 >
                   {t.id}
@@ -445,7 +466,7 @@ export default function RecentPaymentsTable({
                     padding: "14px 12px",
                     fontSize: "14px",
                     fontWeight: 600,
-                    color: "#111827",
+                    color: textColor,
                   }}
                 >
                   {t.studentName}
@@ -454,7 +475,7 @@ export default function RecentPaymentsTable({
                   style={{
                     padding: "14px 12px",
                     fontSize: "14px",
-                    color: "#6b7280",
+                    color: subTextColor,
                   }}
                 >
                   {t.trainingName}
@@ -463,7 +484,7 @@ export default function RecentPaymentsTable({
                   style={{
                     padding: "14px 12px",
                     fontSize: "14px",
-                    color: "#374151",
+                    color: textColor,
                   }}
                 >
                   {t.className}
@@ -473,7 +494,7 @@ export default function RecentPaymentsTable({
                     padding: "14px 12px",
                     fontSize: "14px",
                     fontWeight: 600,
-                    color: "#111827",
+                    color: textColor,
                   }}
                 >
                   {t.amount}
@@ -482,7 +503,7 @@ export default function RecentPaymentsTable({
                   style={{
                     padding: "14px 12px",
                     fontSize: "14px",
-                    color: "#374151",
+                    color: textColor,
                   }}
                 >
                   {formatDateToDMY(t.date)}
@@ -491,13 +512,12 @@ export default function RecentPaymentsTable({
                   style={{
                     padding: "14px 12px",
                     fontSize: "14px",
-                    color: "#374151",
+                    color: textColor,
                   }}
                 >
                   {t.paymentMethod}
                 </td>
 
-                {/* Payment Proof Image */}
                 <td style={{ padding: "14px 12px" }}>
                   <img
                     src={t.proof}
@@ -512,7 +532,7 @@ export default function RecentPaymentsTable({
                       borderRadius: "4px",
                       objectFit: "cover",
                       cursor: "pointer",
-                      border: "1px solid #e5e7eb",
+                      border: `1px solid ${borderColor}`,
                     }}
                     onError={(e) => {
                       e.target.src = "https://placehold.co/40x40?text=No+Img";
@@ -520,7 +540,6 @@ export default function RecentPaymentsTable({
                   />
                 </td>
 
-                {/* View Button */}
                 <td style={{ padding: "14px 12px" }}>
                   <button
                     onClick={() => {
@@ -549,7 +568,7 @@ export default function RecentPaymentsTable({
                 <tr
                   key={`empty-${index}`}
                   style={{
-                    borderBottom: "1px solid #f3f4f6",
+                    borderBottom: `1px solid ${rowBorder}`,
                     height: "53px",
                   }}
                 >
@@ -557,7 +576,7 @@ export default function RecentPaymentsTable({
                     colSpan={9}
                     style={{
                       padding: "14px 12px",
-                      color: "#9ca3af",
+                      color: subTextColor,
                       fontSize: "14px",
                       textAlign: "center",
                     }}
@@ -572,24 +591,30 @@ export default function RecentPaymentsTable({
         </table>
       </div>
 
-      {/* Receipt Dialog Modal Box */}
+      {/* Receipt Modal Box */}
       <Dialog
         open={isModalOpen && Boolean(selectedTransaction)}
         onClose={() => setIsModalOpen(false)}
         maxWidth="xs"
         fullWidth
+        PaperProps={{
+          style: {
+            backgroundColor: cardBg,
+            color: textColor,
+            borderRadius: "12px",
+          },
+        }}
       >
         {selectedTransaction && (
           <div
             style={{
-              background: "#fff",
+              background: cardBg,
               borderRadius: "12px",
               padding: "24px",
               position: "relative",
               fontFamily: "Inter, sans-serif",
             }}
           >
-            {/* Top Right Close Button */}
             <div
               style={{
                 display: "flex",
@@ -603,14 +628,13 @@ export default function RecentPaymentsTable({
                   background: "transparent",
                   border: "none",
                   cursor: "pointer",
-                  color: "#6b7280",
+                  color: subTextColor,
                 }}
               >
                 <CloseIcon fontSize="small" />
               </button>
             </div>
 
-            {/* Printable Section */}
             <div id="invoice-modal-content" style={{ padding: "10px" }}>
               <div
                 style={{
@@ -626,20 +650,19 @@ export default function RecentPaymentsTable({
                     fontSize: "20px",
                     fontWeight: 700,
                     margin: "0 0 4px 0",
-                    color: "#111827",
+                    color: textColor,
                   }}
                 >
                   Registration Successfully!
                 </h1>
-
-                <p style={{ fontSize: "13px", color: "#6b7280", margin: 0 }}>
+                <p style={{ fontSize: "13px", color: subTextColor, margin: 0 }}>
                   Thank you for shopping with us
                 </p>
               </div>
 
               <div
                 style={{
-                  borderBottom: "1px dashed #e5e7eb",
+                  borderBottom: `1px dashed ${borderColor}`,
                   marginBottom: "16px",
                 }}
               ></div>
@@ -655,31 +678,31 @@ export default function RecentPaymentsTable({
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span style={{ color: subTextColor, fontWeight: 500 }}>
                     REGISTRATION ID
                   </span>
-                  <span style={{ fontWeight: 700, color: "#111827" }}>
+                  <span style={{ fontWeight: 700, color: textColor }}>
                     {selectedTransaction.id || "—"}
                   </span>
                 </div>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span style={{ color: subTextColor, fontWeight: 500 }}>
                     DATE
                   </span>
-                  <span style={{ color: "#111827" }}>
+                  <span style={{ color: textColor }}>
                     {formatDateToDMY(selectedTransaction.date)}
                   </span>
                 </div>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span style={{ color: subTextColor, fontWeight: 500 }}>
                     PAYMENT
                   </span>
                   <span
-                    style={{ color: "#111827", textTransform: "uppercase" }}
+                    style={{ color: textColor, textTransform: "uppercase" }}
                   >
                     {selectedTransaction.paymentMethod}
                   </span>
@@ -687,27 +710,27 @@ export default function RecentPaymentsTable({
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span style={{ color: subTextColor, fontWeight: 500 }}>
                     TIME
                   </span>
-                  <span style={{ color: "#111827" }}>
+                  <span style={{ color: textColor }}>
                     {selectedTransaction.time || "12:25 AM"}
                   </span>
                 </div>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span style={{ color: subTextColor, fontWeight: 500 }}>
                     STUDENT NAME
                   </span>
-                  <span style={{ color: "#111827", fontWeight: 500 }}>
+                  <span style={{ color: textColor, fontWeight: 500 }}>
                     {selectedTransaction.studentName}
                   </span>
                 </div>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span style={{ color: subTextColor, fontWeight: 500 }}>
                     TRAINING NAME
                   </span>
                   <span style={{ color: "#2563eb", fontWeight: 600 }}>
@@ -717,7 +740,7 @@ export default function RecentPaymentsTable({
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span style={{ color: subTextColor, fontWeight: 500 }}>
                     TRAINING LEVEL
                   </span>
                   <span style={{ color: "#2563eb", fontWeight: 600 }}>
@@ -725,24 +748,23 @@ export default function RecentPaymentsTable({
                   </span>
                 </div>
 
-                {/* Amount Section */}
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
                     marginTop: "8px",
                     paddingTop: "8px",
-                    borderTop: "1px solid #f3f4f6",
+                    borderTop: `1px solid ${rowBorder}`,
                   }}
                 >
-                  <span style={{ color: "#111827", fontWeight: 700 }}>
+                  <span style={{ color: textColor, fontWeight: 700 }}>
                     AMOUNT
                   </span>
                   <span
                     style={{
                       fontSize: "16px",
                       fontWeight: 700,
-                      color: "#111827",
+                      color: textColor,
                     }}
                   >
                     {selectedTransaction.amount}
@@ -751,25 +773,24 @@ export default function RecentPaymentsTable({
 
                 <div
                   style={{
-                    borderBottom: "1px dashed #e5e7eb",
+                    borderBottom: `1px dashed ${borderColor}`,
                     margin: "16px 0",
                   }}
                 ></div>
               </div>
             </div>
 
-            {/* Modal Actions Footer */}
             <div
               className="modal-actions-hide-on-print"
               style={{ display: "flex", gap: "8px", marginTop: "24px" }}
             >
-              {/* Download Button */}
               {selectedTransaction.proof && (
                 <button
                   onClick={handleDownloadPNG}
                   style={{
-                    background: "#f3f4f6",
-                    border: "1px solid #d1d5db",
+                    background: isDark ? "#334155" : "#f3f4f6",
+                    border: `1px solid ${borderColor}`,
+                    color: textColor,
                     borderRadius: "6px",
                     padding: "8px",
                     cursor: "pointer",
@@ -783,7 +804,6 @@ export default function RecentPaymentsTable({
                 </button>
               )}
 
-              {/* Print Button */}
               <button
                 onClick={handlePrintReceipt}
                 style={{
@@ -800,13 +820,12 @@ export default function RecentPaymentsTable({
                 Print
               </button>
 
-              {/* Cancel Button */}
               <button
                 onClick={() => setIsModalOpen(false)}
                 style={{
-                  background: "#fff",
-                  border: "1px solid #d1d5db",
-                  color: "#4b5563",
+                  background: cardBg,
+                  border: `1px solid ${borderColor}`,
+                  color: subTextColor,
                   borderRadius: "6px",
                   padding: "8px 16px",
                   fontWeight: 500,
@@ -830,13 +849,12 @@ export default function RecentPaymentsTable({
           marginTop: "16px",
         }}
       >
-        <span style={{ fontSize: "13px", color: "#6b7280" }}>
+        <span style={{ fontSize: "13px", color: subTextColor }}>
           Showing {filteredTransactions.length === 0 ? 0 : indexOfFirstItem + 1}{" "}
           to {Math.min(indexOfLastItem, filteredTransactions.length)} of{" "}
           {filteredTransactions.length} transactions
         </span>
         <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
-          {/* Previous Button */}
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
@@ -844,9 +862,9 @@ export default function RecentPaymentsTable({
               width: "32px",
               height: "32px",
               borderRadius: "6px",
-              border: "1.5px solid #e5e7eb",
-              background: "#fff",
-              color: currentPage === 1 ? "#9ca3af" : "#374151",
+              border: `1.5px solid ${borderColor}`,
+              background: cardBg,
+              color: currentPage === 1 ? subTextColor : textColor,
               fontWeight: 600,
               fontSize: "14px",
               cursor: currentPage === 1 ? "not-allowed" : "pointer",
@@ -858,7 +876,6 @@ export default function RecentPaymentsTable({
             ‹
           </button>
 
-          {/* Dynamic Page Buttons */}
           {Array.from({ length: totalPages }).map((_, index) => {
             const pageNum = index + 1;
             return (
@@ -869,9 +886,9 @@ export default function RecentPaymentsTable({
                   width: "32px",
                   height: "32px",
                   borderRadius: "6px",
-                  border: "1.5px solid #e5e7eb",
-                  background: currentPage === pageNum ? "#1e293b" : "#fff",
-                  color: currentPage === pageNum ? "#fff" : "#374151",
+                  border: `1.5px solid ${borderColor}`,
+                  background: currentPage === pageNum ? "#1e293b" : cardBg,
+                  color: currentPage === pageNum ? "#fff" : textColor,
                   fontWeight: 600,
                   fontSize: "14px",
                   cursor: "pointer",
@@ -885,7 +902,6 @@ export default function RecentPaymentsTable({
             );
           })}
 
-          {/* Next Button */}
           <button
             onClick={() =>
               setCurrentPage((prev) => Math.min(prev + 1, totalPages))
@@ -895,9 +911,9 @@ export default function RecentPaymentsTable({
               width: "32px",
               height: "32px",
               borderRadius: "6px",
-              border: "1.5px solid #e5e7eb",
-              background: "#fff",
-              color: currentPage === totalPages ? "#9ca3af" : "#374151",
+              border: `1.5px solid ${borderColor}`,
+              background: cardBg,
+              color: currentPage === totalPages ? subTextColor : textColor,
               fontWeight: 600,
               fontSize: "14px",
               cursor: currentPage === totalPages ? "not-allowed" : "pointer",

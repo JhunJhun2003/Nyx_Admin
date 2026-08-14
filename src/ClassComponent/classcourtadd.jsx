@@ -8,20 +8,34 @@ import AddIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import { Navigate, useNavigate, useOutletContext } from "react-router-dom";
 import ClockIcon from "@mui/icons-material/QueryBuilderOutlined";
 import CloseIcon from "@mui/icons-material/CloseOutlined";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import ClassCourtPopUp from "./classaddcourtpopup";
 import { useNoti } from "../Hooks/alert";
 import ClassEquipmentPopup from "./classequipmentpopup";
 import RemoveIcon from "@mui/icons-material/HighlightOffOutlined";
+import { Context } from "../Hooks/context";
 
 function ClassCourtDetail({ data }) {
+  const contextData = useContext(Context);
+  const outletData = useOutletContext() || {};
+  const {
+    Courts,
+    index,
+    venue_id,
+    GetCourts,
+    isDark: outletIsDark,
+  } = outletData;
+
+  // Dark Mode စစ်ဆေးခြင်း
+  const isDark = outletIsDark ?? contextData?.classBackColor === "#1A1C1E";
+
   const [show, setshow] = useState(false);
   const [header, setheader] = useState("");
   const [heading, setheading] = useState("");
   const [id, setid] = useState();
   const [showtime, setshowtime] = useState(false);
 
-  //equipment popup
+  // equipment popup
   const [showequipment, setshowequipment] = useState(false);
   const [info, setinfo] = useState(null);
 
@@ -31,14 +45,13 @@ function ClassCourtDetail({ data }) {
 
   const navigate = useNavigate();
 
-  const { Courts, index, venue_id, GetCourts } = useOutletContext();
   const { Loading, openerror, openloading, opensuccess, openconfirm } =
     useNoti();
 
-  const court_id = Courts.data?.[index].id || null;
+  const court_id = Courts?.data?.[index]?.id || null;
 
-  //for style gallery
-  const gallery_data = Courts.data?.[index]?.gallery || [];
+  // for style gallery
+  const gallery_data = Courts?.data?.[index]?.gallery || [];
   const item_count = gallery_data.length + 1;
   const col_count = item_count === 0 ? 1 : Math.ceil(Math.sqrt(item_count));
 
@@ -49,15 +62,13 @@ function ClassCourtDetail({ data }) {
     setshow(true);
   }
 
-  console.log(Courts);
-
   const closetimepopup = () => {
-    start_time.current.value = "";
-    end_time.current.value = "";
+    if (start_time.current) start_time.current.value = "";
+    if (end_time.current) end_time.current.value = "";
     setshowtime(false);
   };
 
-  //add time slot function
+  // add time slot function
   async function addtime_slot(e) {
     e.preventDefault();
     if (!court_id) return;
@@ -87,7 +98,7 @@ function ClassCourtDetail({ data }) {
       }
     } catch (err) {
       console.log(err);
-      openerror("Cannot connet with sever");
+      openerror("Cannot connect with server");
     }
   }
 
@@ -101,7 +112,9 @@ function ClassCourtDetail({ data }) {
         `${import.meta.env.VITE_CLASS_DELETE_EQUIPMENT}/${id}`,
         {
           method: "DELETE",
-          "Content-Type": "application/json",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
       );
       if (response.ok) {
@@ -113,19 +126,19 @@ function ClassCourtDetail({ data }) {
       }
     } catch (err) {
       console.log(err);
-      openerror("Cannot connect with sever");
+      openerror("Cannot connect with server");
     }
   }
 
-  //delete con
+  // delete con
   async function delete_data(id, target) {
     if (!id) return;
     let url = [
-      import.meta.env.VITE_CLASS_DELETE_CON, //0 for con
-      import.meta.env.VITE_CLASS_DELETE_PRO, //1 fro pro
-      import.meta.env.VITE_CLASS_DELETE_RULE, //2 for ruel
-      import.meta.env.VITE_CLASS_DELETE_SERVICE, //3 for service
-      import.meta.env.VITE_CLASS_DELETE_TIMESLOT, //4 for timeslot
+      import.meta.env.VITE_CLASS_DELETE_CON, // 0 for con
+      import.meta.env.VITE_CLASS_DELETE_PRO, // 1 for pro
+      import.meta.env.VITE_CLASS_DELETE_RULE, // 2 for rule
+      import.meta.env.VITE_CLASS_DELETE_SERVICE, // 3 for service
+      import.meta.env.VITE_CLASS_DELETE_TIMESLOT, // 4 for timeslot
     ];
     let api = url[target];
     if (!api) return;
@@ -137,11 +150,13 @@ function ClassCourtDetail({ data }) {
     try {
       let response = await fetch(`${api}/${id}`, {
         method: "DELETE",
-        "Content-Type": "application/json",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
       if (response.ok) {
         opensuccess(
-          "Action Sucessful",
+          "Action Successful",
           "Court data has been removed Successfully",
         );
         await GetCourts(venue_id);
@@ -150,11 +165,11 @@ function ClassCourtDetail({ data }) {
       }
     } catch (err) {
       console.log(err);
-      openerror("Cannot connect with sever");
+      openerror("Cannot connect with server");
     }
   }
 
-  //add gallery
+  // add gallery
   async function add_gallery(event) {
     let file = event.target.files[0];
     if (!file) return;
@@ -179,13 +194,13 @@ function ClassCourtDetail({ data }) {
         openerror("Something went wrong");
       }
     } catch (err) {
-      openerror("Cannot connect with sever");
+      openerror("Cannot connect with server");
       console.log(err);
     }
   }
 
   return createPortal(
-    <div className="addcourtwarper">
+    <div className={`addcourtwarper ${isDark ? "dark-mode" : ""}`}>
       {Loading}
       {show && (
         <ClassCourtPopUp
@@ -200,6 +215,7 @@ function ClassCourtDetail({ data }) {
             openloading: openloading,
             opensuccess: opensuccess,
             GetCourts: GetCourts,
+            isDark: isDark,
           }}
         />
       )}
@@ -215,6 +231,7 @@ function ClassCourtDetail({ data }) {
               GetCourts: GetCourts,
               venue_id: venue_id,
               delete_equipment: delete_equipment,
+              isDark: isDark,
             }}
           />
         )}
@@ -232,12 +249,12 @@ function ClassCourtDetail({ data }) {
                 className="addcourtleft11"
                 style={{ "--col-count": col_count }}
               >
-                {Array.isArray(Courts.data?.[index]?.gallery) ? (
-                  Courts.data?.[index]?.gallery.length > 0 ? (
-                    Courts.data?.[index]?.gallery.map((item, index) => {
+                {Array.isArray(Courts?.data?.[index]?.gallery) ? (
+                  Courts.data[index].gallery.length > 0 ? (
+                    Courts.data[index].gallery.map((item, idx) => {
                       return (
-                        <div className="addcourtleft111" key={index}>
-                          <img src={item.court_image_url} />
+                        <div className="addcourtleft111" key={idx}>
+                          <img src={item.court_image_url} alt="court gallery" />
                           <button>
                             <RemoveIcon
                               sx={{
@@ -269,21 +286,21 @@ function ClassCourtDetail({ data }) {
                     ref={fileref}
                     onChange={add_gallery}
                   />
-                  <CameraIcon sx={{ color: "#737685" }} />
+                  <CameraIcon className="add-icon-svg" />
                   <h3>+ Add Photo</h3>
                 </div>
               </div>
               <div className="addcourtleft12">
-                {Array.isArray(Courts.data) ? (
+                {Array.isArray(Courts?.data) ? (
                   Courts.data?.length > 0 ? (
                     <>
                       <span>
                         <p>Court Name</p>
-                        <p>{Courts.data?.[index].court_name}</p>
+                        <p>{Courts.data?.[index]?.court_name}</p>
                       </span>
                       <span>
                         <p>Hourly Price</p>
-                        <p>{Courts.data?.[index].hourly_price}</p>
+                        <p>{Courts.data?.[index]?.hourly_price}</p>
                       </span>
                     </>
                   ) : (
@@ -299,16 +316,14 @@ function ClassCourtDetail({ data }) {
               </div>
               <div className="addcourtleft13">
                 <h4>About Court</h4>
-                {Array.isArray(Courts.data) ? (
+                {Array.isArray(Courts?.data) ? (
                   Courts.data?.length > 0 ? (
-                    <p>{Courts.data?.[index].about_court}</p>
+                    <p>{Courts.data?.[index]?.about_court}</p>
                   ) : (
                     <p>no details</p>
                   )
                 ) : (
-                  <>
-                    <p>Loading...</p>
-                  </>
+                  <p>Loading...</p>
                 )}
               </div>
             </div>
@@ -335,17 +350,18 @@ function ClassCourtDetail({ data }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {Array.isArray(Courts.data?.[index]?.equipment) ? (
-                      Courts.data?.[index]?.equipment.length > 0 ? (
-                        Courts.data[index].equipment.map((item, index) => {
+                    {Array.isArray(Courts?.data?.[index]?.equipment) ? (
+                      Courts.data[index].equipment.length > 0 ? (
+                        Courts.data[index].equipment.map((item, idx) => {
                           return (
-                            <tr key={index}>
+                            <tr key={idx}>
                               <td>{item.product_name}</td>
                               <td>{item.rental_price} ks</td>
-                              <td> {item.qty_total}</td>
+                              <td>{item.qty_total}</td>
                               <td>
                                 <div className="acltd">
                                   <EditIcon
+                                    className="action-icon"
                                     sx={{ fontSize: "20px" }}
                                     onClick={() => {
                                       setinfo(item);
@@ -353,6 +369,7 @@ function ClassCourtDetail({ data }) {
                                     }}
                                   />
                                   <DeleteIcon
+                                    className="action-icon"
                                     sx={{ fontSize: "20px" }}
                                     onClick={() => delete_equipment(item.id)}
                                   />
@@ -363,32 +380,14 @@ function ClassCourtDetail({ data }) {
                         })
                       ) : (
                         <tr>
-                          <td
-                            colSpan="4"
-                            style={{
-                              textAlign: "center",
-                              padding: "20px",
-                              borderTop: "1px solid #0f0e0e4f",
-                              borderBottom: "1px solid #0f0e0e4f",
-                              margin: 0,
-                            }}
-                          >
+                          <td colSpan="4" className="empty-cell">
                             No data
                           </td>
                         </tr>
                       )
                     ) : (
                       <tr>
-                        <td
-                          colSpan="4"
-                          style={{
-                            textAlign: "center",
-                            padding: "20px",
-                            borderTop: "1px solid #0f0e0e4f",
-                            borderBottom: "1px solid #0f0e0e4f",
-                            margin: 0,
-                          }}
-                        >
+                        <td colSpan="4" className="empty-cell">
                           Loading...
                         </td>
                       </tr>
@@ -402,22 +401,19 @@ function ClassCourtDetail({ data }) {
             <div className="addcourtright1">
               <span className="acr1">
                 <h3>Court Schedule</h3>
-                <button
-                  onClick={() => {
-                    setshowtime(true);
-                  }}
-                >
-                  <AddIcon sx={{ fontSize: "20px" }} />
+                <button onClick={() => setshowtime(true)}>
+                  <AddIcon className="action-icon" sx={{ fontSize: "20px" }} />
                 </button>
               </span>
               <div className="acr11">
-                {Array.isArray(Courts.data?.[index]?.time_slots) ? (
+                {Array.isArray(Courts?.data?.[index]?.time_slots) ? (
                   Courts.data[index].time_slots.length > 0 ? (
-                    Courts.data[index].time_slots?.map((item, index) => {
+                    Courts.data[index].time_slots?.map((item, idx) => {
                       return (
-                        <span className="acrchild" key={index}>
+                        <span className="acrchild" key={idx}>
                           <ClockIcon
-                            sx={{ fontSize: "20px", color: "#737685" }}
+                            className="add-icon-svg"
+                            sx={{ fontSize: "20px" }}
                           />
                           <p>
                             {item.start_time.slice(0, 5)} -{" "}
@@ -453,20 +449,19 @@ function ClassCourtDetail({ data }) {
               <div className="acr21">
                 <span className="acr21header">
                   <h3>Pros</h3>
-                  <button
-                    onClick={() => {
-                      showPopup(1, "New Pro", "Pro");
-                    }}
-                  >
-                    <AddIcon sx={{ fontSize: "17px" }} />
+                  <button onClick={() => showPopup(1, "New Pro", "Pro")}>
+                    <AddIcon
+                      className="action-icon"
+                      sx={{ fontSize: "17px" }}
+                    />
                   </button>
                 </span>
                 <div className="acrchilds">
-                  {Array.isArray(Courts.data?.[index]?.pros) ? (
+                  {Array.isArray(Courts?.data?.[index]?.pros) ? (
                     Courts.data[index].pros.length > 0 ? (
-                      Courts.data[index].pros?.map((item, index) => {
+                      Courts.data[index].pros?.map((item, idx) => {
                         return (
-                          <span className="acrprochild" key={index}>
+                          <span className="acrprochild" key={idx}>
                             <h3>{item.name}</h3>
                             <button
                               style={{
@@ -496,22 +491,22 @@ function ClassCourtDetail({ data }) {
               <div className="acr22">
                 <span className="acr21header">
                   <h3>Cons</h3>
-                  <button
-                    onClick={() => {
-                      showPopup(2, "New Con", "Con");
-                    }}
-                  >
-                    <AddIcon sx={{ fontSize: "17px" }} />
+                  <button onClick={() => showPopup(2, "New Con", "Con")}>
+                    <AddIcon
+                      className="action-icon"
+                      sx={{ fontSize: "17px" }}
+                    />
                   </button>
                 </span>
                 <div className="acrchilds">
-                  {Array.isArray(Courts.data?.[index]?.cons) ? (
+                  {Array.isArray(Courts?.data?.[index]?.cons) ? (
                     Courts.data[index].cons.length > 0 ? (
-                      Courts.data[index].cons?.map((item, index) => {
+                      Courts.data[index].cons?.map((item, idx) => {
                         return (
-                          <span className="acrprochild" key={index}>
+                          <span className="acrprochild" key={idx}>
                             <h3>{item.name}</h3>
                             <CloseIcon
+                              className="action-icon"
                               sx={{ fontSize: "15px" }}
                               onClick={() => delete_data(item.id, 0)}
                             />
@@ -540,19 +535,22 @@ function ClassCourtDetail({ data }) {
                   <span className="acr3header1">
                     <h3>ADDITIONAL SERVICES</h3>
                     <button
-                      onClick={() => {
-                        showPopup(3, "New Service", "Additional service");
-                      }}
+                      onClick={() =>
+                        showPopup(3, "New Service", "Additional service")
+                      }
                     >
-                      <AddIcon sx={{ fontSize: "20px" }} />
+                      <AddIcon
+                        className="action-icon"
+                        sx={{ fontSize: "20px" }}
+                      />
                     </button>
                   </span>
                   <div className="acr31content">
-                    {Array.isArray(Courts.data?.[index]?.services) ? (
-                      Courts.data?.[index]?.services.length > 0 ? (
-                        Courts.data[index].services.map((item, index) => {
+                    {Array.isArray(Courts?.data?.[index]?.services) ? (
+                      Courts.data[index].services.length > 0 ? (
+                        Courts.data[index].services.map((item, idx) => {
                           return (
-                            <span key={index}>
+                            <span key={idx}>
                               <p>{item.name}</p>
                               <button onClick={() => delete_data(item.id, 3)}>
                                 <CloseIcon sx={{ fontSize: "17px" }} />
@@ -576,19 +574,20 @@ function ClassCourtDetail({ data }) {
                   <span className="acr3header1">
                     <h3>SAFETY RULES</h3>
                     <button
-                      onClick={() => {
-                        showPopup(4, "New Rule", "Title Rule");
-                      }}
+                      onClick={() => showPopup(4, "New Rule", "Title Rule")}
                     >
-                      <AddIcon sx={{ fontSize: "20px" }} />
+                      <AddIcon
+                        className="action-icon"
+                        sx={{ fontSize: "20px" }}
+                      />
                     </button>
                   </span>
                   <div className="acr32content">
-                    {Array.isArray(Courts.data?.[index]?.rules) ? (
-                      Courts.data?.[index]?.rules.length > 0 ? (
-                        Courts.data[index].rules.map((item, index) => {
+                    {Array.isArray(Courts?.data?.[index]?.rules) ? (
+                      Courts.data[index].rules.length > 0 ? (
+                        Courts.data[index].rules.map((item, idx) => {
                           return (
-                            <div className="acr32child" key={index}>
+                            <div className="acr32child" key={idx}>
                               <span>
                                 <h3>{item.name}</h3>
                                 <p>{item.detail}</p>
@@ -656,8 +655,10 @@ function ClassCourtDetail({ data }) {
               <input type="time" ref={end_time} required />
             </span>
             <span className="stwbody4">
-              <button type="button">Cancel</button>
-              <button>Create</button>
+              <button type="button" onClick={closetimepopup}>
+                Cancel
+              </button>
+              <button type="submit">Create</button>
             </span>
           </form>
         </div>
@@ -666,4 +667,5 @@ function ClassCourtDetail({ data }) {
     document.body,
   );
 }
+
 export default ClassCourtDetail;

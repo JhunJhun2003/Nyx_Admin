@@ -1,159 +1,350 @@
-.addorderproductmain {
-  width: 100%;
+/* Backdrop Overlay */
+.addorderproduct-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
   height: 100vh;
-  position: absolute;
-  background-color: rgb(240, 240, 240);
-  overflow-y: scroll;
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+/* Modal Main Window */
+.addorderproductmain {
+  width: 900px;
+  max-width: 90vw;
+  height: 80vh;
+  max-height: 650px;
+  background-color: #ffffff;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
-  padding-top: 10px;
-  z-index: 100;
-  gap: 10px;
-  padding: 1px 10px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  font-family: "Inter", sans-serif;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
-.Aptcloseicon {
-  align-self: flex-end;
-  border: none;
-  outline: none;
-  background-color: initial;
-  margin: 0;
-  position: absolute;
-  top: 0;
-  right: 0;
-}
+
+/* Header */
 .Adpheader {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1.3em;
-}
-.Adpheader span {
-  padding: 1px 5px;
-  display: flex;
-  align-items: center;
-  border: 1px solid #0d1b2a;
-  border-radius: 13px;
-  background-color: #0d1b2a;
-}
-.Adpheader input {
-  border: none;
-  outline: none;
-  background-color: initial;
-  padding: 7px;
-  color: white;
-}
-.Adpheader h2 {
-  font-family: Inter;
-  padding: 0;
-  position: initial;
-  background-color: initial;
-  margin: 0;
-}
-.Adpcategories {
-  display: flex;
-  width: 100%;
-  justify-content: flex-start;
-  overflow-x: scroll;
-  margin: 0 5px;
-  flex-shrink: 0;
-  gap: 10px;
-}
-.active {
-  background-color: #0d1b2a;
-  color: white;
-}
-.Adpcategories p {
-  padding: 5px 10px;
-  border-radius: 5px;
-  border: 1px solid rgba(128, 128, 128, 0.397);
-  flex-shrink: 0;
-  white-space: nowrap;
-  font-size: small;
-  font-weight: bold;
-}
-.Adpproduct {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(23%, 1fr));
-  padding: 1em 5px;
-  width: 100%;
-  height: 80vh;
-  overflow-y: scroll;
-  border-top: 1px solid rgba(128, 128, 128, 0.267);
-  border-bottom: 1px solid rgba(128, 128, 128, 0.267);
-}
-.addequipment {
-  height: 150px;
-  padding: 10px;
-  border: 1px solid #c3c6d6;
-  border-radius: 10px;
-  background-color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-}
-.addequipment p {
-  align-self: flex-end;
-  background-color: #e0e9f2;
-  padding: 10px;
-  border-radius: 10px;
-  font-size: x-small;
-  color: #003d9b;
-  font-family: Work Sans;
-}
-.addequipment h3 {
-  align-self: flex-start;
-  font-family: Work Sans;
-  color: #141d23;
-  padding: 5px 2px;
-  text-transform: capitalize;
-}
-.addequipment span {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-}
-.addequipment span h4 {
-  font-family: Work Sans;
-  color: #1b263b;
-}
-.addequipment span button {
-  border-radius: 10px;
-  border: none;
-  outline: none;
-  background-color: #1b263b;
-  color: #ffffff;
-  padding: 10px 1em;
-}
-.addequipment span button:disabled {
-  opacity: 0.5;
-}
-.Adpfooter {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-top: auto;
-  margin-bottom: 10px;
-}
-.Adpfooter button {
-  width: 100px;
-  height: 30px;
-  border-radius: 5px;
-  outline: none;
-  color: white;
-  border: 1px solid #b7102a;
-  background-color: #b7102a;
-}
-.Adpfooter button:active {
-  opacity: 0.5;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  box-sizing: border-box;
 }
 
-/* for loading category*/
-.loadingp {
-  height: 30px;
-  width: 80px;
-  background-color: gray;
+.Adpheader h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #0d1b2a;
+}
+
+.Adpheader-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Search Input */
+.Adpsearch-box {
+  display: flex;
+  align-items: center;
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 4px 50px;
+  gap: 6px;
+}
+
+.Adpsearch-box:focus-within {
+  border-color: #0d1b2a;
+  background-color: #ffffff;
+}
+
+.Adpsearch-box .search-icon {
+  font-size: 18px;
+  color: #64748b;
+}
+
+.Adpsearch-box input {
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 4px;
+  font-size: 0.85rem;
+  color: #1e293b;
+  width: 140px;
+}
+
+.Aptcloseicon {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.Aptcloseicon:hover {
+  background-color: #f3f4f6;
+}
+
+/* Product Grid Area */
+.Adpproduct {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  align-items: start;
+  gap: 16px;
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Custom Scrollbar */
+.Adpproduct::-webkit-scrollbar {
+  width: 6px;
+}
+
+.Adpproduct::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
   border-radius: 10px;
+}
+
+/* ==========================================
+   ၁. PRODUCT CARD REDESIGN
+   ========================================== */
+.addequipment {
+  width: 100%;
+  height: fit-content;
+  min-height: 110px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  box-sizing: border-box;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.addequipment:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+.addequipment-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.product-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.3;
+  text-transform: capitalize;
+  word-break: break-word;
+}
+
+.status-badge {
+  background-color: #e0f2fe;
+  color: #0284c7;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.addequipment-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.price-tag {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #059669;
+  white-space: nowrap;
+}
+
+.addequipment-bottom button {
+  background-color: #0d1b2a;
+  color: #ffffff;
+  border: none;
+  padding: 6px 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+.addequipment-bottom button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.no-product {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #94a3b8;
+  padding: 40px 0;
+  font-size: 0.95rem;
+}
+
+/* ==========================================
+   ၂. FOOTER & CONFIRM ORDER BUTTON
+   ========================================== */
+.Adpfooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  background-color: #ffffff;
+}
+
+.Adpfooter span {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.Adpfooter span h5 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.Adpfooter span h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0d1b2a;
+}
+
+.Adpfooter .confirm-btn {
+  background-color: #0d1b2a;
+  color: #ffffff;
+  border: none;
+  padding: 10px 24px;
+  width: auto;
+  min-width: 140px;
+  height: auto;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.Adpfooter .confirm-btn:hover {
+  opacity: 0.9;
+}
+
+/* ==========================================
+   DARK MODE STYLES
+   ========================================== */
+.addorderproductmain.dark-mode {
+  background-color: #27292d;
+  color: #ffffff;
+}
+
+.addorderproductmain.dark-mode .Adpheader {
+  border-bottom-color: #3a3d40;
+}
+
+.addorderproductmain.dark-mode .Adpheader h2 {
+  color: #ffffff;
+}
+
+.addorderproductmain.dark-mode .Adpsearch-box {
+  background-color: #1e2023;
+  border-color: #3a3d40;
+}
+
+.addorderproductmain.dark-mode .Adpsearch-box input {
+  color: #ffffff;
+}
+
+.addorderproductmain.dark-mode .Aptcloseicon:hover {
+  background-color: #3a3d40;
+}
+
+.addorderproductmain.dark-mode .addequipment {
+  background-color: #1e2023;
+  border-color: #3a3d40;
+}
+
+.addorderproductmain.dark-mode .product-title {
+  color: #ffffff;
+}
+
+.addorderproductmain.dark-mode .status-badge {
+  background-color: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+}
+
+.addorderproductmain.dark-mode .addequipment-bottom {
+  border-top-color: #27292d;
+}
+
+.addorderproductmain.dark-mode .price-tag {
+  color: #34d399;
+}
+
+.addorderproductmain.dark-mode .addequipment-bottom button {
+  background-color: #3b82f6;
+}
+
+.addorderproductmain.dark-mode .Adpproduct::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+}
+
+.addorderproductmain.dark-mode .Adpfooter {
+  background-color: #27292d;
+  border-top-color: #3a3d40;
+}
+
+.addorderproductmain.dark-mode .Adpfooter span h5 {
+  color: #9ca3af;
+}
+
+.addorderproductmain.dark-mode .Adpfooter span h3 {
+  color: #ffffff;
+}
+
+.addorderproductmain.dark-mode .Adpfooter .confirm-btn {
+  background-color: #3b82f6;
 }

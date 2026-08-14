@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "../classCss/studenttable.css";
 import PersonIcon from "@mui/icons-material/Person";
 import AddIcon from "@mui/icons-material/Add";
@@ -9,13 +9,20 @@ import CloseIcon from "@mui/icons-material/Close";
 import BadgeIcon from "@mui/icons-material/Badge";
 import SchoolIcon from "@mui/icons-material/School";
 import ImageIcon from "@mui/icons-material/Image";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import deleteIcon from "../images/deleteicon.png";
+import { Context } from "../Hooks/context";
+
+const API_BASE = "http://130.94.99.9:5000";
 
 const StudentsTable = () => {
+  // Theme context detection
+  const { classBackColor } = useContext(Context) || {};
+  const isDark = classBackColor === "#1A1C1E";
+
   const [activeTab, setActiveTab] = useState("All");
   const [tabsList, setTabsList] = useState(["All"]);
   const [coursesData, setCoursesData] = useState([]);
@@ -26,14 +33,16 @@ const StudentsTable = () => {
   const itemsPerPage = 15;
 
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Loading
+  // Loading states
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Action Loading State
+  // Action Processing State
   const [isActionProcessing, setIsActionProcessing] = useState(false);
 
+  // Modals
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStudentMain, setSelectedStudentMain] = useState(null);
   const [selectedStudentDetail, setSelectedStudentDetail] = useState(null);
@@ -50,7 +59,7 @@ const StudentsTable = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        "http://130.94.99.9:5000/api/coursestudent/showtrainingstudentall",
+        `${API_BASE}/api/coursestudent/showtrainingstudentall`,
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -82,8 +91,6 @@ const StudentsTable = () => {
       setLoading(false);
     }
   };
-
-  const location = useLocation();
 
   useEffect(() => {
     fetchAllStudentsData();
@@ -136,20 +143,18 @@ const StudentsTable = () => {
   }, [activeTab, searchQuery, coursesData]);
 
   const confirmDeleteStudent = async () => {
-    setIsDeleteModalOpen(false); // အရင်ဆုံး Modal ဘောက်စ်ကို ပိတ်လိုက်မယ်
+    setIsDeleteModalOpen(false);
 
     try {
       setIsActionProcessing(true);
 
-      // သိမ်းထားတဲ့ deletingStudentId ကို သုံးပြီး student detail ကို ရှာမယ်
       const studentToDelete = filteredStudents.find(
         (student) => student.id === deletingStudentId,
       );
-      const studentSource = studentToDelete?.source;
+      const studentSource = studentToDelete?.source || "mobile";
 
       const response = await fetch(
-        `http://
-130.94.99.9:5000/api/course/deletetrainingstudent/${deletingStudentId}/${studentSource}`,
+        `${API_BASE}/api/course/deletetrainingstudent/${deletingStudentId}/${studentSource}`,
         {
           method: "DELETE",
           headers: {
@@ -160,35 +165,29 @@ const StudentsTable = () => {
 
       const result = await response.json();
 
-      // if (response.ok && result.success) {
-      //   alert("Student deleted successfully!");
-      //   await fetchAllStudentsData(); // Table ထဲက data တွေ refresh ပြန်လုပ်မယ်
-      // } else {
-      //   alert(`Failed to delete student: ${result.message || "Server Error"}`);
-      // }
       if (response.ok && result.success) {
-  await Swal.fire({
-    icon: 'success',
-    title: 'Deleted!',
-    text: 'Student deleted successfully!',
-    confirmButtonColor: '#3085d6',
-    timer: 2000,
-    showConfirmButton: true
-  });
-  await fetchAllStudentsData(); // Refresh data
-} else {
-  await Swal.fire({
-    icon: 'error',
-    title: 'Failed!',
-    text: result.message || 'Failed to delete student',
-    confirmButtonColor: '#3085d6'
-  });
-}
+        await Swal.fire({
+          icon: "success",
+          title: "Deleted!",
+          text: "Student deleted successfully!",
+          confirmButtonColor: "#3085d6",
+          timer: 2000,
+          showConfirmButton: true,
+        });
+        await fetchAllStudentsData();
+      } else {
+        await Swal.fire({
+          icon: "error",
+          title: "Failed!",
+          text: result.message || "Failed to delete student",
+          confirmButtonColor: "#3085d6",
+        });
+      }
     } catch (err) {
       alert(`Network Error: ${err.message}`);
     } finally {
       setIsActionProcessing(false);
-      setDeletingStudentId(null); // အလုပ်ပြီးသွားရင် id ကို null ပြန်ပြောင်းမယ်
+      setDeletingStudentId(null);
     }
   };
 
@@ -216,8 +215,7 @@ const StudentsTable = () => {
 
     try {
       const response = await fetch(
-        `http://
-130.94.99.9:5000/api/coursestudent/trainingstudentdetailfindid/${studentId}/${studentSource}`,
+        `${API_BASE}/api/coursestudent/trainingstudentdetailfindid/${studentId}/${studentSource}`,
       );
       if (!response.ok) {
         throw new Error("Failed to fetch student details from server.");
@@ -254,40 +252,56 @@ const StudentsTable = () => {
   };
 
   return (
-    <div className="st-container">
-      {/* ==========================================================================
-         [INTERNET/ACTION LOSS LOADING EFFECT OVERLAY]
-         ========================================================================== */}
-      {/* {isActionProcessing && (
-        <div
-          className="st-modal-overlay"
-          style={{ backgroundColor: "rgba(255, 255, 255, 0.7)", zIndex: 2000 }}
-        >
-          <div className="st-loading-container">
-            <div className="st-spinner"></div>
-            <p
-              className="st-loading-text"
-              style={{ fontWeight: 600, color: "#0b1528" }}
-            >
-              Processing requested action... Please wait or check connection.
-            </p>
-          </div>
-        </div>
-      )} */}
-
+    <div
+      className={`st-container ${isDark ? "dark-mode" : ""}`}
+      style={{
+        backgroundColor: isDark ? "#121212" : "#f8fafc",
+        color: isDark ? "#ffffff" : "#111827",
+      }}
+    >
       {/* Header */}
       <div className="st-header">
         <div className="st-title-section">
-          <PersonIcon className="st-title-icon" />
-          <h1 className="st-title-text">Students</h1>
+          <PersonIcon
+            className="st-title-icon"
+            style={{ color: isDark ? "#ffffff" : "#0b1320" }}
+          />
+          <h1
+            className="st-title-text"
+            style={{
+              margin: 0,
+              fontSize: "30px",
+              color: isDark ? "#ffffff" : "#0b1320",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            Students
+          </h1>
         </div>
-        <button className="st-add-btn" onClick={() => navigate("add_student")}>
+        <button
+          className="st-add-btn"
+          onClick={() => navigate("add_student")}
+          style={{
+            backgroundColor: isDark ? "#0284c7" : "#0f1f3d",
+            color: isDark ? "#ffffff" : "white",
+
+            cursor: "pointer",
+          }}
+        >
           <AddIcon style={{ fontSize: 18 }} /> Add Student
         </button>
       </div>
 
       {/* Main Table Card */}
-      <div className="st-card">
+      <div
+        className="st-card"
+        style={{
+          backgroundColor: isDark ? "#1a1c1e" : "#ffffff",
+          border: `1px solid ${isDark ? "#334155" : "#e5e7eb"}`,
+        }}
+      >
         <div className="st-toolbar">
           <div className="st-tabs">
             {tabsList.map((tab, idx) => (
@@ -312,7 +326,6 @@ const StudentsTable = () => {
               className="st-search-input"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ backgroundColor: "#0b1528", color: "#ffffff" }}
             />
             <SearchIcon className="st-search-icon" />
           </div>
@@ -343,7 +356,10 @@ const StudentsTable = () => {
             </div>
           ) : (
             <>
-              <table className="st-student-table">
+              <table
+                className="st-student-table"
+                style={{ borderColor: isDark ? "#2e3238" : "#e5e7eb" }}
+              >
                 <thead>
                   <tr>
                     <th className="st-th">NAME</th>
@@ -380,8 +396,8 @@ const StudentsTable = () => {
                         <button
                           className="st-action-btn st-delete-btn"
                           onClick={() => {
-                            setDeletingStudentId(student.id); // ဖျက်မယ့် student ရဲ့ id ကို သိမ်းထားမယ်
-                            setIsDeleteModalOpen(true); // Modal ကို ဖွင့်မယ်
+                            setDeletingStudentId(student.id);
+                            setIsDeleteModalOpen(true);
                           }}
                           disabled={isActionProcessing}
                         >
@@ -393,112 +409,34 @@ const StudentsTable = () => {
                 </tbody>
               </table>
 
+              {/* Delete Modal */}
               {isDeleteModalOpen && (
-                <div
-                  style={{
-                    position: "fixed",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    backgroundColor: "rgba(0, 0, 0, 0.4)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    zIndex: 9999,
-                  }}
-                >
-                  <div
-                    style={{
-                      backgroundColor: "white",
-                      padding: "28px",
-                      borderRadius: "16px",
-                      boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-                      maxWidth: "380px",
-                      width: "90%",
-                      textAlign: "center",
-                      fontFamily: "sans-serif",
-                    }}
-                  >
-                    {/* အမှိုက်ပုံး Icon ပုံစံ */}
-                    <div
-                      style={{
-                        width: "60px",
-                        height: "60px",
-                        backgroundColor: "#fce8e6",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        margin: "0 auto 16px auto",
-                      }}
-                    >
+                <div className="st-modal-overlay">
+                  <div className="st-delete-modal-card">
+                    <div className="st-delete-icon-wrapper">
                       <span className="alretconfirmicon">
-                        <img src={deleteIcon} />
+                        <DeleteIcon className="st-delete-modal-icon" />
                       </span>
                     </div>
 
-                    <h3
-                      style={{
-                        margin: "0 0 8px 0",
-                        fontSize: "20px",
-                        fontWeight: "700",
-                        color: "#1a1a1a",
-                      }}
-                    >
-                      Deleting Student?
-                    </h3>
-                    <p
-                      style={{
-                        margin: "0 0 24px 0",
-                        color: "#5f6368",
-                        fontSize: "14px",
-                        lineHeight: "1.5",
-                      }}
-                    >
+                    <h3 className="st-delete-title">Deleting Student?</h3>
+                    <p className="st-delete-desc">
                       Are you sure you want to delete this student?
                     </p>
 
-                    {/* Buttons Component */}
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        gap: "12px",
-                      }}
-                    >
+                    <div className="st-delete-btn-group">
                       <button
+                        className="st-delete-cancel-btn"
                         onClick={() => {
                           setIsDeleteModalOpen(false);
                           setDeletingStudentId(null);
                         }}
-                        style={{
-                          flex: 1,
-                          padding: "10px 0",
-                          backgroundColor: "#f1f3f4",
-                          color: "#3c4043",
-                          border: "1px solid #dadce0",
-                          borderRadius: "8px",
-                          cursor: "pointer",
-                          fontWeight: "600",
-                          fontSize: "14px",
-                        }}
                       >
-                        cancel
+                        Cancel
                       </button>
                       <button
+                        className="st-delete-confirm-btn"
                         onClick={confirmDeleteStudent}
-                        style={{
-                          flex: 1,
-                          padding: "10px 0",
-                          backgroundColor: "#dc3545",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "8px",
-                          cursor: "pointer",
-                          fontWeight: "600",
-                          fontSize: "14px",
-                        }}
                       >
                         Delete
                       </button>
@@ -506,6 +444,7 @@ const StudentsTable = () => {
                   </div>
                 </div>
               )}
+
               {/* Pagination Section */}
               {totalPages > 1 && (
                 <div className="st-footer">
@@ -528,9 +467,9 @@ const StudentsTable = () => {
                     {[...Array(totalPages)].map((_, i) => (
                       <button
                         key={i + 1}
-                        className={`st -
-                          pag -
-                          btn${currentPage === i + 1 ? "st-page-active" : ""}`}
+                        className={`st-pag-btn ${
+                          currentPage === i + 1 ? "st-page-active" : ""
+                        }`}
                         onClick={() => handlePageChange(i + 1)}
                       >
                         {i + 1}
@@ -570,7 +509,7 @@ const StudentsTable = () => {
 
             <div className="st-modal-body">
               <div className="st-info-section-title">
-                <BadgeIcon style={{ fontSize: 18, color: "#4b5563" }} />
+                <BadgeIcon style={{ fontSize: 18 }} />
                 <span>STUDENT INFORMATION</span>
               </div>
 
@@ -620,7 +559,7 @@ const StudentsTable = () => {
                 className="st-info-section-title"
                 style={{ marginTop: "24px" }}
               >
-                <SchoolIcon style={{ fontSize: 18, color: "#4b5563" }} />
+                <SchoolIcon style={{ fontSize: 18 }} />
                 <span>COURSE TABLE</span>
               </div>
 
@@ -692,9 +631,7 @@ const StudentsTable = () => {
                                 )
                               }
                             >
-                              <ImageIcon
-                                style={{ fontSize: 18, color: "#4b5563" }}
-                              />
+                              <ImageIcon style={{ fontSize: 18 }} />
                             </button>
                           </td>
                         </tr>
@@ -720,6 +657,7 @@ const StudentsTable = () => {
           </div>
         </div>
       )}
+
       {/* Image Modal Pop-up Box */}
       {isImageModalOpen && (
         <div

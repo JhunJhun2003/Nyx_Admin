@@ -1,4 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import "../PosSettingCss/GeneralSetting.css";
 import ShopLogo from "../images/shoplogo.png";
 import { Context } from "../Hooks/context";
@@ -9,10 +10,42 @@ function PosGeneralSetting() {
   const [file, setfile] = useState(null);
   const [filepath, setfilepath] = useState(null);
 
-  const { General, GetGenerals } = useGetGeneralSetting();
+  // useGetGeneralSetting မှ Data ယူခြင်း
+  const { General = {}, GetGenerals } = useGetGeneralSetting();
+
+  // Dark Mode Dynamic Style ယူရန်
+  const ContextData = useContext(Context) || {};
+  const location = useLocation();
+
+  // Class Path စစ်ခြင်း
+  const isClass = location.pathname.includes("/class");
+
+  const backcolor = isClass
+    ? ContextData?.classBackColor
+    : ContextData?.backcolor;
+
+  const isDark = Boolean(backcolor === "#1A1C1E");
+
+  // Dynamic Styles
+  const ContainerStyle = {
+    backgroundColor: isDark ? "#1E2227" : "#f0f0f0",
+    borderColor: isDark ? "#3A3F47" : "#000000",
+  };
+
+  const FontStyle = {
+    color: isDark ? "#E1E1E1" : "#0D1B2A",
+  };
+
+  const InputStyle = {
+    backgroundColor: isDark ? "#25282C" : "#FFFFFF",
+    color: isDark ? "#FFFFFF" : "#000000",
+    border: isDark ? "1px solid #444" : "1px solid #ccc",
+  };
 
   useEffect(() => {
-    GetGenerals();
+    if (typeof GetGenerals === "function") {
+      GetGenerals();
+    }
   }, []);
 
   const nameref = useRef();
@@ -21,37 +54,41 @@ function PosGeneralSetting() {
   const linkref = useRef();
   const fileref = useRef();
 
-  const shop_info =
-    Array.isArray(General.data) && General.data.length > 0
-      ? {
-          key: 1,
-          url: General.data[0].logo_image_url,
-          name: General.data[0].shop_name,
-          phNo: General.data[0].contact_info,
-          address: General.data[0].address,
-          social_link: General.data[0].social_link,
-        }
-      : {
-          key: 2,
-          url: ShopLogo,
-          name: "Loading...",
-          phNo: "Loading...",
-          address: "Loading...",
-          social_link: "Loading...",
-        };
+  // ⚠️ Crash မဖြစ်အောင် Optional Chaining (?. ) ဖြင့် စစ်ဆေးထားပါသည်
+  const hasData = Array.isArray(General?.data) && General.data.length > 0;
+
+  const shop_info = hasData
+    ? {
+        key: 1,
+        url: General.data[0]?.logo_image_url || ShopLogo,
+        name: General.data[0]?.shop_name || "",
+        phNo: General.data[0]?.contact_info || "",
+        address: General.data[0]?.address || "",
+        social_link: General.data[0]?.social_link || "",
+      }
+    : {
+        key: 2,
+        url: ShopLogo,
+        name: "Loading...",
+        phNo: "Loading...",
+        address: "Loading...",
+        social_link: "Loading...",
+      };
 
   async function update_general(e) {
     e.preventDefault();
-    if (Array.isArray(General.data)) {
+    if (hasData) {
       let fromdata = new FormData();
       fromdata.append("id", General.data[0].id);
       fromdata.append("shop_name", nameref.current.value);
       fromdata.append("contact_info", contactref.current.value);
       fromdata.append("address", addressref.current.value);
       fromdata.append("social_link", linkref.current.value);
-      if (fileref.current.files[0]) {
+
+      if (fileref.current?.files?.[0]) {
         fromdata.append("logo", fileref.current.files[0]);
       }
+
       let data = {
         id: General.data[0].id,
         shop_name: nameref.current.value,
@@ -61,23 +98,23 @@ function PosGeneralSetting() {
       };
 
       if (
-        data.shop_name == General.data[0].shop_name &&
-        data.contact_info == General.data[0].contact_info &&
-        data.address == General.data[0].address &&
-        data.social_link == General.data[0].social_link &&
-        !fileref.current.files[0]
+        data.shop_name === General.data[0].shop_name &&
+        data.contact_info === General.data[0].contact_info &&
+        data.address === General.data[0].address &&
+        data.social_link === General.data[0].social_link &&
+        !fileref.current?.files?.[0]
       ) {
         return;
       }
+
       const updating = toast.loading("Saving Changes...");
       try {
         let response = await fetch(import.meta.env.VITE_UPDATE_GENERAL, {
           method: "PUT",
-
           body: fromdata,
         });
         if (response.ok) {
-          await GetGenerals();
+          if (typeof GetGenerals === "function") await GetGenerals();
           toast.success("Successfully changed", { id: updating });
         } else {
           toast.error("failed", { id: updating });
@@ -86,25 +123,20 @@ function PosGeneralSetting() {
         console.log(error);
         toast.error("failed", { id: updating });
       }
-    } else {
-      console.log("second block is work");
-      return;
     }
   }
 
   function cancelFun() {
-    nameref.current.value = shop_info.name;
-    contactref.current.value = shop_info.phNo;
-    addressref.current.value = shop_info.address;
-    linkref.current.value = shop_info.social_link;
+    if (nameref.current) nameref.current.value = shop_info.name;
+    if (contactref.current) contactref.current.value = shop_info.phNo;
+    if (addressref.current) addressref.current.value = shop_info.address;
+    if (linkref.current) linkref.current.value = shop_info.social_link;
     setfile(null);
     setfilepath(null);
   }
 
-  //show img preview
   function show_img(event) {
-    let img = event.target.files[0];
-    console.log("function work");
+    let img = event.target.files?.[0];
     setfile(img);
     if (img) {
       let url = URL.createObjectURL(img);
@@ -115,17 +147,14 @@ function PosGeneralSetting() {
   return (
     <form
       className="posgeneralsettingmain"
+      style={ContainerStyle}
       key={shop_info.key}
       onSubmit={update_general}
     >
       <Toaster />
       <div className="posgeneralsettingbody1">
         <div className="zoom_img">
-          {file ? (
-            <img src={filepath} alt="shop logo" />
-          ) : (
-            <img src={shop_info.url} alt="Shop Logo" />
-          )}
+          <img src={filepath || shop_info.url} alt="Shop Logo" />
         </div>
         <label className="changelogo">
           Change Logo
@@ -137,49 +166,66 @@ function PosGeneralSetting() {
           />
         </label>
       </div>
+
       <div className="posgeneralsettingbody2">
-        <label htmlFor="">Shop Name</label>
+        <label style={FontStyle}>Shop Name</label>
         <input
           type="text"
           defaultValue={shop_info.name}
           ref={nameref}
+          style={InputStyle}
           required
         />
       </div>
+
       <div className="posgeneralsettingbody2">
-        <label htmlFor="">Contact Info</label>
+        <label style={FontStyle}>Contact Info</label>
         <input
           type="text"
           defaultValue={shop_info.phNo}
           ref={contactref}
+          style={InputStyle}
           required
         />
       </div>
+
       <div className="posgeneralsettingbody2">
-        <label htmlFor="">Address</label>
+        <label style={FontStyle}>Address</label>
         <input
           type="text"
           defaultValue={shop_info.address}
           ref={addressref}
+          style={InputStyle}
           required
         />
       </div>
+
       <div className="posgeneralsettingbody2">
-        <label htmlFor="">Social Link</label>
+        <label style={FontStyle}>Social Link</label>
         <input
           type="text"
           defaultValue={shop_info.social_link}
           ref={linkref}
+          style={InputStyle}
           required
         />
       </div>
+
       <div className="posgeneralsettingbody2button">
-        <button type="button" onClick={cancelFun}>
-          cancel
+        <button
+          type="button"
+          onClick={cancelFun}
+          style={{
+            backgroundColor: isDark ? "#3A3F47" : "#f0f0f0",
+            color: isDark ? "#FFFFFF" : "#0d1b2a",
+          }}
+        >
+          Cancel
         </button>
-        <button>save changes</button>
+        <button type="submit">Save Changes</button>
       </div>
     </form>
   );
 }
+
 export default PosGeneralSetting;

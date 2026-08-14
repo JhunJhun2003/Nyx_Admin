@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
 import {
   Search,
   GetApp,
   Restaurant,
   MonetizationOn,
   CalendarToday,
-  Visibility,
   FileDownload,
   Close,
 } from "@mui/icons-material";
@@ -22,16 +22,25 @@ import {
 import * as XLSX from "xlsx";
 import html2canvas from "html2canvas";
 
-// Training Overview ပုံစံအတိုင်း သန့်ရှင်းသပ်ရပ်သော StatCard Component
-const StatCard = ({ title, value, change, icon, iconColor, isCurrent }) => (
+// Dark/Light Mood အလိုက် Color ပြောင်းလဲပေးမည့် StatCard Component
+const StatCard = ({
+  title,
+  value,
+  change,
+  icon,
+  iconColor,
+  isCurrent,
+  isDark,
+}) => (
   <div
     style={{
-      background: "#fff",
-      border: "1px solid #e5e7eb",
+      background: isDark ? "#1a1c1e" : "#ffffff",
+      border: `1px solid ${isDark ? "#2e3238" : "#e5e7eb"}`,
       borderRadius: "12px",
       padding: "20px 24px",
       flex: 1,
-      minWidth: 0,
+      minWidth: "220px",
+      transition: "all 0.2s ease",
     }}
   >
     <div
@@ -42,15 +51,21 @@ const StatCard = ({ title, value, change, icon, iconColor, isCurrent }) => (
         marginBottom: "8px",
       }}
     >
-      <span style={{ fontSize: "13px", color: "#6b7280", fontWeight: 500 }}>
+      <span
+        style={{
+          fontSize: "13px",
+          color: isDark ? "#94a3b8" : "#6b7280",
+          fontWeight: 500,
+        }}
+      >
         {title}
       </span>
       {isCurrent ? (
         <span
           style={{
             fontSize: "12px",
-            color: "#6b7280",
-            background: "#f3f4f6",
+            color: isDark ? "#cbd5e1" : "#6b7280",
+            background: isDark ? "#1e293b" : "#f3f4f6",
             padding: "2px 8px",
             borderRadius: "4px",
           }}
@@ -67,7 +82,7 @@ const StatCard = ({ title, value, change, icon, iconColor, isCurrent }) => (
       style={{
         fontSize: "22px",
         fontWeight: 700,
-        color: "#111827",
+        color: isDark ? "#ffffff" : "#111827",
         marginBottom: "6px",
       }}
     >
@@ -87,7 +102,18 @@ const StatCard = ({ title, value, change, icon, iconColor, isCurrent }) => (
   </div>
 );
 
-export default function ClassCanteenOverview() {
+export default function ClassCanteenOverview(props) {
+  // OutletContext (သို့) Parent Props (သို့) Window/Local Theme မှ isDark တန်ဖိုးကို စစ်ဆေးခြင်း
+  const outletContext = useOutletContext();
+
+  // dynamic dark mode check
+  const isDark =
+    props.isDark !== undefined
+      ? props.isDark
+      : outletContext && outletContext.isDark !== undefined
+        ? outletContext.isDark
+        : false;
+
   const [overviewData, setOverviewData] = useState({
     total_order: "0",
     today_order: 0,
@@ -97,8 +123,6 @@ export default function ClassCanteenOverview() {
 
   const [orderTrend, setOrderTrend] = useState("+0%");
   const [revenueTrend, setRevenueTrend] = useState("+0%");
-  const [isOrderPositive, setIsOrderPositive] = useState(true);
-  const [isRevenuePositive, setIsRevenuePositive] = useState(true);
 
   const [orders, setOrders] = useState([]);
   const [rawChartData, setRawChartData] = useState([]);
@@ -112,7 +136,7 @@ export default function ClassCanteenOverview() {
   const [tableEndDate, setTableEndDate] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Training Overview အတိုင်း တစ်မျက်နှာလျှင် ၅ ခုစီပြရန်
+  const itemsPerPage = 5;
 
   const [openViewModal, setOpenViewModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -141,24 +165,18 @@ export default function ClassCanteenOverview() {
 
           if (totalOrderNum > 100000) {
             setOrderTrend("+12%");
-            setIsOrderPositive(true);
           } else if (totalOrderNum > 0 && totalOrderNum <= 100000) {
             setOrderTrend("+5%");
-            setIsOrderPositive(true);
           } else {
             setOrderTrend("-2%");
-            setIsOrderPositive(false);
           }
 
           if (todayRevenueNum > 50000) {
             setRevenueTrend("+15%");
-            setIsRevenuePositive(true);
           } else if (todayRevenueNum === 0) {
             setRevenueTrend("0%");
-            setIsRevenuePositive(true);
           } else {
             setRevenueTrend("-4%");
-            setIsRevenuePositive(false);
           }
 
           const formattedChartData = json.data.canteen_order_trend.map(
@@ -245,7 +263,7 @@ export default function ClassCanteenOverview() {
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
-        backgroundColor: "#ffffff",
+        backgroundColor: isDark ? "#0f172a" : "#ffffff",
       });
 
       const dataURL = canvas.toDataURL("image/png");
@@ -261,7 +279,6 @@ export default function ClassCanteenOverview() {
     const printContent = document.querySelector(".receipt-print-section");
     if (!printContent) return;
 
-    // ယာယီ iframe တစ်ခု ဆောက်မယ်
     const iframe = document.createElement("iframe");
     iframe.style.position = "absolute";
     iframe.style.width = "0px";
@@ -272,18 +289,17 @@ export default function ClassCanteenOverview() {
 
     const doc = iframe.contentWindow.document;
 
-    // Slip ရဲ့ HTML နဲ့ ပုံစံလှပစေဖို့ Font Style ကိုပါ ထည့်ပေးရမယ်
     doc.write(`
     <html>
       <head>
         <title>Print Receipt</title>
         <style>
           body { 
-            font-family: 'Inter', sans-serif; 
+            font-family: 'Segoe UI', sans-serif; 
             margin: 20px; 
             padding: 0;
+            color: #111827;
           }
-          /* Flexbox တွေ သေချာအလုပ်လုပ်အောင် style ပြန်ထည့်ပေးခြင်း */
           div { display: flex; }
         </style>
       </head>
@@ -297,11 +313,9 @@ export default function ClassCanteenOverview() {
 
     doc.close();
 
-    // Font တွေ load တက်လာအောင် ခဏစောင့်ပြီး print ထုတ်မယ်
     setTimeout(() => {
       iframe.contentWindow.focus();
       iframe.contentWindow.print();
-      // Print ပြီးရင် ယာယီဆောက်ထားတဲ့ iframe ကို ပြန်ဖျက်မယ်
       document.body.removeChild(iframe);
     }, 500);
   };
@@ -327,24 +341,43 @@ export default function ClassCanteenOverview() {
     XLSX.writeFile(wb, `${fileName}.xlsx`);
   };
 
+  const inputStyle = {
+    padding: "6px 12px",
+    border: `1px solid ${isDark ? "#334155" : "#e5e7eb"}`,
+    background: isDark ? "#1e293b" : "#fff",
+    color: isDark ? "#ffffff" : "#111827",
+    borderRadius: "6px",
+    fontSize: "14px",
+    outline: "none",
+  };
+
   return (
     <div
       style={{
         fontFamily: "'Segoe UI', sans-serif",
-        background: "#f3f4f6",
+        background: isDark ? "#121212" : "#f3f4f6",
         minHeight: "100vh",
         padding: "24px",
-        color: "#111827",
+        color: isDark ? "#ffffff" : "#111827",
+        transition: "background 0.2s ease, color 0.2s ease",
       }}
     >
       {/* Stat Cards Row */}
-      <div style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "16px",
+          marginBottom: "24px",
+          flexWrap: "wrap",
+        }}
+      >
         <StatCard
           title="TOTAL ORDERS"
           value={`${Number(overviewData.total_order).toLocaleString()} Ks`}
           change={orderTrend}
           icon={<MonetizationOn sx={{ fontSize: "24px" }} />}
           iconColor="#3b82f6"
+          isDark={isDark}
         />
         <StatCard
           title="TODAY ORDERS"
@@ -353,6 +386,7 @@ export default function ClassCanteenOverview() {
           icon={<CalendarToday sx={{ fontSize: "24px" }} />}
           iconColor="#ef4444"
           isCurrent={true}
+          isDark={isDark}
         />
         <StatCard
           title="TOP SELLING MENU"
@@ -360,21 +394,23 @@ export default function ClassCanteenOverview() {
           change=""
           icon={<Restaurant sx={{ fontSize: "24px" }} />}
           iconColor="#f59e0b"
+          isDark={isDark}
         />
         <StatCard
           title="TOTAL REVENUE"
-          value={`${overviewData.today_revenue.toLocaleString()} Ks`}
+          value={`${Number(overviewData.today_revenue).toLocaleString()} Ks`}
           change={revenueTrend}
           icon={<MonetizationOn sx={{ fontSize: "24px" }} />}
           iconColor="#10b981"
+          isDark={isDark}
         />
       </div>
 
       {/* Chart Section */}
       <div
         style={{
-          background: "#fff",
-          border: "1px solid #e5e7eb",
+          background: isDark ? "#1a1c1e" : "#ffffff",
+          border: `1px solid ${isDark ? "#2e3238" : "#e5e7eb"}`,
           borderRadius: "12px",
           padding: "24px",
           marginBottom: "24px",
@@ -386,9 +422,18 @@ export default function ClassCanteenOverview() {
             justifyContent: "space-between",
             alignItems: "center",
             marginBottom: "20px",
+            flexWrap: "wrap",
+            gap: "12px",
           }}
         >
-          <h2 style={{ fontSize: "20px", fontWeight: 700, margin: 0 }}>
+          <h2
+            style={{
+              fontSize: "20px",
+              fontWeight: 700,
+              margin: 0,
+              color: isDark ? "#ffffff" : "#111827",
+            }}
+          >
             Canteen Order Trends
           </h2>
           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -396,28 +441,18 @@ export default function ClassCanteenOverview() {
               type="date"
               value={chartStartDate}
               onChange={(e) => setChartStartDate(e.target.value)}
-              style={{
-                padding: "6px 12px",
-                border: "1px solid #e5e7eb",
-                borderRadius: "6px",
-                fontSize: "14px",
-              }}
+              style={inputStyle}
             />
             <input
               type="date"
               value={chartEndDate}
               onChange={(e) => setChartEndDate(e.target.value)}
-              style={{
-                padding: "6px 12px",
-                border: "1px solid #e5e7eb",
-                borderRadius: "6px",
-                fontSize: "14px",
-              }}
+              style={inputStyle}
             />
             <button
               onClick={() => exportToExcel(filteredChartData, "Trend_Data")}
               style={{
-                background: "#1e293b",
+                background: isDark ? "#2563eb" : "#0D1B2A",
                 color: "#fff",
                 border: "none",
                 borderRadius: "8px",
@@ -445,30 +480,32 @@ export default function ClassCanteenOverview() {
               >
                 <defs>
                   <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.01} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid
                   strokeDasharray="0"
                   vertical={false}
-                  stroke="#e5e7eb"
+                  stroke={isDark ? "#1e293b" : "#e5e7eb"}
                 />
                 <XAxis
                   dataKey="name"
-                  tick={{ fontSize: 12, fill: "#9ca3af" }}
+                  tick={{ fontSize: 12, fill: isDark ? "#94a3b8" : "#9ca3af" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 12, fill: "#9ca3af" }}
+                  tick={{ fontSize: 12, fill: isDark ? "#94a3b8" : "#9ca3af" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <Tooltip
                   contentStyle={{
+                    background: isDark ? "#0f172a" : "#fff",
                     borderRadius: "8px",
-                    border: "1px solid #e5e7eb",
+                    border: `1px solid ${isDark ? "#1e293b" : "#e5e7eb"}`,
+                    color: isDark ? "#ffffff" : "#111827",
                     fontSize: "13px",
                   }}
                 />
@@ -487,7 +524,7 @@ export default function ClassCanteenOverview() {
               style={{
                 textAlign: "center",
                 padding: "40px",
-                color: "#9ca3af",
+                color: isDark ? "#94a3b8" : "#9ca3af",
                 fontSize: "14px",
               }}
             >
@@ -500,8 +537,8 @@ export default function ClassCanteenOverview() {
       {/* Recent Canteen Orders Table Section */}
       <div
         style={{
-          background: "#fff",
-          border: "1px solid #e5e7eb",
+          background: isDark ? "#1a1c1e" : "#ffffff",
+          border: `1px solid ${isDark ? "#2e3238" : "#e5e7eb"}`,
           borderRadius: "12px",
           padding: "24px",
         }}
@@ -516,7 +553,14 @@ export default function ClassCanteenOverview() {
             gap: "10px",
           }}
         >
-          <h2 style={{ fontSize: "20px", fontWeight: 700, margin: 0 }}>
+          <h2
+            style={{
+              fontSize: "20px",
+              fontWeight: 700,
+              margin: 0,
+              color: isDark ? "#ffffff" : "#111827",
+            }}
+          >
             Recent Canteen Orders
           </h2>
           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -531,9 +575,9 @@ export default function ClassCanteenOverview() {
                   setCurrentPage(1);
                 }}
                 style={{
-                  background: "#1e293b",
-                  color: "#fff",
-                  border: "none",
+                  background: isDark ? "#1e293b" : "#f3f4f6",
+                  color: isDark ? "#ffffff" : "#111827",
+                  border: `1px solid ${isDark ? "#334155" : "#e5e7eb"}`,
                   borderRadius: "8px",
                   padding: "8px 36px 8px 14px",
                   fontSize: "14px",
@@ -556,7 +600,7 @@ export default function ClassCanteenOverview() {
             <button
               onClick={() => exportToExcel(filteredOrders)}
               style={{
-                background: "#1e293b",
+                background: isDark ? "#2563eb" : "#0D1B2A",
                 color: "#fff",
                 border: "none",
                 borderRadius: "8px",
@@ -574,7 +618,7 @@ export default function ClassCanteenOverview() {
           </div>
         </div>
 
-        {/* Date Filter Layout (Switch Button ဖြုတ်ထားသည်) */}
+        {/* Date Filter Layout */}
         <div
           style={{
             display: "flex",
@@ -590,12 +634,7 @@ export default function ClassCanteenOverview() {
                 setTableStartDate(e.target.value);
                 setCurrentPage(1);
               }}
-              style={{
-                padding: "6px 12px",
-                border: "1px solid #e5e7eb",
-                borderRadius: "6px",
-                fontSize: "14px",
-              }}
+              style={inputStyle}
             />
             <input
               type="date"
@@ -604,21 +643,20 @@ export default function ClassCanteenOverview() {
                 setTableEndDate(e.target.value);
                 setCurrentPage(1);
               }}
-              style={{
-                padding: "6px 12px",
-                border: "1px solid #e5e7eb",
-                borderRadius: "6px",
-                fontSize: "14px",
-              }}
+              style={inputStyle}
             />
           </div>
         </div>
 
-        {/* Modern Custom Table */}
+        {/* Table */}
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
-              <tr style={{ borderBottom: "2px solid #f3f4f6" }}>
+              <tr
+                style={{
+                  borderBottom: `2px solid ${isDark ? "#1e293b" : "#f3f4f6"}`,
+                }}
+              >
                 {[
                   "ORDER ID",
                   "CUSTOMER NAME",
@@ -637,7 +675,7 @@ export default function ClassCanteenOverview() {
                       padding: "10px 12px",
                       fontSize: "11px",
                       fontWeight: 700,
-                      color: "#374151",
+                      color: isDark ? "#94a3b8" : "#374151",
                       letterSpacing: "0.5px",
                       whiteSpace: "nowrap",
                     }}
@@ -655,7 +693,7 @@ export default function ClassCanteenOverview() {
                     style={{
                       textAlign: "center",
                       padding: "24px",
-                      color: "#6b7280",
+                      color: isDark ? "#94a3b8" : "#6b7280",
                     }}
                   >
                     No records found
@@ -666,7 +704,7 @@ export default function ClassCanteenOverview() {
                   <tr
                     key={idx}
                     style={{
-                      borderBottom: "1px solid #f3f4f6",
+                      borderBottom: `1px solid ${isDark ? "#1e293b" : "#f3f4f6"}`,
                       height: "53px",
                     }}
                   >
@@ -674,7 +712,7 @@ export default function ClassCanteenOverview() {
                       style={{
                         padding: "14px 12px",
                         fontSize: "14px",
-                        color: "#374151",
+                        color: isDark ? "#cbd5e1" : "#374151",
                       }}
                     >
                       #C-0{order.order_id}
@@ -684,7 +722,7 @@ export default function ClassCanteenOverview() {
                         padding: "14px 12px",
                         fontSize: "14px",
                         fontWeight: 600,
-                        color: "#111827",
+                        color: isDark ? "#ffffff" : "#111827",
                       }}
                     >
                       Msh
@@ -694,7 +732,7 @@ export default function ClassCanteenOverview() {
                         padding: "14px 12px",
                         fontSize: "14px",
                         fontWeight: 600,
-                        color: "#111827",
+                        color: isDark ? "#ffffff" : "#111827",
                       }}
                     >
                       {order.Total?.toLocaleString()} Ks
@@ -703,7 +741,7 @@ export default function ClassCanteenOverview() {
                       style={{
                         padding: "14px 12px",
                         fontSize: "14px",
-                        color: "#374151",
+                        color: isDark ? "#cbd5e1" : "#374151",
                       }}
                     >
                       {order.Data}
@@ -712,7 +750,7 @@ export default function ClassCanteenOverview() {
                       style={{
                         padding: "14px 12px",
                         fontSize: "14px",
-                        color: "#374151",
+                        color: isDark ? "#cbd5e1" : "#374151",
                       }}
                     >
                       {order.Time}
@@ -721,7 +759,7 @@ export default function ClassCanteenOverview() {
                       style={{
                         padding: "14px 12px",
                         fontSize: "14px",
-                        color: "#374151",
+                        color: isDark ? "#cbd5e1" : "#374151",
                         textTransform: "uppercase",
                       }}
                     >
@@ -739,7 +777,7 @@ export default function ClassCanteenOverview() {
                             borderRadius: "4px",
                             objectFit: "cover",
                             cursor: "pointer",
-                            border: "1px solid #e5e7eb",
+                            border: `1px solid ${isDark ? "#334155" : "#e5e7eb"}`,
                           }}
                         />
                       ) : (
@@ -754,8 +792,21 @@ export default function ClassCanteenOverview() {
                           padding: "4px 8px",
                           borderRadius: "6px",
                           background:
-                            order.Total >= 6000 ? "#e6f4ea" : "#fce8e6",
-                          color: order.Total >= 6000 ? "#137333" : "#c5221f",
+                            order.Total >= 6000
+                              ? isDark
+                                ? "#064e3b"
+                                : "#e6f4ea"
+                              : isDark
+                                ? "#7f1d1d"
+                                : "#fce8e6",
+                          color:
+                            order.Total >= 6000
+                              ? isDark
+                                ? "#6ee7b7"
+                                : "#137333"
+                              : isDark
+                                ? "#fca5a5"
+                                : "#c5221f",
                         }}
                       >
                         {order.Total >= 6000 ? "Profit" : "Loss"}
@@ -794,11 +845,15 @@ export default function ClassCanteenOverview() {
               alignItems: "center",
               marginTop: "16px",
               paddingTop: "12px",
-              borderTop: "1px solid #f3f4f6",
+              borderTop: `1px solid ${isDark ? "#1e293b" : "#f3f4f6"}`,
             }}
           >
             <span
-              style={{ fontSize: "14px", color: "#4b5563", fontWeight: 500 }}
+              style={{
+                fontSize: "14px",
+                color: isDark ? "#94a3b8" : "#4b5563",
+                fontWeight: 500,
+              }}
             >
               Showing Page {currentPage} of {totalPages}
             </span>
@@ -810,9 +865,16 @@ export default function ClassCanteenOverview() {
                   width: "32px",
                   height: "32px",
                   borderRadius: "6px",
-                  border: "1.5px solid #e5e7eb",
-                  background: "#fff",
-                  color: currentPage === 1 ? "#9ca3af" : "#374151",
+                  border: `1.5px solid ${isDark ? "#334155" : "#e5e7eb"}`,
+                  background: isDark ? "#1e293b" : "#fff",
+                  color:
+                    currentPage === 1
+                      ? isDark
+                        ? "#64748b"
+                        : "#9ca3af"
+                      : isDark
+                        ? "#ffffff"
+                        : "#374151",
                   fontWeight: 600,
                   fontSize: "14px",
                   cursor: currentPage === 1 ? "not-allowed" : "pointer",
@@ -830,9 +892,19 @@ export default function ClassCanteenOverview() {
                       width: "32px",
                       height: "32px",
                       borderRadius: "6px",
-                      border: "1.5px solid #e5e7eb",
-                      background: currentPage === pageNum ? "#1e293b" : "#fff",
-                      color: currentPage === pageNum ? "#fff" : "#374151",
+                      border: `1.5px solid ${isDark ? "#334155" : "#e5e7eb"}`,
+                      background:
+                        currentPage === pageNum
+                          ? "#0284c7"
+                          : isDark
+                            ? "#1e293b"
+                            : "#fff",
+                      color:
+                        currentPage === pageNum
+                          ? "#fff"
+                          : isDark
+                            ? "#ffffff"
+                            : "#374151",
                       fontWeight: 600,
                       fontSize: "14px",
                       cursor: "pointer",
@@ -851,9 +923,16 @@ export default function ClassCanteenOverview() {
                   width: "32px",
                   height: "32px",
                   borderRadius: "6px",
-                  border: "1.5px solid #e5e7eb",
-                  background: "#fff",
-                  color: currentPage === totalPages ? "#9ca3af" : "#374151",
+                  border: `1.5px solid ${isDark ? "#334155" : "#e5e7eb"}`,
+                  background: isDark ? "#1e293b" : "#fff",
+                  color:
+                    currentPage === totalPages
+                      ? isDark
+                        ? "#64748b"
+                        : "#9ca3af"
+                      : isDark
+                        ? "#ffffff"
+                        : "#374151",
                   fontWeight: 600,
                   fontSize: "14px",
                   cursor:
@@ -873,16 +952,16 @@ export default function ClassCanteenOverview() {
         onClose={() => setOpenViewModal(false)}
         maxWidth="xs"
         fullWidth
+        PaperProps={{
+          style: {
+            backgroundColor: isDark ? "#1a1c1e" : "#ffffff",
+            color: isDark ? "#ffffff" : "#111827",
+            borderRadius: "12px",
+          },
+        }}
       >
         {selectedOrder && (
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "12px",
-              padding: "24px",
-              position: "relative",
-            }}
-          >
+          <div style={{ padding: "24px", position: "relative" }}>
             <div
               style={{
                 display: "flex",
@@ -896,7 +975,7 @@ export default function ClassCanteenOverview() {
                   background: "transparent",
                   border: "none",
                   cursor: "pointer",
-                  color: "#6b7280",
+                  color: isDark ? "#94a3b8" : "#6b7280",
                 }}
               >
                 <Close fontSize="small" />
@@ -918,19 +997,25 @@ export default function ClassCanteenOverview() {
                     fontSize: "20px",
                     fontWeight: 700,
                     margin: "0 0 4px 0",
-                    color: "#111827",
+                    color: isDark ? "#ffffff" : "#111827",
                   }}
                 >
                   Order Placed Successfully!
                 </h1>
-                <p style={{ fontSize: "13px", color: "#6b7280", margin: 0 }}>
+                <p
+                  style={{
+                    fontSize: "13px",
+                    color: isDark ? "#94a3b8" : "#6b7280",
+                    margin: 0,
+                  }}
+                >
                   Thank you for shopping with us
                 </p>
               </div>
 
               <div
                 style={{
-                  borderBottom: "1px dashed #e5e7eb",
+                  borderBottom: `1px dashed ${isDark ? "#334155" : "#e5e7eb"}`,
                   marginBottom: "16px",
                 }}
               ></div>
@@ -946,29 +1031,54 @@ export default function ClassCanteenOverview() {
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span
+                    style={{
+                      color: isDark ? "#94a3b8" : "#6b7280",
+                      fontWeight: 500,
+                    }}
+                  >
                     REGISTRATION ID
                   </span>
-                  <span style={{ fontWeight: 700, color: "#111827" }}>
+                  <span
+                    style={{
+                      fontWeight: 700,
+                      color: isDark ? "#ffffff" : "#111827",
+                    }}
+                  >
                     {selectedOrder.reciept_no || `#T-${selectedOrder.order_id}`}
                   </span>
                 </div>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span
+                    style={{
+                      color: isDark ? "#94a3b8" : "#6b7280",
+                      fontWeight: 500,
+                    }}
+                  >
                     DATE
                   </span>
-                  <span style={{ color: "#111827" }}>{selectedOrder.Data}</span>
+                  <span style={{ color: isDark ? "#ffffff" : "#111827" }}>
+                    {selectedOrder.Data}
+                  </span>
                 </div>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span
+                    style={{
+                      color: isDark ? "#94a3b8" : "#6b7280",
+                      fontWeight: 500,
+                    }}
+                  >
                     PAYMENT
                   </span>
                   <span
-                    style={{ color: "#111827", textTransform: "uppercase" }}
+                    style={{
+                      color: isDark ? "#ffffff" : "#111827",
+                      textTransform: "uppercase",
+                    }}
                   >
                     {selectedOrder.payment_method}
                   </span>
@@ -976,18 +1086,32 @@ export default function ClassCanteenOverview() {
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span
+                    style={{
+                      color: isDark ? "#94a3b8" : "#6b7280",
+                      fontWeight: 500,
+                    }}
+                  >
                     TIME
                   </span>
-                  <span style={{ color: "#111827" }}>{selectedOrder.Time}</span>
+                  <span style={{ color: isDark ? "#ffffff" : "#111827" }}>
+                    {selectedOrder.Time}
+                  </span>
                 </div>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                  <span
+                    style={{
+                      color: isDark ? "#94a3b8" : "#6b7280",
+                      fontWeight: 500,
+                    }}
+                  >
                     STUDENT NAME
                   </span>
-                  <span style={{ color: "#111827" }}>Msh</span>
+                  <span style={{ color: isDark ? "#ffffff" : "#111827" }}>
+                    Msh
+                  </span>
                 </div>
 
                 {selectedOrder.items &&
@@ -999,10 +1123,15 @@ export default function ClassCanteenOverview() {
                           justifyContent: "space-between",
                         }}
                       >
-                        <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                        <span
+                          style={{
+                            color: isDark ? "#94a3b8" : "#6b7280",
+                            fontWeight: 500,
+                          }}
+                        >
                           TRAINING NAME
                         </span>
-                        <span style={{ color: "#2563eb", fontWeight: 600 }}>
+                        <span style={{ color: "#3b82f6", fontWeight: 600 }}>
                           {item.product_name} (x{item.quantity})
                         </span>
                       </div>
@@ -1012,10 +1141,15 @@ export default function ClassCanteenOverview() {
                           justifyContent: "space-between",
                         }}
                       >
-                        <span style={{ color: "#6b7280", fontWeight: 500 }}>
+                        <span
+                          style={{
+                            color: isDark ? "#94a3b8" : "#6b7280",
+                            fontWeight: 500,
+                          }}
+                        >
                           TRAINING LEVEL
                         </span>
-                        <span style={{ color: "#2563eb", fontWeight: 600 }}>
+                        <span style={{ color: "#3b82f6", fontWeight: 600 }}>
                           Beginner Class
                         </span>
                       </div>
@@ -1028,17 +1162,22 @@ export default function ClassCanteenOverview() {
                     justifyContent: "space-between",
                     marginTop: "8px",
                     paddingTop: "8px",
-                    borderTop: "1px solid #f3f4f6",
+                    borderTop: `1px solid ${isDark ? "#1e293b" : "#f3f4f6"}`,
                   }}
                 >
-                  <span style={{ color: "#111827", fontWeight: 700 }}>
+                  <span
+                    style={{
+                      color: isDark ? "#ffffff" : "#111827",
+                      fontWeight: 700,
+                    }}
+                  >
                     AMOUNT
                   </span>
                   <span
                     style={{
                       fontSize: "16px",
                       fontWeight: 700,
-                      color: "#111827",
+                      color: isDark ? "#ffffff" : "#111827",
                     }}
                   >
                     {selectedOrder.Total?.toLocaleString()} Ks
@@ -1047,7 +1186,7 @@ export default function ClassCanteenOverview() {
 
                 <div
                   style={{
-                    borderBottom: "1px dashed #e5e7eb",
+                    borderBottom: `1px dashed ${isDark ? "#334155" : "#e5e7eb"}`,
                     margin: "16px 0",
                   }}
                 ></div>
@@ -1060,8 +1199,9 @@ export default function ClassCanteenOverview() {
                 <button
                   onClick={() => handleDownloadPNG(selectedOrder.order_id)}
                   style={{
-                    background: "#f3f4f6",
-                    border: "1px solid #d1d5db",
+                    background: isDark ? "#1e293b" : "#f3f4f6",
+                    border: `1px solid ${isDark ? "#334155" : "#d1d5db"}`,
+                    color: isDark ? "#ffffff" : "#111827",
                     borderRadius: "6px",
                     padding: "8px",
                     cursor: "pointer",
@@ -1073,18 +1213,18 @@ export default function ClassCanteenOverview() {
                   <FileDownload fontSize="small" />
                 </button>
               )}
-              {/* Print Button */}
               <button
                 onClick={handlePrintReceipt}
                 style={{
                   flex: 1,
-                  background: "#2563eb",
+                  background: "#0284c7",
                   color: "#fff",
                   border: "none",
                   borderRadius: "6px",
                   fontWeight: 600,
                   fontSize: "14px",
                   cursor: "pointer",
+                  padding: "8px 16px",
                 }}
               >
                 Print
@@ -1092,9 +1232,9 @@ export default function ClassCanteenOverview() {
               <button
                 onClick={() => setOpenViewModal(false)}
                 style={{
-                  background: "#fff",
-                  border: "1px solid #d1d5db",
-                  color: "#4b5563",
+                  background: isDark ? "#1e293b" : "#fff",
+                  border: `1px solid ${isDark ? "#334155" : "#d1d5db"}`,
+                  color: isDark ? "#cbd5e1" : "#4b5563",
                   borderRadius: "6px",
                   padding: "8px 16px",
                   fontWeight: 500,
@@ -1115,10 +1255,14 @@ export default function ClassCanteenOverview() {
         onClose={() => setOpenProofModal(false)}
         maxWidth="xs"
         fullWidth
+        PaperProps={{
+          style: {
+            backgroundColor: isDark ? "#0f172a" : "#fff",
+            borderRadius: "12px",
+          },
+        }}
       >
-        <div
-          style={{ background: "#fff", padding: "16px", position: "relative" }}
-        >
+        <div style={{ padding: "16px", position: "relative" }}>
           <button
             onClick={() => setOpenProofModal(false)}
             style={{
@@ -1128,7 +1272,7 @@ export default function ClassCanteenOverview() {
               background: "transparent",
               border: "none",
               cursor: "pointer",
-              color: "#9ca3af",
+              color: isDark ? "#94a3b8" : "#9ca3af",
             }}
           >
             <Close fontSize="small" />

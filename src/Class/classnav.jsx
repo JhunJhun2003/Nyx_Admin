@@ -8,13 +8,16 @@ import ArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import ArrowDown from "@mui/icons-material/KeyboardArrowDown";
 
 function ClassNav() {
-  const [show1, setshow1] = useState(false); //for training
-  const [show2, setshow2] = useState(false); //for renatal
-  const [show3, setshow3] = useState(false); //for canteen
-  const { setisClassLogin } = useContext(Context);
+  const [show1, setshow1] = useState(false);
+  const [show2, setshow2] = useState(false);
+  const [show3, setshow3] = useState(false);
 
+  // Context မှ classNavColor နှင့် classBackColor ကို ရယူခြင်း
+  const { classNavColor, classBackColor, setisClassLogin } =
+    useContext(Context);
   const nagivate = useNavigate();
 
+  const isDark = classBackColor === "#1A1C1E";
   function handleTraining() {
     setshow1(!show1);
     setshow2(false);
@@ -36,7 +39,8 @@ function ClassNav() {
   return (
     <>
       <div className="classnavcontainer">
-        <div className="classnav">
+        {/* Class Sidebar သည် classNavColor ကို သုံးမည် */}
+        <div className="classnav" style={{ background: classNavColor }}>
           <div className="classnavheader">
             <img src={Logo} alt="Logo" />
             <h1>Service</h1>
@@ -62,7 +66,7 @@ function ClassNav() {
 
               {show1 && (
                 <span className="dropdownwarper">
-                   <NavLink className="dropdownlist" to="classcourses">
+                  <NavLink className="dropdownlist" to="classcourses">
                     Courses
                   </NavLink>
                   <NavLink className="dropdownlist" to="classcoursemanagement">
@@ -150,7 +154,9 @@ function ClassNav() {
             </button>
           </div>
         </div>
-        <div className="classdashboard">
+
+        {/* Dashboard သည် classBackColor အတိုင်း သီးခြား ပြောင်းမည် */}
+        <div className="classdashboard" style={{ background: classBackColor }}>
           <Outlet />
         </div>
       </div>

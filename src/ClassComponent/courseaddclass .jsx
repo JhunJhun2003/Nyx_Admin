@@ -30,9 +30,10 @@ const AddClassForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Get courseId and courseName from navigation state
+  // Get navigation state
   const courseId = location.state?.courseId;
   const courseName = location.state?.courseName || "Course";
+  const isDark = location.state?.isDark || false; // 💡 Read dark mode state
 
   const toggleDay = (day) => {
     setSelectedDays(day);
@@ -41,8 +42,12 @@ const AddClassForm = () => {
   const handleImageChange = (e, setImage) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/jpg",
+        "image/webp",
+      ];
       if (!allowedTypes.includes(file.type)) {
         Swal.fire({
           icon: "warning",
@@ -52,8 +57,7 @@ const AddClassForm = () => {
         });
         return;
       }
-      
-      // Validate file size (max 5MB)
+
       if (file.size > 5 * 1024 * 1024) {
         Swal.fire({
           icon: "warning",
@@ -63,33 +67,20 @@ const AddClassForm = () => {
         });
         return;
       }
-      
+
       setImage(file);
     }
   };
 
-  const days = {
-    M: 1,
-    TU: 2,
-    W: 3,
-    TH: 4,
-    F: 5,
-    SA: 6,
-    SU: 7,
-  };
+  const days = { M: 1, TU: 2, W: 3, TH: 4, F: 5, SA: 6, SU: 7 };
+  const BASE_URL = "http://130.94.99.9:5000";
 
-//   const BASE_URL = "http://
-// 130.94.99.9:5000";
-const BASE_URL = "http://130.94.99.9:5000";
-
-  // Validate time format (HH:MM:SS)
   const isValidTimeFormat = (time) => {
     const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
     return timeRegex.test(time);
   };
 
   const validateForm = () => {
-    // Required field validations
     if (!level || level.trim() === "") {
       Swal.fire({
         icon: "warning",
@@ -99,7 +90,6 @@ const BASE_URL = "http://130.94.99.9:5000";
       });
       return false;
     }
-    
     if (!price || price.trim() === "") {
       Swal.fire({
         icon: "warning",
@@ -109,7 +99,6 @@ const BASE_URL = "http://130.94.99.9:5000";
       });
       return false;
     }
-    
     if (isNaN(price) || parseFloat(price) <= 0) {
       Swal.fire({
         icon: "warning",
@@ -119,7 +108,6 @@ const BASE_URL = "http://130.94.99.9:5000";
       });
       return false;
     }
-    
     if (!selectedDays) {
       Swal.fire({
         icon: "warning",
@@ -129,47 +117,24 @@ const BASE_URL = "http://130.94.99.9:5000";
       });
       return false;
     }
-    
-    if (!startTime || startTime.trim() === "") {
-      Swal.fire({
-        icon: "warning",
-        title: "Missing Field",
-        text: "Please enter Start Time (Format: 12:00:00)",
-        confirmButtonColor: "#3085d6",
-      });
-      return false;
-    }
-    
-    if (!isValidTimeFormat(startTime)) {
+    if (!startTime || !isValidTimeFormat(startTime)) {
       Swal.fire({
         icon: "warning",
         title: "Invalid Start Time",
-        text: "Please use correct format: HH:MM:SS (e.g., 12:00:00 or 14:30:00)",
+        text: "Format: HH:MM:SS",
         confirmButtonColor: "#3085d6",
       });
       return false;
     }
-    
-    if (!endTime || endTime.trim() === "") {
-      Swal.fire({
-        icon: "warning",
-        title: "Missing Field",
-        text: "Please enter End Time (Format: 16:00:00)",
-        confirmButtonColor: "#3085d6",
-      });
-      return false;
-    }
-    
-    if (!isValidTimeFormat(endTime)) {
+    if (!endTime || !isValidTimeFormat(endTime)) {
       Swal.fire({
         icon: "warning",
         title: "Invalid End Time",
-        text: "Please use correct format: HH:MM:SS (e.g., 16:00:00 or 18:30:00)",
+        text: "Format: HH:MM:SS",
         confirmButtonColor: "#3085d6",
       });
       return false;
     }
-    
     if (!classImage) {
       Swal.fire({
         icon: "warning",
@@ -179,7 +144,6 @@ const BASE_URL = "http://130.94.99.9:5000";
       });
       return false;
     }
-    
     if (!courseId) {
       Swal.fire({
         icon: "warning",
@@ -189,7 +153,6 @@ const BASE_URL = "http://130.94.99.9:5000";
       });
       return false;
     }
-    
     if (!description || description.trim() === "") {
       Swal.fire({
         icon: "warning",
@@ -199,25 +162,19 @@ const BASE_URL = "http://130.94.99.9:5000";
       });
       return false;
     }
-    
     return true;
   };
 
   const handleCreate = async () => {
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
-
     const formData = new FormData();
 
-    // Files
     formData.append("category_card_image", classImage);
     if (learningImage) formData.append("learning_image", learningImage);
     if (coachImage) formData.append("coach_file", coachImage);
 
-    // Required text fields
     formData.append("learning_description", learningDescription || "");
     formData.append("title_level", level);
     formData.append("price", price);
@@ -229,7 +186,6 @@ const BASE_URL = "http://130.94.99.9:5000";
     formData.append("day_id", days[selectedDays]);
     formData.append("about_level", description || "");
 
-    // Optional Selection fields
     if (isOptionalEnabled) {
       formData.append("main_title", mainTitle || "");
       formData.append("title", title || "");
@@ -242,17 +198,6 @@ const BASE_URL = "http://130.94.99.9:5000";
       formData.append("about_title", "-");
     }
 
-    console.log("=== SENDING FORM DATA ===");
-    console.log("Course ID:", courseId);
-    console.log("Course Name:", courseName);
-    console.log("Toggle is:", isOptionalEnabled ? "ON" : "OFF");
-    for (let pair of formData.entries()) {
-      console.log(
-        pair[0] + ":",
-        pair[0].includes("image") ? `FILE (${pair[1].name})` : `"${pair[1]}"`,
-      );
-    }
-
     try {
       const res = await fetch(`${BASE_URL}/api/course/trainingprogram`, {
         method: "POST",
@@ -260,9 +205,6 @@ const BASE_URL = "http://130.94.99.9:5000";
       });
 
       const responseText = await res.text();
-      console.log("Response status:", res.status);
-      console.log("Response:", responseText);
-
       let responseData;
       try {
         responseData = JSON.parse(responseText);
@@ -278,7 +220,6 @@ const BASE_URL = "http://130.94.99.9:5000";
             text: `Training program for "${courseName}" created successfully!`,
             confirmButtonColor: "#3085d6",
           }).then(() => {
-            // Reset form
             setSelectedDays("");
             setClassImage(null);
             setLearningImage(null);
@@ -308,32 +249,19 @@ const BASE_URL = "http://130.94.99.9:5000";
           setIsSubmitting(false);
         }
       } else {
-        let errorMessage = "Failed to create training program";
-        
-        if (responseText.includes("duplicate key") || responseText.includes("already exists")) {
-          errorMessage = "This training program already exists for the selected day and level";
-        } else if (responseText.includes("foreign key constraint")) {
-          errorMessage = "Invalid course ID. Please select a valid course";
-        } else if (responseText.includes("AppError")) {
-          errorMessage = "Server configuration error. Please contact support";
-        } else if (responseData.message) {
-          errorMessage = responseData.message;
-        }
-        
         Swal.fire({
           icon: "error",
           title: "Error!",
-          text: `${errorMessage}\n\nStatus Code: ${res.status}`,
+          text: `Failed to create training program (${res.status})`,
           confirmButtonColor: "#3085d6",
         });
         setIsSubmitting(false);
       }
     } catch (err) {
-      console.error("Network error:", err);
       Swal.fire({
         icon: "error",
         title: "Network Error!",
-        text: "Unable to connect to the server. Please check your internet connection and try again.",
+        text: "Unable to connect to the server.",
         confirmButtonColor: "#3085d6",
       });
       setIsSubmitting(false);
@@ -341,13 +269,13 @@ const BASE_URL = "http://130.94.99.9:5000";
   };
 
   return (
-    <div className="custom-admin-container">
+    <div className={`custom-admin-container ${isDark ? "dark-mode" : ""}`}>
       <header className="custom-header">
         <div className="custom-header-title">
           <button className="custom-back-btn" onClick={() => navigate(-1)}>
             <ChevronLeftIcon />
           </button>
-          <span>{courseName} Training Center</span>
+          <span>{courseName}</span>
         </div>
         <div className="custom-tabs-container">
           <div className="custom-tab custom-active-tab">
@@ -408,7 +336,7 @@ const BASE_URL = "http://130.94.99.9:5000";
                   min="0"
                   step="1000"
                 />
-                <small style={{ fontSize: "11px", color: "#666", marginTop: "4px", display: "block" }}>
+                <small className="custom-subtext">
                   Enter price in Myanmar Kyat (MMK)
                 </small>
               </div>
@@ -416,7 +344,7 @@ const BASE_URL = "http://130.94.99.9:5000";
             <div className="custom-input-group custom-mt-3">
               <label>Description *</label>
               <textarea
-                placeholder="Establish a strong foundation with core footwork, grip techniques, and basic stroke play designed for new players entering the competitive arena."
+                placeholder="Establish a strong foundation..."
                 rows="4"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -469,7 +397,7 @@ const BASE_URL = "http://130.94.99.9:5000";
                   />
                   <AccessTimeIcon className="custom-input-icon-mui" />
                 </div>
-                <small style={{ fontSize: "11px", color: "#666", marginTop: "4px", display: "block" }}>
+                <small className="custom-subtext">
                   Format: HH:MM:SS (24-hour)
                 </small>
               </div>
@@ -484,7 +412,7 @@ const BASE_URL = "http://130.94.99.9:5000";
                   />
                   <AccessTimeIcon className="custom-input-icon-mui" />
                 </div>
-                <small style={{ fontSize: "11px", color: "#666", marginTop: "4px", display: "block" }}>
+                <small className="custom-subtext">
                   Format: HH:MM:SS (24-hour)
                 </small>
               </div>
@@ -525,7 +453,7 @@ const BASE_URL = "http://130.94.99.9:5000";
               <div className="custom-input-group custom-flex-1">
                 <label>Learning Description</label>
                 <textarea
-                  placeholder="Outline the key curriculum milestones and student outcomes..."
+                  placeholder="Outline key milestones..."
                   rows="4"
                   value={learningDescription}
                   onChange={(e) => setLearningDescription(e.target.value)}
@@ -575,7 +503,7 @@ const BASE_URL = "http://130.94.99.9:5000";
                 <div className="custom-input-group custom-mt-2">
                   <label>Biography</label>
                   <textarea
-                    placeholder="Describe the instructor's background and experience..."
+                    placeholder="Describe instructor background..."
                     rows="3"
                     value={biography}
                     onChange={(e) => setBiography(e.target.value)}
@@ -623,7 +551,7 @@ const BASE_URL = "http://130.94.99.9:5000";
               <div className="custom-input-group">
                 <label>Details</label>
                 <textarea
-                  placeholder="Get a massive 50% discount on your first month's registration! Limited to the first 20 applicants this season. Don't miss out on this opportunity."
+                  placeholder="Get a discount..."
                   rows="3"
                   value={details}
                   onChange={(e) => setDetails(e.target.value)}
@@ -647,19 +575,22 @@ const BASE_URL = "http://130.94.99.9:5000";
         </div>
       </main>
 
-      <footer className="custom-form-footer">
-        <button 
-          className="custom-btn-cancel" 
+      <footer className="custom-form-footer" style={{ marginTop: "-40px" }}>
+        <button
+          className="custom-btn-cancel"
           onClick={() => navigate(-1)}
           disabled={isSubmitting}
         >
           Cancel
         </button>
-        <button 
-          className="custom-btn-create" 
+        <button
+          className="custom-btn-create"
           onClick={handleCreate}
           disabled={isSubmitting}
-          style={{ opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "not-allowed" : "pointer" }}
+          style={{
+            opacity: isSubmitting ? 0.7 : 1,
+            cursor: isSubmitting ? "not-allowed" : "pointer",
+          }}
         >
           {isSubmitting ? "Creating..." : "Create"}
         </button>

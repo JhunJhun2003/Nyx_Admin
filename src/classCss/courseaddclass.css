@@ -1,6 +1,4 @@
-/* ==========================================================================
-   1. Base Layout & Theme Custom Reset
-   ========================================================================== */
+/* Base Layout */
 .custom-admin-container {
   position: absolute;
   right: 0;
@@ -18,16 +16,14 @@
   box-sizing: border-box;
 }
 
-/* ==========================================================================
-   2. Top Header Navigation Layout
-   ========================================================================== */
+/* Header & Nav */
 .custom-header {
-  background-color: #1a2536; /* 💡 နောက်ခံ အဖြူပြောင်း */
-  color: #ffffff; /* 💡 စာလုံးအရောင် အမည်းပြောင်း */
+  background-color: #1a2536;
+  color: #ffffff;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  border-bottom: 1px solid #e2e8f0; /* Layout ပိုသေသပ်အောင် အောက်ခြေစည်းလေးထည့် */
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .custom-header-title {
@@ -41,10 +37,10 @@
 }
 
 .custom-back-btn {
-  background: #f1f5f9; /* 💡 နောက်ခံ ခန်းမည်းရောင် နုနုပြောင်း */
-  border: 1px solid #cbd5e1; /* အနားသတ် စည်းလေးထည့် */
-  color: #1a2536; /* 💡 Icon အရောင် အမည်းပြောင်း */
-  width: 32px; /* Figma အတိုင်း အရွယ်အစား အနည်းငယ်ကြီးပေး */
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #1a2536;
+  width: 32px;
   height: 32px;
   border-radius: 6px;
   cursor: pointer;
@@ -55,7 +51,7 @@
 
 .custom-tabs-container {
   display: flex;
-  gap: 16px; /* Tab တွေကြား အကွာအဝေး */
+  gap: 16px;
   background-color: #ffffff;
   width: 100%;
   padding-left: 20px;
@@ -65,7 +61,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 8px 4px 12px 4px; /* အောက်ခြေ Border နဲ့ ကပ်အောင် အောက် padding ပိုပေး */
+  padding: 8px 4px 12px 4px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -76,10 +72,9 @@
 .custom-active-tab {
   color: #003d9b;
   font-weight: 600;
-  background-color: transparent; /* 💡 Red Block ကို ဖျောက်ပါ */
+  background-color: transparent;
 }
 
-/* 💡 Figma ထဲကလို Active ဖြစ်တဲ့ Tab အောက်မှာ လိုင်းတိုလေး ပေါ်စေဖို့ */
 .custom-active-tab::after {
   content: "";
   position: absolute;
@@ -87,12 +82,10 @@
   left: 0;
   width: 100%;
   height: 2px;
-  background-color: #1a2536; /* Active Line အရောင် */
+  background-color: #1a2536;
 }
 
-/* ==========================================================================
-   3. Two-Column Dashboard Grid Layout
-   ========================================================================== */
+/* Grid Layout */
 .custom-form-grid {
   background-color: #eaeaea;
   padding: 20px;
@@ -116,9 +109,7 @@
   gap: 20px;
 }
 
-/* ==========================================================================
-   4. Card Component Structural Panels
-   ========================================================================== */
+/* Cards & Section Titles */
 .custom-form-card {
   background-color: #ffffff;
   border-radius: 8px;
@@ -138,9 +129,7 @@
   text-transform: uppercase;
 }
 
-/* ==========================================================================
-   5. Photo Upload Containers & Previews
-   ========================================================================== */
+/* Upload Containers */
 .custom-upload-box {
   border: 2px dashed #cbd5e1;
   border-radius: 6px;
@@ -166,13 +155,11 @@
   height: 200px;
   width: 100%;
 }
-
 .small-photo-box {
   width: 100px;
   height: 100px;
   flex-shrink: 0;
 }
-
 .coach-box {
   height: 125px;
   width: 100px;
@@ -183,26 +170,21 @@
   color: #94a3b8;
   margin-bottom: 4px;
 }
-
 .custom-upload-icon-small-mui {
   font-size: 24px !important;
   color: #94a3b8;
   margin-bottom: 2px;
 }
-
 .custom-upload-text {
   margin: 0;
   font-size: 13px;
 }
-
 .custom-small-upload-text {
   font-size: 10px;
   line-height: 1.2;
 }
 
-/* ==========================================================================
-   6. Form Field Row & Column Management
-   ========================================================================== */
+/* Inputs & Groups */
 .custom-input-row {
   display: flex;
   gap: 16px;
@@ -219,7 +201,6 @@
   font-weight: 600;
   color: #94a3b8;
 }
-
 .custom-input-group input,
 .custom-input-group textarea {
   border: 1px solid #cbd5e1;
@@ -235,20 +216,23 @@
   resize: none;
   line-height: 1.4;
 }
+.custom-subtext {
+  font-size: 11px;
+  color: #666;
+  margin-top: 4px;
+  display: block;
+}
 
 .custom-flex-row {
   display: flex;
   gap: 16px;
 }
-
 .custom-flex-1 {
   flex: 1;
 }
-
 .custom-half-width {
   max-width: 50%;
 }
-
 .custom-mt-2 {
   margin-top: 12px;
 }
@@ -256,26 +240,21 @@
   margin-top: 16px;
 }
 
-/* ==========================================================================
-   7. Schedule Grid Selector Interface
-   ========================================================================== */
+/* Days Selector */
 .custom-schedule-row {
   display: flex;
   align-items: center;
   gap: 16px;
 }
-
 .custom-schedule-row > div {
   display: flex;
   gap: 6px;
 }
-
 .custom-days-label {
   font-size: 12px;
   font-weight: 600;
   color: #94a3b8;
 }
-
 .custom-day-item {
   display: flex;
   flex-direction: column;
@@ -303,27 +282,22 @@
   color: #ffffff;
   border-color: #000000;
 }
-
 .custom-days-subtext {
   font-size: 9px;
   font-weight: 600;
   color: #cbd5e1;
 }
 
-/* ==========================================================================
-   8. Standard Icon Inside Text Input Fields
-   ========================================================================== */
+/* Icon Inputs */
 .custom-icon--input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
-
 .custom-icon--input-wrapper input {
   width: 100%;
   padding-right: 36px;
 }
-
 .custom-input-icon-mui {
   position: absolute;
   right: 10px;
@@ -331,22 +305,18 @@
   font-size: 18px !important;
 }
 
-/* ==========================================================================
-   9. iOS Styled Switch Toggle Component
-   ========================================================================== */
+/* Switch Toggle */
 .custom-toggle-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-
 .custom-switch {
   position: relative;
   display: inline-block;
   width: 40px;
   height: 22px;
 }
-
 .custom-switch input {
   opacity: 0;
   width: 0;
@@ -380,21 +350,17 @@
 .custom-switch input:checked + .custom-slider {
   background-color: #dc2626;
 }
-
 .custom-switch input:checked + .custom-slider:before {
   transform: translateX(18px);
 }
 
-/* ==========================================================================
-   10. Form Control Action Footer
-   ========================================================================== */
+/* Footer Buttons */
 .custom-form-footer {
   background-color: #eaeaea;
   padding: 0 20px 20px 20px;
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  border-radius: 0 0 8px 8px;
 }
 
 .custom-btn-cancel {
@@ -412,9 +378,112 @@
   background-color: #1a2536;
   color: #ffffff;
   border: none;
-  padding: 12px 170px;
+  padding: 12px 165px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
   font-size: 15px;
+}
+
+/* ---------------------------------------------------- */
+/* 🌙 DARK MODE OVERRIDES */
+/* ---------------------------------------------------- */
+.custom-admin-container.dark-mode {
+  background-color: #121315;
+  color: #e1e1e1;
+}
+
+.custom-admin-container.dark-mode .custom-header {
+  background-color: #1a1c1e;
+  border-bottom: 1px solid #2d3139;
+}
+
+.custom-admin-container.dark-mode .custom-header-title span {
+  color: #ffffff;
+}
+
+.custom-admin-container.dark-mode .custom-back-btn {
+  background-color: #2d3139;
+  border-color: #383d44;
+  color: #ffffff;
+}
+
+.custom-admin-container.dark-mode .custom-tabs-container {
+  background-color: #1a1c1e;
+}
+
+.custom-admin-container.dark-mode .custom-tab {
+  color: #94a3b8;
+}
+
+.custom-admin-container.dark-mode .custom-active-tab {
+  color: #60a5fa;
+}
+
+.custom-admin-container.dark-mode .custom-active-tab::after {
+  background-color: #60a5fa;
+}
+
+.custom-admin-container.dark-mode .custom-form-grid,
+.custom-admin-container.dark-mode .custom-form-footer {
+  background-color: #121315;
+}
+
+.custom-admin-container.dark-mode .custom-form-card {
+  background-color: #1a1c1e;
+  border: 1px solid #2d3139;
+}
+
+.custom-admin-container.dark-mode .custom-section-title {
+  color: #60a5fa;
+  border-left-color: #ef4444;
+}
+
+.custom-admin-container.dark-mode .custom-upload-box {
+  background-color: #24272b;
+  border-color: #383d44;
+  color: #94a3b8;
+}
+
+.custom-admin-container.dark-mode .custom-upload-box:hover {
+  background-color: #2d3139;
+}
+
+.custom-admin-container.dark-mode .custom-input-group label,
+.custom-admin-container.dark-mode .custom-days-label {
+  color: #94a3b8;
+}
+
+.custom-admin-container.dark-mode .custom-input-group input,
+.custom-admin-container.dark-mode .custom-input-group textarea {
+  background-color: #24272b;
+  color: #ffffff;
+  border: 1px solid #383d44;
+}
+
+.custom-admin-container.dark-mode .custom-subtext {
+  color: #94a3b8;
+}
+
+.custom-admin-container.dark-mode .custom-day-btn {
+  background-color: #24272b;
+  color: #e1e1e1;
+  border-color: #383d44;
+}
+
+.custom-admin-container.dark-mode .custom-day-selected {
+  background-color: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+}
+
+.custom-admin-container.dark-mode .custom-btn-cancel {
+  background-color: #24272b;
+  color: #e1e1e1;
+  border-color: #383d44;
+}
+
+.custom-admin-container.dark-mode .custom-btn-create {
+  background-color: #3b82f6;
+  color: #ffffff;
 }

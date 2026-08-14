@@ -1,282 +1,475 @@
+/* ==========================================
+   1. MAIN CONTAINER & LAYOUT
+   ========================================== */
 .addordermain {
   position: absolute;
   width: calc(100% - 230px);
   height: 100vh;
   background-color: #f0f0f0;
+  color: #1e293b;
   top: 0;
   right: 0;
   display: flex;
   flex-direction: column;
-  gap: 5px;
   overflow-y: auto;
   z-index: 9999;
+  font-family: "Inter", sans-serif;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
-.addordertitle {
-  font-family: Inter;
-  font-size: x-large;
-  padding: 7px 10px;
-}
+
+/* ==========================================
+   2. NAVBAR HEADER
+   ========================================== */
 .addordernav {
   background-color: #0d1b2a;
   width: 100%;
+  padding: 10px 20px;
   display: flex;
   align-items: center;
+  gap: 15px;
 }
-.addorderbody {
+
+.btn-back {
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.addordertitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* ==========================================
+   3. CONTENT CONTAINER & TOP INFO CARDS
+   ========================================== */
+.addorder-container {
+  padding: 16px 20px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 16px;
 }
-.addorderbody1 {
+
+.order-info-cards {
   display: flex;
   justify-content: space-between;
-  padding: 5px 1em;
+  gap: 20px;
 }
-.addorderreciept {
+
+.info-card {
+  background-color: #ffffff;
+  border: 1px solid #0d1b2a;
+  border-radius: 10px;
+  padding: 12px 16px;
   display: flex;
   flex-direction: column;
-  border: 1px solid #0d1b2a;
-  justify-content: space-evenly;
-  border-radius: 10px;
-  width: 60%;
-  background-color: #ffffff;
-  padding: 0 10px;
+  justify-content: space-between;
   height: 90px;
+  width: 60%;
 }
-.addorderreciept span {
-  padding: 7px 8px;
-  width: 100%;
-  color: gray;
+
+.info-card.total-card {
+  width: 38%;
+}
+
+.info-card p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.info-card span {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #6b7280;
+  background-color: #ffffff;
+  padding: 6px 10px;
   border-radius: 5px;
   border: 1px solid rgba(128, 128, 128, 0.397);
 }
-.addorderamount {
-  display: flex;
-  flex-direction: column;
-  width: 38%;
-  padding: 0 10px;
-  border: 1px solid #0d1b2a;
-  border-radius: 10px;
-  background-color: #ffffff;
-  justify-content: space-evenly;
-  font-family: Inter;
-}
-.addorderamount h2 {
-  position: initial;
-}
-.addorderbody2 {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  padding: 5px 1em;
-  height: 70vh;
-}
-.addorderchoice {
-  width: 60%;
-  background-color: #ffffff;
-  padding: 1em;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  border-radius: 10px;
-  border: 1px solid #0d1b2a;
-  height: 100%;
-}
-.addorderchoiceheader {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-}
-.addorderchoiceheader1 {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.addorderchoiceheader2 {
-  color: white;
-  background-color: #0d1b2a;
-  padding: 5px 10px;
-  border-radius: 10px;
-  font-family: Inter;
-  font-size: small;
-  font-weight: 400;
-  cursor: pointer;
-  border: 1px solid #0d1b2a;
-  outline: none;
+
+.info-card.total-card h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #0f172a;
 }
 
-/*for fake table by display flex*/
-.toorder {
-  width: 100%;
+/* ==========================================
+   4. MAIN ORDER GRID
+   ========================================== */
+.order-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  height: 70vh;
+}
+
+/* --- Left: Order Items Section --- */
+.order-items-section {
+  width: 60%;
+  background-color: #ffffff;
+  border: 1px solid #0d1b2a;
+  border-radius: 10px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  height: 60vh;
-  overflow-y: scroll;
+  gap: 12px;
+  height: 100%;
 }
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-header p {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.section-header button {
+  background-color: #0d1b2a;
+  color: #ffffff;
+  border: 1px solid #0d1b2a;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* 🎯 Table Title Column Header Styling */
 .toorderheader {
   width: 100%;
   display: flex;
   justify-content: space-between;
   background-color: #e5e7eb;
   padding: 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #374151;
 }
-.toorderheader :first-child {
+
+.toorderheader p:nth-child(1) {
   text-align: left;
   width: 40%;
+  margin: 0;
 }
-.toorderheader :nth-child(2) {
+
+.toorderheader p:nth-child(2) {
   text-align: center;
   width: 30%;
+  margin: 0;
 }
-.toorderheader :last-child {
+
+.toorderheader p:nth-child(3) {
   text-align: right;
   width: 30%;
+  margin: 0;
   padding-right: 24px;
 }
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
 .toorderbody {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 5px;
+  padding: 8px 5px;
   border-bottom: 1px solid rgba(128, 128, 128, 0.281);
 }
+
 .toorderchild {
   width: 40%;
-  text-align: left;
   display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.toorderbody .toorderchild div {
-  width: 40px;
-  height: 30px;
-}
-.toorderbody .toorderchild div img {
-  width: 100%;
-  border-radius: 4px;
-  height: 100%;
-  object-fit: cover;
-  background-color: #44474c88;
-}
-.toorderchild1 {
-  width: 30%;
-  text-align: center;
-  display: flex;
-  gap: 3px;
-  align-items: center;
-  justify-content: center;
-}
-.toorderchild1 * {
-  outline: none;
-  padding: 1px 7px;
-}
-.toorderchild1 button {
-  height: 20px;
-  display: flex;
-  align-items: center;
-  border: 1px solid #0d1b2a4b;
-  border-radius: 4px;
-}
-.toorderchild2 {
-  width: 30%;
-  text-align: right;
-  display: flex;
-  justify-content: flex-end;
   align-items: center;
   gap: 8px;
-  font-size: small;
-  padding-right: 5px;
 }
-.toorderchild2 button {
-  outline: none;
+
+.toorderchild img {
+  width: 40px;
+  height: 32px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.toorderchild p {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.toorderchild1 {
+  width: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.toorderchild1 button {
+  height: 22px;
+  width: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(13, 27, 42, 0.294);
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.toorderchild1 span {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.toorderchild2 {
+  width: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.remove-btn {
+  background: transparent;
   border: none;
-  background-color: initial;
-}
-.orderprint {
+  color: #ef4444;
+  cursor: pointer;
+  padding: 0;
   display: flex;
-  flex-direction: column;
-  width: 38%;
-  gap: 10px;
-  border-radius: 10px;
-  justify-content: space-between;
-}
-.orderprint1 {
-  width: 100%;
-  border: 1px solid #0d1b2a;
-  border-radius: 10px;
-  height: 90%;
-  background-color: #ffffff;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.orderprintheader {
-  display: flex;
-  width: 100%;
   align-items: center;
 }
-.ssx {
+
+.empty-state {
+  width: 100%;
+  text-align: center;
+  padding: 2em;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+/* --- Right: Payment Section --- */
+.payment-section {
+  width: 38%;
+  background-color: #ffffff;
+  border: 1px solid #0d1b2a;
+  border-radius: 10px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  width: 100%;
-}
-.ssx select {
-  width: 100%;
-  padding: 7px 10px;
-  border-radius: 5px;
-  outline: none;
-  border: 1px solid rgba(128, 128, 128, 0.548);
-}
-.receipet {
-  width: 100%;
+  justify-content: space-between;
   height: 100%;
-  border-radius: 10px;
 }
-.paymentmain {
+
+.section-title {
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.payment-form {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  width: 100%;
+  gap: 12px;
 }
-.paymentwarper {
+
+.payment-form label {
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+.payment-form select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 5px;
   border: 1px solid rgba(128, 128, 128, 0.548);
-  padding: 7px;
-  border-radius: 10px;
+  outline: none;
 }
-.paymentwarper span {
+
+.payment-data-box {
+  border: 1px solid rgba(128, 128, 128, 0.548);
+  padding: 8px 12px;
+  border-radius: 10px;
   display: flex;
-  width: 100%;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.payment-data-box div {
+  display: flex;
   justify-content: space-between;
 }
-.paymentwarper span p {
-  padding: 5px;
-  font-size: small;
-  font-family: Inter;
+
+.payment-data-box small {
+  font-size: 0.8rem;
+  color: #6b7280;
 }
-.addorderreceipet {
+
+.payment-data-box p {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.upload-box {
   width: 100%;
-  height: 44%;
+  height: 120px;
   border-radius: 10px;
   border: 1px dashed gray;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+  overflow: hidden;
 }
-.addorderbtn {
+
+.upload-box div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #6b7280;
+}
+
+.upload-box div p {
+  margin: 0;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.upload-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.action-buttons {
   display: flex;
   gap: 10px;
-  align-self: flex-end;
+  justify-content: flex-end;
 }
-.addorderbtn button {
-  padding: 10px 2em;
+
+.btn-cancel {
+  padding: 8px 24px;
   border-radius: 5px;
   border: 1px solid #0d1b2a;
-  outline: none;
+  background-color: transparent;
+  cursor: pointer;
 }
-.addorderbtn button:disabled {
+
+.btn-create {
+  padding: 8px 24px;
+  border-radius: 5px;
+  border: 1px solid #0d1b2a;
+  background-color: #0d1b2a;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.btn-create:disabled {
   opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   5. DARK MODE OVERRIDES
+   ========================================== */
+.addordermain.dark-mode {
+  background-color: #1a1c1e;
+  color: #e1e1e1;
+}
+
+.addordermain.dark-mode .addordernav {
+  background-color: #111315;
+}
+
+.addordermain.dark-mode .info-card,
+.addordermain.dark-mode .order-items-section,
+.addordermain.dark-mode .payment-section {
+  background-color: #27292d;
+  border-color: #3a3d40;
+}
+
+.addordermain.dark-mode .info-card p,
+.addordermain.dark-mode .payment-form label,
+.addordermain.dark-mode .payment-data-box small,
+.addordermain.dark-mode .upload-box div,
+.addordermain.dark-mode .empty-state {
+  color: #9ca3af;
+}
+
+.addordermain.dark-mode .info-card span {
+  background-color: #1e2023;
+  border-color: #3a3d40;
+  color: #9ca3af;
+}
+
+.addordermain.dark-mode .info-card.total-card h2 {
+  color: #ffffff;
+}
+
+/* Dark Mode Table Title Header */
+.addordermain.dark-mode .toorderheader {
+  background-color: #1e2023;
+  color: #e1e1e1;
+}
+
+.addordermain.dark-mode .toorderbody {
+  border-bottom-color: #3a3d40;
+}
+
+.addordermain.dark-mode .toorderchild1 button {
+  border-color: #4b5563;
+  color: #ffffff;
+}
+
+.addordermain.dark-mode .payment-form select {
+  background-color: #1e2023;
+  border-color: #4b5563;
+  color: #ffffff;
+}
+
+.addordermain.dark-mode .payment-data-box,
+.addordermain.dark-mode .upload-box {
+  border-color: #4b5563;
+}
+
+.addordermain.dark-mode .btn-cancel {
+  background-color: #27292d;
+  color: #e1e1e1;
+}
+
+.addordermain.dark-mode .btn-create {
+  background-color: #0d1b2a;
+  border-color: #0d1b2a;
+  color: #ffffff;
 }

@@ -1,11 +1,14 @@
 import CloseIcon from "@mui/icons-material/CloseOutlined";
-import SearchIcon from "@mui/icons-material/SearchOutlined";
-import { useEffect, useState } from "react";
-import { useGetClassMenu } from "../ClassApi";
-import "./addmenuorder.css";
 import FoodIcon from "@mui/icons-material/Flatware";
+import { useContext, useEffect, useState } from "react";
+import { useGetClassMenu } from "../ClassApi";
+import { Context } from "../Hooks/context";
+import "./addmenuorder.css";
 
 function AddOrderMenu({ data }) {
+  const { classBackColor } = useContext(Context);
+  const isDark = classBackColor?.toLowerCase() === "#1a1c1e";
+
   const [state, setstate] = useState({});
   const [category, setcategory] = useState("All");
   const [purfiedData, setpurfiedData] = useState(null);
@@ -14,18 +17,10 @@ function AddOrderMenu({ data }) {
   const { fun1, fun2, amount } = data;
 
   const classcategory = [
-    {
-      category: "All",
-    },
-    {
-      category: "Snack",
-    },
-    {
-      category: "Meal",
-    },
-    {
-      category: "Drink",
-    },
+    { category: "All" },
+    { category: "Snack" },
+    { category: "Meal" },
+    { category: "Drink" },
   ];
 
   useEffect(() => {
@@ -50,7 +45,8 @@ function AddOrderMenu({ data }) {
   function add_order(item) {
     fun1((prev) => [...prev, item]);
   }
-  //function to clickable once
+
+  // function to clickable once
   function click_once(id) {
     setstate((prev) => {
       return { ...prev, [id]: true };
@@ -62,72 +58,93 @@ function AddOrderMenu({ data }) {
   }
 
   return (
-    <div className="addordermenumain">
-      <div className="addordermenuheader">
-        <h3>Select Menu Item</h3>
-        <button onClick={() => fun2(false)}>
-          <CloseIcon />
-        </button>
-      </div>
-      <div className="addordermenucategory">
-        {classcategory.map((item, index) => {
-          return (
-            <p
-              key={index}
-              onClick={() => categorychange(item.category)}
-              className={category === item.category ? "active" : ""}
-            >
-              {item.category}
-            </p>
-          );
-        })}
-      </div>
-      <div className="addordermenuproduct">
-        {Array.isArray(purfiedData) ? (
-          purfiedData.length > 0 ? (
-            purfiedData.map((item, index) => {
-              return (
-                <div className="AODsinglemenu" key={index}>
-                  <div className="AODimg">
-                    <img src={item.image_url} alt={item.name} />
-                  </div>
-                  <span className="AODtext1">
-                    <p>{item.name}</p>
-                    <h3>{item.price} ks</h3>
-                  </span>
-                  <span className="AODtext2">
-                    <div>
-                      <FoodIcon sx={{ color: "#0d1b2acb" }} />
-                      <p>{item.category_name}</p>
+    <div className="addordermenu-overlay">
+      <div className={`addordermenumain ${isDark ? "dark-mode" : ""}`}>
+        {/* Header */}
+        <div className="addordermenuheader">
+          <h3>Select Menu Item</h3>
+          <button onClick={() => fun2(false)}>
+            <CloseIcon sx={{ color: isDark ? "#ffffff" : "#0d1b2a" }} />
+          </button>
+        </div>
+
+        {/* Categories */}
+        <div className="addordermenucategory">
+          {classcategory.map((item, index) => {
+            return (
+              <p
+                key={index}
+                onClick={() => categorychange(item.category)}
+                className={category === item.category ? "active" : ""}
+              >
+                {item.category}
+              </p>
+            );
+          })}
+        </div>
+
+        {/* Products Grid */}
+        <div className="addordermenuproduct">
+          {Array.isArray(purfiedData) ? (
+            purfiedData.length > 0 ? (
+              purfiedData.map((item, index) => {
+                return (
+                  <div className="AODsinglemenu" key={index}>
+                    <div className="AODimg">
+                      <img src={item.image_url} alt={item.name} />
                     </div>
-                    <button
-                      disabled={state[item.id]}
-                      onClick={() => {
-                        add_order(item);
-                        click_once(item.id);
-                      }}
-                    >
-                      + Add Order
-                    </button>
-                  </span>
-                </div>
-              );
-            })
+
+                    <div className="AODdetails">
+                      <div className="AODtitle-row">
+                        <p className="AODname" title={item.name}>
+                          {item.name}
+                        </p>
+                        <span className="AODprice">{item.price} ks</span>
+                      </div>
+
+                      <div className="AODaction-row">
+                        <div className="AODcategory-tag">
+                          <FoodIcon
+                            sx={{
+                              color: isDark ? "#9ca3af" : "#64748b",
+                              fontSize: "16px",
+                            }}
+                          />
+                          <span>{item.category_name}</span>
+                        </div>
+                        <button
+                          disabled={state[item.id]}
+                          onClick={() => {
+                            add_order(item);
+                            click_once(item.id);
+                          }}
+                        >
+                          + Add Order
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <p className="no-data">No items found</p>
+            )
           ) : (
-            <p>No items found</p>
-          )
-        ) : (
-          <h1>Loading...</h1>
-        )}
-      </div>
-      <div className="addordermenufooter">
-        <span>
-          <h5>Total Amount</h5>
-          <h3>{amount}-ks</h3>
-        </span>
-        <button onClick={() => fun2(false)}>Confirm Order</button>
+            <p className="no-data">Loading...</p>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="addordermenufooter">
+          <span>
+            <h5>Total Amount</h5>
+            <h3>{amount} Ks</h3>
+          </span>
+          <button onClick={() => fun2(false)}>Confirm Order</button>
+        </div>
       </div>
     </div>
   );
 }
+
 export default AddOrderMenu;

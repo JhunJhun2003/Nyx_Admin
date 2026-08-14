@@ -1,9 +1,26 @@
 import CloseIcon from "@mui/icons-material/Close";
 import UploadIcon from "@mui/icons-material/FileUploadOutlined";
 import "./classvenueadd.css";
-import { useRef, useState } from "react";
+import { useRef, useState, useContext } from "react";
 import { createPortal } from "react-dom";
+import { Context } from "../Hooks/context";
+import Swal from "sweetalert2";
+
 function ClassVenueAdd({ data }) {
+  const contextData = useContext(Context);
+
+  const { info, setinfo, setshow, GetVenue, isDark: parentIsDark } = data;
+
+  // Venue Management သို့မဟုတ် Context မှ isDark တန်ဖိုးကို Case-Insensitive စစ်ဆေးခြင်း
+  const isDark =
+    parentIsDark ?? contextData?.classBackColor?.toLowerCase() === "#1a1c1e";
+
+  // 🎯 Dynamic Light / Dark Theme Helper
+  const getSwalTheme = () => ({
+    background: isDark ? "#1A1C1E" : "#ffffff",
+    color: isDark ? "#E1E1E1" : "#0f172a",
+  });
+
   const [file, setfile] = useState(null);
   const [filepath, setfilepath] = useState(null);
   const [allow, setallow] = useState(true);
@@ -12,17 +29,6 @@ function ClassVenueAdd({ data }) {
   const nameref = useRef();
   const priceref = useRef();
   const checkboxref = useRef();
-
-  const {
-    info,
-    setinfo,
-    setshow,
-    openloading,
-    openerror,
-    opensuccess,
-    GetVenue,
-    openconfirm,
-  } = data;
 
   const close = () => {
     setinfo(null);
@@ -40,38 +46,66 @@ function ClassVenueAdd({ data }) {
 
   // delete function
   async function delete_venue() {
-    let id = info.id;
+    let id = info?.id;
     if (!id) return;
-    let confirm = await openconfirm(
-      "Delete Venue",
-      "Are you sure to delete this venue",
-    );
-    if (!confirm) return;
+
+    // ၁။ Delete confirm မပြမီ အရှေ့က Venue Details modal ကို ပိတ်မည်
+    close();
+
+    const result = await Swal.fire({
+      title: "Delete Venue?",
+      text: "Are you sure to delete this venue?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+      ...getSwalTheme(),
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
-      openloading();
       let response = await fetch(
         `${import.meta.env.VITE_CLASS_DELETE_VENUE}/${id}`,
         {
           method: "DELETE",
         },
       );
+
       if (response.ok) {
-        opensuccess(
-          "New Venue Added",
-          "This venue is permantly remove from list",
-        );
         await GetVenue();
-        setshow(false);
+        await Swal.fire({
+          title: "Venue Deleted",
+          text: "This venue is permanently removed from list",
+          icon: "success",
+          confirmButtonText: "Great, Thank!",
+          confirmButtonColor: "#3b82f6",
+          ...getSwalTheme(),
+        });
       } else {
-        openerror("something went wrong");
+        await Swal.fire({
+          title: "Error",
+          text: "Something went wrong",
+          icon: "error",
+          confirmButtonColor: "#ef4444",
+          ...getSwalTheme(),
+        });
       }
     } catch (err) {
       console.log(err);
-      openerror("Cannot connect with sever");
+      await Swal.fire({
+        title: "Error",
+        text: "Cannot connect with server",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+        ...getSwalTheme(),
+      });
     }
   }
 
-  //add_venue
+  // add_venue
   async function add_venue(e) {
     e.preventDefault();
     let formData = new FormData();
@@ -80,33 +114,50 @@ function ClassVenueAdd({ data }) {
     formData.append("price", priceref.current.value);
     formData.append("available", checkboxref.current.checked);
 
-    openloading();
     try {
       let response = await fetch(import.meta.env.VITE_CLASS_ADD_VENUE, {
         method: "POST",
         body: formData,
       });
+
       if (response.ok) {
-        opensuccess(
-          "Venue Added Successfully",
-          "Your new venue is now available",
-        );
         setfile(null);
         setfilepath(null);
         nameref.current.value = "";
         priceref.current.value = "";
         setshow(false);
         await GetVenue();
+
+        await Swal.fire({
+          title: "Venue Added Successfully",
+          text: "Your new venue is now available",
+          icon: "success",
+          confirmButtonText: "Great, Thank!",
+          confirmButtonColor: "#3b82f6",
+          ...getSwalTheme(),
+        });
       } else {
-        openerror("Something went wrong");
+        await Swal.fire({
+          title: "Error",
+          text: "Something went wrong",
+          icon: "error",
+          confirmButtonColor: "#ef4444",
+          ...getSwalTheme(),
+        });
       }
     } catch (err) {
       console.log(err);
-      openerror("Cannot connect with sever");
+      await Swal.fire({
+        title: "Error",
+        text: "Cannot connect with server",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+        ...getSwalTheme(),
+      });
     }
   }
 
-  //update venue
+  // update venue
   async function update_venue(e) {
     let id = info?.id;
     if (!id) return;
@@ -120,7 +171,6 @@ function ClassVenueAdd({ data }) {
     formData.append("price", priceref.current.value);
     formData.append("available", checkboxref.current.checked);
 
-    openloading();
     try {
       let response = await fetch(
         `${import.meta.env.VITE_CLASS_UPDATE_VENUE}/${id}`,
@@ -129,25 +179,46 @@ function ClassVenueAdd({ data }) {
           body: formData,
         },
       );
+
       if (response.ok) {
         await GetVenue();
         setshow(false);
-        opensuccess("Action Successful", "Venue Update Successfully");
+
+        await Swal.fire({
+          title: "Action Successful",
+          text: "Venue Update Successfully",
+          icon: "success",
+          confirmButtonText: "Great, Thank!",
+          confirmButtonColor: "#3b82f6",
+          ...getSwalTheme(),
+        });
       } else {
-        openerror("Something went wrong");
+        await Swal.fire({
+          title: "Error",
+          text: "Something went wrong",
+          icon: "error",
+          confirmButtonColor: "#ef4444",
+          ...getSwalTheme(),
+        });
       }
     } catch (err) {
       console.log(err);
-      openerror("Cannot connect with sever");
+      await Swal.fire({
+        title: "Error",
+        text: "Cannot connect with server",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+        ...getSwalTheme(),
+      });
     }
   }
 
   return createPortal(
-    <div className="cvawarper">
+    <div className={`cvawarper ${isDark ? "dark-mode" : ""}`}>
       <form className="cvamain" onSubmit={info ? update_venue : add_venue}>
         <div className="cvabody1">
           <h3>{info ? "Venue Details" : "New Details"}</h3>
-          <button type="button" onClick={close}>
+          <button type="button" onClick={close} className="close-btn">
             <CloseIcon />
           </button>
         </div>
@@ -186,10 +257,14 @@ function ClassVenueAdd({ data }) {
             {file ? (
               <img src={filepath} alt="venue image" className="venueimgurl" />
             ) : info ? (
-              <img src={info.venue_image_url} className="venueimgurl" />
+              <img
+                src={info.venue_image_url}
+                alt="venue"
+                className="venueimgurl"
+              />
             ) : (
               <>
-                <UploadIcon />
+                <UploadIcon className="upload-icon" />
                 <p>Upload</p>
               </>
             )}
@@ -222,9 +297,9 @@ function ClassVenueAdd({ data }) {
         ) : (
           <div className="cvabody6">
             <button type="button" onClick={close}>
-              cancel
+              Cancel
             </button>
-            <button>create</button>
+            <button type="submit">Create</button>
           </div>
         )}
       </form>
@@ -232,4 +307,5 @@ function ClassVenueAdd({ data }) {
     document.body,
   );
 }
+
 export default ClassVenueAdd;

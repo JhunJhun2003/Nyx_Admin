@@ -2,17 +2,21 @@ import BookingIcon from "@mui/icons-material/EventAvailable";
 import LockIcon from "@mui/icons-material/LockOutlineRounded";
 import "../classCss/classbookingschedule.css";
 import { useGetClassVenue } from "../ClassApi";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNoti } from "../Hooks/alert";
 import Defaultimg from "../images/defaultimg.png";
 import CloseIcon from "@mui/icons-material/CloseOutlined";
 import { useGetClassBookingSchedule } from "../ClassApi/classbookingscheduleapi";
 import ArrowBackIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForwardIos";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ClassCreateBooking from "../ClassComponent/classcreatenewbook";
+import { Context } from "../Hooks/context"; // Context ကို import ခေါ်ယူခြင်း
 
 function BookingSchedule() {
+  const { classBackColor } = useContext(Context);
+  const isDark = classBackColor === "#1A1C1E";
+
   const [active, setactive] = useState();
 
   const navigate = useNavigate();
@@ -154,7 +158,16 @@ function BookingSchedule() {
   }
 
   return (
-    <div className="cbsmain">
+    <div
+      className={`cbsmain ${isDark ? "dark-mode" : ""}`}
+      style={{
+        width: "100%",
+        minHeight: "100vh",
+        backgroundColor: classBackColor || (isDark ? "#121212" : "#f8fafc"),
+        color: isDark ? "#ffffff" : "#111827",
+        transition: "all 0.2s ease",
+      }}
+    >
       {showCreate && (
         <ClassCreateBooking
           data={{
@@ -170,13 +183,14 @@ function BookingSchedule() {
             venue_id: active,
             setshowCreate: setshowCreate,
             GetRemainBooking,
+            isDark: isDark,
           }}
         />
       )}
       {Loading}
       <header className="cbsheader">
-        <BookingIcon />
-        <h2>Booking Schedule</h2>
+        <BookingIcon style={{ fontSize: "35px", marginRight: "5px" }} />
+        <h2 style={{ fontSize: "30px" }}>Booking Schedule</h2>
       </header>
       <main className="cbslayout">
         <div className="cbsbody1">
@@ -204,7 +218,7 @@ function BookingSchedule() {
               <h3>Loading...</h3>
             )}
           </div>
-          <hr style={{ margin: "10px 1px" }} />
+          <hr style={{ margin: "10px 1px", opacity: 0.2 }} />
           <div className="cbsbody">
             {Array.isArray(Courts.data) ? (
               Courts.data.length > 0 ? (
@@ -227,7 +241,7 @@ function BookingSchedule() {
                             alt="court image"
                           />
                         ) : (
-                          <img src={Defaultimg} />
+                          <img src={Defaultimg} alt="default court" />
                         )}
                       </div>
                     </div>
@@ -310,4 +324,5 @@ function BookingSchedule() {
     </div>
   );
 }
+
 export default BookingSchedule;

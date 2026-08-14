@@ -1,218 +1,400 @@
+/* ====================================================
+   CLASS MENU PAGE - LIGHT & DARK MODE STYLES
+   ==================================================== */
+
 .classmenumain {
   display: flex;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   flex-direction: column;
-  padding: 1em 1.5em;
-  gap: 15px;
+  padding: 1.5em;
+  gap: 20px;
+  box-sizing: border-box;
+  background-color: #f8fafc;
+  color: #0f172a;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
+
+/* 🌙 Dark Mode Container Override */
+.classmenumain.dark-mode {
+  background-color: #121315;
+  color: #f1f5f9;
+}
+
+/* Header Styling */
+.classmenuheader-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
 .classmenuheader {
   display: flex;
   align-items: center;
-  gap: 5px;
-}
-.classmenuheading {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between;
-}
-.classmenuheading > :first-child {
-  background-color: #becefd;
-}
-.classmenuheading > :nth-child(2) {
-  background-color: #b0fdad;
-}
-.classmenuheading > :nth-child(3) {
-  background-color: #fa676777;
-}
-.classmenuheading > :last-child {
-  background-color: #ddc2ff;
-}
-.classmenuheadchild {
-  width: 23%;
-  border-radius: 10px;
-  border: 1px solid rgba(128, 128, 128, 0.438);
-  height: 100px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 13px;
-  justify-content: center;
-}
-.classmenuheadchild span {
-  display: flex;
   gap: 10px;
-  align-items: center;
-}
-.classmenuheadchild span h3 {
-  font-weight: 500;
-  font-family: Inter;
-  color: #000000;
-  font-size: medium;
-}
-.classmenuheadchild p {
-  font-family: Inter;
-  color: #898484;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
 }
 
-.classmenuheadchildicon {
-  font-size: 35px;
-  padding: 7px;
-  border-radius: 5px;
+.menu-header-icon {
+  color: #3b82f6;
+  font-size: 24px !important;
 }
-.classmenuheadchild0 {
-  background-color: #a8b5de;
-  color: #000000;
-}
-.classmenuheadchild1 {
-  background-color: #dcfce7;
-  color: #15803d;
-}
-.classmenuheadchild2 {
-  background-color: #b710293d;
-  color: #b7102a;
-}
-.classmenuheadchild3 {
-  background-color: #c4abe3;
-  color: #1d4fd8e5;
-}
-.classmenubody {
-  width: 100%;
-  justify-content: space-between;
+
+/* ----------------------------------------------------
+   STAT CARDS ROW
+   ---------------------------------------------------- */
+.stat-cards-container {
   display: flex;
-}
-.classmenubody1 {
-  display: flex;
-  justify-content: flex-start;
-  background-color: #ffffff;
-  border-radius: 5px;
-  width: 360px;
-  height: auto;
-}
-.classmenubody1 p {
-  padding: 10px 2em;
-  width: 90px;
-  font-family: Inter;
-  font-size: 13px;
-  font-weight: 500;
-  text-align: center;
-}
-.menu_active {
-  background-color: #0d1b2a;
-  color: #ffffff;
-  border-radius: 10px;
-}
-.addmenubtn {
-  height: 35px;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-  background-color: #0d1b2a;
-  color: #ffffff;
-  cursor: pointer;
-}
-.classmenufooter {
-  display: flex;
+  gap: 16px;
   width: 100%;
   flex-wrap: wrap;
-  flex-shrink: 0;
-  gap: 7px;
 }
+
+.menu-stat-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  flex: 1;
+  min-width: 180px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.menu-stat-card.dark-card {
+  background: #1a1c1e;
+  border-color: #2d3139;
+  box-shadow: none;
+}
+
+.menu-stat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.menu-stat-card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.dark-card .menu-stat-card-title {
+  color: #94a3b8;
+}
+
+.menu-stat-card-badge {
+  font-size: 11px;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.dark-card .menu-stat-card-badge {
+  background: #24272b;
+  color: #cbd5e1;
+}
+
+.menu-stat-card-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.dark-card .menu-stat-card-value {
+  color: #ffffff;
+}
+
+.menu-stat-card-change {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.menu-stat-card-change.positive {
+  color: #10b981;
+}
+.menu-stat-card-change.negative {
+  color: #ef4444;
+}
+
+/* ----------------------------------------------------
+   FILTER TABS & ACTION BAR
+   ---------------------------------------------------- */
+.classmenubody {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Category Filter Tabs Box */
+.classmenubody1 {
+  display: flex;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.dark-mode .classmenubody1 {
+  background-color: #1a1c1e;
+  border-color: #2d3139;
+}
+
+.classmenubody1 p {
+  padding: 8px 18px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.dark-mode .classmenubody1 p {
+  color: #94a3b8;
+}
+
+.classmenubody1 p:hover {
+  color: #0f172a;
+}
+
+.dark-mode .classmenubody1 p:hover {
+  color: #ffffff;
+}
+
+.menu_active {
+  background-color: #0d1b2a !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.25);
+}
+
+/* Selected Active Tab */
+.dark-mode .menu_active {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.25);
+}
+
+/* Add Menu Button */
+.addmenubtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: #0d1b2a;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.addmenubtn:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.dark-mode .addmenubtn {
+  background-color: #2563eb;
+}
+/* ----------------------------------------------------
+   MENU PRODUCTS GRID
+   ---------------------------------------------------- */
+.classmenufooter {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+/* Single Product Card */
 .singlemenuproduct {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 180px;
-  border-radius: 10px;
+  border-radius: 12px;
   background-color: #ffffff;
-  box-shadow:
-    1px 1px 1px 1px #c4c6cc,
-    -1px 1px 1px #c4c6cc;
-  font-family: Work Sans;
-  text-transform: capitalize;
-  font-weight: 600;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
+
+.singlemenuproduct:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+.dark-mode .singlemenuproduct {
+  background-color: #1a1c1e;
+  border-color: #2d3139;
+}
+
+.dark-mode .singlemenuproduct:hover {
+  box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.5);
+  border-color: #383d44;
+}
+
+/* Product Image Box */
 .menuimg {
   width: 100%;
-  height: 150px;
-  background-color: #a6b1b9;
-  border-top-right-radius: 10px;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
+  height: 140px;
+  background-color: #f1f5f9;
+  position: relative;
+  overflow: hidden;
 }
+
+.dark-mode .menuimg {
+  background-color: #24272b;
+}
+
 .menuimg img {
   width: 100%;
   height: 100%;
-  border-top-right-radius: 10px;
-  border-top-left-radius: 10px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
 }
+
+.singlemenuproduct:hover .menuimg img {
+  transform: scale(1.05);
+}
+
+/* Card Content Details */
 .singlemenutext {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  padding: 10px;
-  gap: 5px;
+  padding: 12px;
+  gap: 8px;
 }
+
 .singlemenutext1 {
   display: flex;
-  width: 100%;
   justify-content: space-between;
   align-items: center;
-  font-family: Inter;
+  gap: 8px;
 }
-.singlemenutext1 p {
-  font-size: small;
-  color: #0d1b2a;
-  width: 60%;
+
+.product-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1;
 }
-.singlemenutext1 h3 {
-  font-size: smaller;
-  color: #0d1b2a;
-  font-weight: 500;
-  width: 40%;
-  text-align: right;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
+.dark-mode .product-title {
+  color: #f1f5f9;
+}
+
+.product-price {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #2563eb;
   white-space: nowrap;
 }
+
+.dark-mode .product-price {
+  color: #60a5fa;
+}
+
 .singlemenutext2 {
   display: flex;
-  width: 100%;
   justify-content: space-between;
   align-items: center;
+  font-size: 12px;
 }
+
 .singlemenutext21 {
-  width: 50%;
   display: flex;
-  gap: 2px;
   align-items: center;
-}
-.singlemenutext21 p {
-  font-size: small !important;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-}
-.singlemenutext22 {
-  width: 50%;
-  display: flex;
-  align-items: baseline;
-  justify-content: flex-end;
-}
-.singlemenutext22 p {
-  font-size: x-small;
-  text-align: right;
+  gap: 4px;
   color: #64748b;
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.dark-mode .singlemenutext21 {
+  color: #94a3b8;
+}
+
+.category-icon {
+  font-size: 16px !important;
+}
+
+.singlemenutext21 p {
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Availability Status Pill Tag */
+/* Availability Status Pill Tag */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  position: static !important; /* absolute ဖြစ်မသွားစေရန် ထိန်းပေးထားသည် */
   white-space: nowrap;
-  width: auto;
-  text-transform: initial;
+}
+
+.status-pill .dot-icon {
+  font-size: 8px !important;
+}
+
+/* ✅ Class name များကို status-available / status-out-of-stock သို့ ပြောင်းပါ */
+.status-pill.status-available {
+  color: #16a34a;
+  background-color: #dcfce7;
+}
+
+.dark-mode .status-pill.status-available {
+  color: #4ade80;
+  background-color: rgba(74, 222, 128, 0.12);
+}
+
+.status-pill.status-out-of-stock {
+  color: #dc2626;
+  background-color: #fee2e2;
+}
+
+.dark-mode .status-pill.status-out-of-stock {
+  color: #f87171;
+  background-color: rgba(248, 113, 113, 0.12);
+}
+
+.no-product-box {
+  grid-column: 1 / -1;
+  padding: 40px;
+  text-align: center;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.dark-mode .no-product-box {
+  color: #94a3b8;
 }

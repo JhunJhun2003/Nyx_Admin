@@ -14,13 +14,14 @@ function ClassEquipmentPopup({ data }) {
     GetCourts,
     venue_id,
     delete_equipment,
+    isDark, // Parent ကနေ ပို့လိုက်တဲ့ isDark ကို ရယူခြင်း
   } = data;
 
   const nameref = useRef();
   const priceref = useRef();
   const qtyref = useRef();
 
-  //add equipment
+  // add equipment
   async function add_equipment(e) {
     e.preventDefault();
     if (!venue_id) return;
@@ -51,19 +52,19 @@ function ClassEquipmentPopup({ data }) {
         openerror("Something went wrong");
       }
     } catch (err) {
-      openerror("Cannot connect with sever");
+      openerror("Cannot connect with server");
       console.log(err);
     }
   }
-  //function do not finish ,waiting for backend
 
   return (
-    <div className="cepwarper">
+    <div className={`cepwarper ${isDark ? "dark-mode" : ""}`}>
       <form
         className="cepmain"
         onSubmit={
           info
-            ? () => {
+            ? (e) => {
+                e.preventDefault();
                 alert("Waiting api from backend");
               }
             : add_equipment
@@ -122,13 +123,14 @@ function ClassEquipmentPopup({ data }) {
         ) : (
           <span className="cepbody5">
             <button type="button" onClick={() => setshowequipment(false)}>
-              cancel
+              Cancel
             </button>
-            <button>create</button>
+            <button type="submit">Create</button>
           </span>
         )}
       </form>
     </div>
   );
 }
+
 export default ClassEquipmentPopup;

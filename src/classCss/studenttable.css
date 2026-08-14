@@ -201,10 +201,219 @@
 .st-view-btn {
   color: #2563eb;
 }
+
 .st-delete-btn {
-  color: #dc2626;
+  color: #ef4444;
 }
 
+/* ==========================================
+   DELETE MODAL COMPLETE STYLES (LIGHT & DARK)
+   ========================================== */
+
+/* 1. Modal Backdrop Overlay (Screen အလယ်ရောက်စေရန်) */
+.st-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: stFadeIn 0.2s ease-out;
+}
+
+/* 2. Delete Card Container (Light Mode Base) */
+.st-delete-modal-card {
+  background-color: #ffffff;
+  color: #1e293b;
+  width: 90%;
+  max-width: 380px;
+  padding: 28px 24px;
+  border-radius: 16px;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  animation: stScaleUp 0.2s ease-out;
+}
+
+/* Delete Modal Icon Styling */
+.alretconfirmicon {
+  width: 64px;
+  height: 64px;
+  background-color: #fef2f2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none !important;
+}
+
+.st-delete-modal-icon {
+  font-size: 32px !important;
+  color: #ef4444 !important; /* Red Color */
+}
+
+/* Dark Mode Overrides */
+.st-container.dark-mode .alretconfirmicon,
+.dark-mode .alretconfirmicon {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+.st-container.dark-mode .st-delete-modal-icon,
+.dark-mode .st-delete-modal-icon {
+  color: #f87171 !important;
+}
+
+.alretconfirmicon img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+/* 4. Text Typography */
+.st-delete-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+}
+
+.st-delete-desc {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+/* 5. Button Group & Buttons Layout */
+.st-delete-btn-group {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.st-delete-cancel-btn,
+.st-delete-confirm-btn {
+  flex: 1;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Cancel Button - Light Mode */
+.st-delete-cancel-btn {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.st-delete-cancel-btn:hover {
+  background-color: #e2e8f0;
+  color: #1e293b;
+}
+
+/* Delete Button - Light Mode */
+.st-delete-confirm-btn {
+  background-color: #ef4444;
+  color: #ffffff;
+  border: none;
+}
+
+.st-delete-confirm-btn:hover {
+  background-color: #dc2626;
+}
+
+/* Modal Open Animations */
+@keyframes stFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes stScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ==========================================
+   DELETE MODAL - DARK MODE OVERRIDES
+   ========================================== */
+
+.st-container.dark-mode .st-modal-overlay,
+.dark-mode .st-modal-overlay {
+  background-color: rgba(0, 0, 0, 0.75) !important;
+}
+
+.st-container.dark-mode .st-delete-modal-card,
+.dark-mode .st-delete-modal-card {
+  background-color: #0f172a !important; /* Deep Dark Background */
+  border: 1px solid #1e293b !important;
+  color: #f8fafc !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
+}
+
+.st-container.dark-mode .alretconfirmicon,
+.dark-mode .alretconfirmicon {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+.st-container.dark-mode .st-delete-title,
+.dark-mode .st-delete-title {
+  color: #ffffff !important;
+}
+
+.st-container.dark-mode .st-delete-desc,
+.dark-mode .st-delete-desc {
+  color: #94a3b8 !important;
+}
+
+/* Cancel Button - Dark Mode */
+.st-container.dark-mode .st-delete-cancel-btn,
+.dark-mode .st-delete-cancel-btn {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+  border: 1px solid #334155 !important;
+}
+
+.st-container.dark-mode .st-delete-cancel-btn:hover,
+.dark-mode .st-delete-cancel-btn:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+}
+
+/* Delete Confirm Button - Dark Mode */
+.st-container.dark-mode .st-delete-confirm-btn,
+.dark-mode .st-delete-confirm-btn {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+.st-container.dark-mode .st-delete-confirm-btn:hover,
+.dark-mode .st-delete-confirm-btn:hover {
+  background-color: #dc2626 !important;
+}
 .st-footer {
   display: flex;
   justify-content: space-between;
@@ -529,4 +738,265 @@
   text-align: center;
   color: #dc2626;
   font-weight: 500;
+}
+
+/* ==========================================
+   TARGET DARK MODE TABLE COLOR FIX (IMAGE 2 MATCH)
+   ========================================== */
+
+/* 1. Main Card Background & Border */
+.st-container.dark-mode .st-card,
+.dark-mode .st-card {
+  background-color: #1e1e1e !important; /* Deep Navy Blue */
+  border: 1px solid #333333 !important;
+  border-radius: 12px;
+}
+
+/* 2. Table Header (th) - အဖြူရောင်ဖြစ်နေတာကို ဖျောက်ပြီး Text ကို အရောင်ဖျော့ပြောင်းခြင်း */
+.st-container.dark-mode .st-student-table th,
+.st-container.dark-mode .st-th,
+.dark-mode .st-th {
+  background-color: transparent !important; /* Header Background ကို ဖျောက်ထားသည် */
+  color: #64748b !important; /* Soft Gray-Blue Header Text */
+  font-weight: 600;
+  font-size: 13px;
+  border-bottom: 1px solid #1e293b !important;
+  padding: 16px;
+}
+
+/* 3. Table Rows & Hover State */
+.st-container.dark-mode .st-tr,
+.dark-mode .st-tr {
+  background-color: transparent !important;
+}
+
+.st-container.dark-mode .st-tr:hover,
+.dark-mode .st-tr:hover {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Table Rows & Cells ၏ Border ကို လုံးဝ ဖျောက်ရန် */
+.st-container.dark-mode .st-td,
+.dark-mode .st-td,
+.st-container.dark-mode .st-tr,
+.dark-mode .st-tr {
+  border-bottom: none !important;
+  border: none !important;
+}
+
+/* 4. Table Cell Text (td) */
+.st-container.dark-mode .st-td,
+.dark-mode .st-td {
+  color: #94a3b8 !important; /* General text (Gender, Age, Phone, Email) */
+  border-bottom: 1px solid #1e293b !important;
+  padding: 16px;
+  font-size: 14px;
+}
+
+/* Student Name ကို ပိုမိုထင်ရှားစေရန် အဖြူရောင်ထားခြင်း */
+.st-container.dark-mode .st-student-name,
+.dark-mode .st-student-name {
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+/* 5. Action Buttons (View & Delete) Styling */
+.st-container.dark-mode .st-action-btn,
+.dark-mode .st-action-btn {
+  border-radius: 6px;
+  padding: 6px 8px;
+  transition: all 0.2s ease;
+}
+
+/* View Button (Blue-Cyan Tint) */
+.st-container.dark-mode .st-view-btn,
+.dark-mode .st-view-btn {
+  background-color: rgba(56, 189, 248, 0.1) !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  color: #38bdf8 !important;
+}
+
+.st-container.dark-mode .st-view-btn:hover,
+.dark-mode .st-view-btn:hover {
+  background-color: rgba(56, 189, 248, 0.2) !important;
+}
+
+/* Delete Button (Red Tint) */
+.st-container.dark-mode .st-delete-btn,
+.dark-mode .st-delete-btn {
+  background-color: rgba(248, 113, 113, 0.1) !important;
+  border: 1px solid rgba(248, 113, 113, 0.3) !important;
+  color: #f87171 !important;
+}
+
+.st-container.dark-mode .st-delete-btn:hover,
+.dark-mode .st-delete-btn:hover {
+  background-color: rgba(248, 113, 113, 0.2) !important;
+}
+
+/* 6. Search Input & Pagination Styling */
+.st-container.dark-mode .st-search-input,
+.dark-mode .st-search-input {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+}
+
+.st-container.dark-mode .st-footer-text,
+.dark-mode .st-footer-text {
+  color: #64748b !important;
+}
+
+.st-container.dark-mode .st-pag-btn,
+.dark-mode .st-pag-btn {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #94a3b8 !important;
+}
+
+.st-container.dark-mode .st-page-active,
+.dark-mode .st-page-active {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+}
+
+/* ==========================================
+   STUDENT DETAIL MODAL DARK MODE STYLES
+   ========================================== */
+
+/* 1. Modal Overlay Backdrop */
+.st-container.dark-mode .st-modal-overlay,
+.dark-mode .st-modal-overlay {
+  background-color: rgba(0, 0, 0, 0.75) !important;
+  backdrop-filter: blur(4px);
+}
+
+/* 2. Modal Content Card */
+.st-container.dark-mode .st-modal-content,
+.dark-mode .st-modal-content {
+  background-color: #1e1e1e !important; /* Deep Navy Background */
+  border: 1px solid #1e293b !important;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.5),
+    0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  color: #f8fafc !important;
+}
+
+/* 3. Modal Header & Close Button */
+.st-container.dark-mode .st-modal-header,
+.dark-mode .st-modal-header {
+  border-bottom: 1px solid #1e293b !important;
+}
+
+.st-container.dark-mode .st-modal-title,
+.dark-mode .st-modal-title {
+  color: #ffffff !important;
+}
+
+.st-container.dark-mode .st-modal-close-btn,
+.dark-mode .st-modal-close-btn {
+  color: #94a3b8 !important;
+  background-color: transparent;
+  transition: color 0.2s ease;
+}
+
+.st-container.dark-mode .st-modal-close-btn:hover,
+.dark-mode .st-modal-close-btn:hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 6px;
+}
+
+/* 4. Section Titles (STUDENT INFORMATION & COURSE TABLE) */
+.st-container.dark-mode .st-info-section-title,
+.dark-mode .st-info-section-title {
+  color: #38bdf8 !important; /* Blue Accent Color */
+}
+
+/* 5. Info Grid (Labels and Values) */
+.st-container.dark-mode .st-info-label,
+.dark-mode .st-info-label {
+  color: #64748b !important; /* Soft Gray-Blue */
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.st-container.dark-mode .st-info-value,
+.dark-mode .st-info-value {
+  color: #f1f5f9 !important;
+  font-weight: 500;
+}
+
+/* 6. Modal Inside Table (Course Table) */
+.st-container.dark-mode .st-modal-table-wrapper,
+.dark-mode .st-modal-table-wrapper {
+  border: 1px solid #1e293b !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.st-container.dark-mode .st-modal-table,
+.dark-mode .st-modal-table {
+  background-color: #0f172a !important;
+}
+
+/* Modal Table Header */
+.st-container.dark-mode .st-mth,
+.dark-mode .st-mth {
+  background-color: #1e1e1e !important;
+  color: #94a3b8 !important;
+  border-bottom: 1px solid #334155 !important;
+  font-size: 12px;
+}
+
+/* Modal Table Data Cells */
+.st-container.dark-mode .st-mtd,
+.dark-mode .st-mtd {
+  background-color: #1e1e1e !important;
+  color: #cbd5e1 !important;
+  border-bottom: 1px solid #1e293b !important;
+  font-size: 13px;
+}
+
+.st-container.dark-mode .st-text-muted,
+.dark-mode .st-text-muted {
+  color: #64748b !important;
+}
+
+/* Receipt Button */
+.st-container.dark-mode .st-receipt-btn,
+.dark-mode .st-receipt-btn {
+  background-color: rgba(56, 189, 248, 0.1) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+  border-radius: 6px;
+  padding: 4px 8px;
+  transition: all 0.2s ease;
+}
+
+.st-container.dark-mode .st-receipt-btn:hover,
+.dark-mode .st-receipt-btn:hover {
+  background-color: rgba(56, 189, 248, 0.2) !important;
+}
+
+/* 7. Modal Footer & Close Button */
+.st-container.dark-mode .st-modal-footer,
+.dark-mode .st-modal-footer {
+  border-top: 1px solid #1e293b !important;
+}
+
+.st-container.dark-mode .st-modal-action-close-btn,
+.dark-mode .st-modal-action-close-btn {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+  border-radius: 6px;
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+}
+
+.st-container.dark-mode .st-modal-action-close-btn:hover,
+.dark-mode .st-modal-action-close-btn:hover {
+  background-color: #334155 !important;
 }

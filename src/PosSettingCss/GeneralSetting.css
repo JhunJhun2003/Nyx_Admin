@@ -5,7 +5,7 @@
   border: 1px solid black;
   padding: 1em;
   border-radius: 1em;
-  background-color: #f0f0f0;
+  /* background-color ကို JSX ထဲမှ Dynamic Style ဖြင့် ထိန်းချုပ်ရန် CSS မှ ဖြုတ်ထားသည် */
 }
 .posgeneralsettingbody1 {
   display: flex;
@@ -19,6 +19,7 @@
   border: none;
   outline: none;
   color: white;
+  cursor: pointer;
 }
 .zoom_img {
   width: 80px;
@@ -41,13 +42,11 @@
 .posgeneralsettingbody2 input {
   padding: 10px 10px;
   border-radius: 5px;
-  border: none;
-  background-color: #100d2a6c;
   outline: none;
   text-transform: none;
-  color: #0d1b2a;
   font-weight: 700;
   font-family: Inter;
+  /* background-color နှင့် color ကို JSX ၏ InputStyle ဖြင့် ထိန်းချုပ်ရန် CSS မှ ဖြုတ်ထားသည် */
 }
 .posgeneralsettingbody2button {
   display: flex;
@@ -61,11 +60,12 @@
   outline: none;
   background-color: #0d1b2a;
   color: white;
+  cursor: pointer;
 }
 
 .posgeneralsettingbody2button :first-child {
   padding: 8px 15px;
   border-radius: 10px;
-  background-color: #f0f0f0;
-  color: #0d1b2a;
+  border: none;
+  cursor: pointer;
 }

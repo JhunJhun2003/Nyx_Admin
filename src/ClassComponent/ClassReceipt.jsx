@@ -1,21 +1,25 @@
 import { useRef, useState } from "react";
 import "./classreceipt.css";
 import { createPortal } from "react-dom";
-import CheckIcon from "@mui/icons-material/CheckBox";
 import SaveIcon from "@mui/icons-material/SaveAlt";
+import CloseIcon from "@mui/icons-material/Close";
 import html2canvas from "html2canvas";
 import { useReactToPrint } from "react-to-print";
 
 export const useClassReceipt = () => {
   const [show, setshow] = useState(false);
   const [info, setinfo] = useState(null);
+  const [isDark, setIsDark] = useState(false); // Dark mode state ထည့်သွင်းခြင်း
 
   const imgref = useRef();
 
-  const open = (receiptinfo) => {
+  // open function တွင် isDarkMode ပါ လက်ခံအောင် ပြင်ဆင်ခြင်း
+  const open = (receiptinfo, isDarkMode = false) => {
     setinfo(receiptinfo);
+    setIsDark(isDarkMode);
     setshow(true);
   };
+
   const close = () => {
     setshow(false);
     setinfo(null);
@@ -23,96 +27,116 @@ export const useClassReceipt = () => {
 
   const print = useReactToPrint({
     contentRef: imgref,
-    documentTitle: `Receipt_${info?.order_no}` || `reciept${Date.now()}`,
+    documentTitle: `Receipt_${info?.order_no || Date.now()}`,
   });
 
   const download = async () => {
     if (imgref.current) {
       const canvas = await html2canvas(imgref.current, {
-        backgroundColor: "#1a222c",
+        backgroundColor: null,
         scale: 2,
       });
 
       const image = canvas.toDataURL("image/png");
       const link = document.createElement("a");
       link.href = image;
-      link.download = `receipet${Date.now()}.png`;
+      link.download = `receipt_${info?.order_no || Date.now()}.png`;
       link.click();
     }
   };
+
   const ClassReceipetJsx = show
     ? createPortal(
-        <div className="receipetwarper">
+        /* isDark ပေါ်မူတည်၍ dark / dark-mode class ထည့်ပေးခြင်း */
+        <div className={`receipetwarper ${isDark ? "dark" : ""}`}>
           <div className="rccmain">
+            {/* Top Close Icon */}
+            <button className="rc-close-btn" onClick={close}>
+              <CloseIcon fontSize="small" />
+            </button>
+
+            {/* Printable Area */}
             <div className="rcbody" ref={imgref}>
               <div className="rc1">
-                <h3>
-                  <CheckIcon />
-                  Order Placed Successfully
-                </h3>
+                <h3>Order Placed Successfully!</h3>
                 <p>Thank you for shopping with us</p>
               </div>
-              <div className="rc2">
-                <div className="rc21" style={{ width: "50%" }}>
-                  <span>
-                    <h3>Registration id:</h3>
-                    <p>#{info?.order_no || "00000"}</p>
-                  </span>
-                  <span>
-                    <h3>Payment:</h3>
-                    <p>{info?.payment || "Cash"}</p>
-                  </span>
-                </div>
-                <div className="rc21">
-                  <span>
-                    <h3>Date:</h3>
-                    <p>{info?.Date || new Date().toLocaleDateString()}</p>
-                  </span>
-                  <span>
-                    <h3>Time:</h3>
-                    <p>{info?.Time || new Date().toLocaleTimeString()}</p>
-                  </span>
-                </div>
-              </div>
+
               <hr />
-              <div className="rcc3">
-                <span className="rcc31">
-                  <h3>Court Fee</h3>
-                  <h3>Rental Fee</h3>
-                </span>
-                <span className="rcc31">
-                  <h3>{info ? info.court_fee : "---------"} ks</h3>
-                  <h3>{info ? info.rental_fee : "---------"} ks</h3>
+
+              <div className="rc-row">
+                <span className="label">Registration ID</span>
+                <span className="value">#{info?.order_no || "00000"}</span>
+              </div>
+              <div className="rc-row">
+                <span className="label">Date</span>
+                <span className="value">
+                  {info?.Date || new Date().toLocaleDateString()}
                 </span>
               </div>
-              <hr />
-              <div className="rc4">
-                <span className="rc41">
-                  <h3>Total Amount:</h3>
-                  <h3>Discount(%):</h3>
-                </span>
-                <span className="rc42">
-                  <h3>{info ? info.total_amount : "---------"} KS</h3>
-                  <h3>{info?.discount || 0} ks</h3>
+              <div className="rc-row">
+                <span className="label">Payment</span>
+                <span className="value">{info?.payment || "Cash"}</span>
+              </div>
+              <div className="rc-row">
+                <span className="label">Time</span>
+                <span className="value">
+                  {info?.Time && info.Time !== "Invalid Date"
+                    ? info.Time
+                    : "------------"}
                 </span>
               </div>
+
               <hr />
-              <div className="rc5">
-                <h3>Total</h3>
-                <h3>{info ? info.total_amount : "--------"} ks</h3>
+
+              <div className="rc-row">
+                <span className="label">Court Fee</span>
+                <span className="value">{info ? info.court_fee : 0} KS</span>
+              </div>
+              <div className="rc-row">
+                <span className="label">Rental Fee</span>
+                <span className="value">{info ? info.rental_fee : 0} KS</span>
+              </div>
+              <div className="rc-row">
+                <span className="label">Discount</span>
+                <span className="value">{info?.discount || 0} KS</span>
+              </div>
+
+              <hr />
+
+              <div className="rc-row rc-total-row">
+                <span className="label total-label">Total Amount</span>
+                <span className="value total-value">
+                  {info ? info.total_amount : 0} KS
+                </span>
               </div>
             </div>
+
+            {/* Integrated Action Buttons */}
             <div className="rc6">
-              <button onClick={() => download()} className="downloadbtn">
-                <SaveIcon />
+              <button
+                onClick={download}
+                className="downloadbtn"
+                title="Download"
+              >
+                <SaveIcon fontSize="small" />
               </button>
-              <button onClick={() => print()}>Print</button>
-              <button onClick={() => close()}>Cancel</button>
+              <button
+                onClick={print}
+                className="printbtn"
+                style={{ padding: "0 100px" }}
+              >
+                Print
+              </button>
+              <button onClick={close} className="cancelbtn">
+                Cancel
+              </button>
             </div>
           </div>
         </div>,
         document.body,
       )
     : null;
+
   return { open, ClassReceipetJsx };
 };
