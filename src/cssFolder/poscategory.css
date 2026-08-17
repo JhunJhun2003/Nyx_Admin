@@ -341,6 +341,20 @@
   gap: 8px;
 }
 
+.btn-sub {
+  background: #8655f0;
+  width: 100px;
+  height: 40px;
+  border-radius: 12px;
+}
+
+.btn-cancel {
+  background: #c3c4c5;
+  width: 100px;
+  height: 40px;
+  border-radius: 12px;
+}
+
 .categorypopup .categoryupdate button,
 .tagupdatebtn button,
 .tagbutton button {

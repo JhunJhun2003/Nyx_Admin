@@ -250,3 +250,62 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ==========================================
+   Dark Mode Theme Rules
+   ========================================== */
+.addproductform.dark-mode {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+.addproductform.dark-mode .categoryupload3,
+.addproductform.dark-mode .close-top-btn {
+  color: #f8fafc;
+}
+
+.addproductform.dark-mode .pos-detail-left-card,
+.addproductform.dark-mode .pos-detail-right-card {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+.addproductform.dark-mode .section-title-label,
+.addproductform.dark-mode .input-field-group label {
+  color: #cbd5e1;
+}
+
+.addproductform.dark-mode .upload91 {
+  background-color: #0f172a;
+  border-color: #334155;
+}
+
+.addproductform.dark-mode .upload91 span {
+  color: #94a3b8;
+}
+
+.addproductform.dark-mode .pos-input-grid input,
+.addproductform.dark-mode .pos-input-grid select,
+.addproductform.dark-mode .pos-input-grid .textarea {
+  background-color: #0f172a;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+.addproductform.dark-mode .pos-input-grid input:focus,
+.addproductform.dark-mode .pos-input-grid select:focus {
+  border-color: #6366f1;
+  background-color: #0f172a;
+}
+
+.addproductform.dark-mode .categoryupload14,
+.addproductform.dark-mode .up132btn3 {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+.addproductform.dark-mode .categoryupload15 {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}

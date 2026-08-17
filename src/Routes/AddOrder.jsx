@@ -32,7 +32,11 @@ function AddOrder() {
 
   const imgref = useRef();
   const paymentref = useRef();
-  const { Token } = useContext(Context);
+
+  // Context မှ backcolor ယူယူပြီး Dark Mode စစ်ဆေးခြင်း
+  const { Token, backcolor } = useContext(Context);
+  const isDarkMode = Boolean(backcolor === "#1A1C1E");
+
   const { Payment, Products, GetPayment, Tax, GetTax } = useGetPayment();
   const { Loading, openconfirm, openerror, openloading, opensuccess, close } =
     useNoti();
@@ -54,7 +58,6 @@ function AddOrder() {
     }
   }, [childdata, filetosend]);
 
-  // function to  radom recepit number
   function randomNum() {
     let random = Date.now();
     setreciept(random);
@@ -97,7 +100,6 @@ function AddOrder() {
     });
   }
 
-  //function to show receipet
   function show_receipet() {
     let TAX = Tax.result[0].tax || 1;
     let curtax = (amount / 100) * Number(TAX);
@@ -137,7 +139,6 @@ function AddOrder() {
     }
   };
 
-  //function to add order
   async function add_order() {
     let delta = childdata.map((item) => {
       let qty = cart[item.id] !== undefined ? cart[item.id] : 1;
@@ -177,27 +178,26 @@ function AddOrder() {
     }
   }
 
-  //payment change
   function paymentchange(event) {
     setpayment(event.target.value);
   }
 
   return createPortal(
-    <div className="addordermain">
+    <div className={`addordermain ${isDarkMode ? "dark-mode" : ""}`}>
       {Loading}
       {ReceipetJsx}
       <div className="addordernav">
-        <button
-          style={{ border: "none", outline: "none", background: "initial" }}
-          onClick={() => navigate("/posorder")}
-        >
+        <button className="btn-back" onClick={() => navigate("/posorder")}>
           <BackIcon
-            sx={{ color: "white", margin: "7px", marginLeft: "15px" }}
+            sx={{
+              color: "#F8FAFC",
+              fontSize: "28px",
+            }}
           />
         </button>
       </div>
       <div className="addorderbody">
-        <h3 className="addordertitle">Create New Orderr</h3>
+        <h3 className="addordertitle">Create New Order</h3>
         <div className="addorderbody1">
           <div className="addorderreciept">
             <p>Receipt No</p>
@@ -205,9 +205,8 @@ function AddOrder() {
           </div>
           <div className="addorderamount">
             <p>Total amount</p>
-            <hr style={{ color: "black" }} />
-            <h2 style={{ margin: "0", paddingTop: "0" }}>
-              {amount} <label htmlFor="h2">ks</label>
+            <h2>
+              {amount.toLocaleString()} <label htmlFor="h2">ks</label>
             </h2>
           </div>
         </div>
@@ -215,7 +214,7 @@ function AddOrder() {
           <div className="addorderchoice">
             <span className="addorderchoiceheader">
               <p className="addorderchoiceheader1">
-                <FoodIcon sx={{ color: "red", fontSize: "20px" }} />
+                <FoodIcon sx={{ color: "#ef4444", fontSize: "20px" }} />
                 Order items
               </p>
               <button
@@ -238,7 +237,7 @@ function AddOrder() {
                     <div className="toorderbody" key={index}>
                       <span className="toorderchild">
                         <div>
-                          <img src={item.images} />
+                          <img src={item.images} alt="" />
                         </div>
                         <p>{item.productName}</p>
                       </span>
@@ -250,7 +249,7 @@ function AddOrder() {
                         <button onClick={() => updateQty(item.id, 1)}>+</button>
                       </span>
                       <p className="toorderchild2">
-                        {item.price}
+                        {item.price?.toLocaleString()} ks
                         <button onClick={() => remove_item(item.id)}>
                           <RemoveIcon sx={{ fontSize: "20px" }} />
                         </button>
@@ -259,11 +258,7 @@ function AddOrder() {
                   );
                 })
               ) : (
-                <p
-                  style={{ width: "100%", textAlign: "center", padding: "1em" }}
-                >
-                  No Product Choose Yet...
-                </p>
+                <p className="empty-state">No Product Choose Yet...</p>
               )}
             </div>
           </div>
@@ -271,7 +266,7 @@ function AddOrder() {
           <div className="orderprint">
             <div className="orderprint1">
               <p className="orderprintheader">
-                <PaymentIcon sx={{ color: "red" }} />
+                <PaymentIcon sx={{ color: "#ef4444" }} />
                 Payment Details
               </p>
               <div className="ssx">
@@ -294,7 +289,7 @@ function AddOrder() {
                 </select>
               </div>
               <span className="paymentmain">
-                <label style={{ padding: "5px" }}>Payment Details</label>
+                <label>Payment Details</label>
                 <div className="paymentwarper">
                   <span>
                     <p>{payment == "Cash" ? "--------" : `${payment} name`}</p>
@@ -332,11 +327,11 @@ function AddOrder() {
               </div>
             </div>
             <span className="addorderbtn">
-              <button>cancel</button>
+              <button onClick={() => navigate("/posorder")}>cancel</button>
               <button
-                style={{ background: "#0D1B2A", color: "white" }}
                 disabled={allow}
                 onClick={add_order}
+                className="btn-create"
               >
                 Create
               </button>
@@ -353,4 +348,5 @@ function AddOrder() {
     document.body,
   );
 }
+
 export default AddOrder;

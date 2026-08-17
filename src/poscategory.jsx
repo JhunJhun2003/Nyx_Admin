@@ -492,7 +492,7 @@ function PosCategory() {
                 </div>
               ) : (
                 <div className="categorycreatebtn">
-                  <button type="submit" className="btn-submit-action">
+                  <button type="submit" className="btn-sub">
                     Create
                   </button>
                   <button
@@ -502,7 +502,7 @@ function PosCategory() {
                       setfilepath(null);
                     }}
                     type="button"
-                    className="btn-cancel-action"
+                    className="btn-cancel"
                   >
                     Cancel
                   </button>

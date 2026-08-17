@@ -25,6 +25,10 @@ function AddProduct() {
   const [file, setfile] = useState(null);
   const [filepath, setfilepath] = useState(null);
 
+  // Context မှ backcolor ရယူပြီး Dark Mode စစ်ဆေးခြင်း
+  const { backcolor } = useContext(Context);
+  const isDarkMode = Boolean(backcolor === "#1A1C1E");
+
   const navigate = useNavigate();
 
   const { Categories, GetCategories, Tags, GetTags } = useGetCategory();
@@ -214,7 +218,7 @@ function AddProduct() {
     <>
       <form
         onSubmit={info ? updateProduct : AddProduct}
-        className="addproductform"
+        className={`addproductform ${isDarkMode ? "dark-mode" : ""}`}
       >
         {Loading}
         <div className="posadditemcontainer">

@@ -16,7 +16,7 @@ import { useReceipt } from "../Components/Receipt";
 import { useGetOrder, useGetPayment } from "../Api_Call";
 import { useNoti } from "../Hooks/alert";
 import AddOrderMenu from "./addmenuorder";
-import "../Routes/addorder.css";
+import "./addmenu.css";
 
 function AddMenu() {
   const { classBackColor } = useContext(Context);

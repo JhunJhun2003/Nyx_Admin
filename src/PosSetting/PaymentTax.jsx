@@ -6,6 +6,7 @@ import { useSecurityCheck } from "../Hooks/SecurityCheck";
 import AddPaymentPopUp from "../Components/addpaymentpopup";
 import toast, { Toaster } from "react-hot-toast";
 import { useGetPayment } from "../Api_Call";
+import { useLocation } from "react-router-dom";
 
 function PosPaymentTax() {
   const [show, setshow] = useState(false);
@@ -15,14 +16,32 @@ function PosPaymentTax() {
 
   const { Payment, GetPayment, Tax, GetTax } = useGetPayment();
   const { ReturnJsx, openbox } = useSecurityCheck();
-  const { backcolor, Token } = useContext(Context);
-  const Font_Color = Boolean(backcolor == "#1A1C1E");
+
+  const ContextData = useContext(Context);
+  const location = useLocation();
+
+  const isClass = location.pathname.includes("/class");
+
+  const color = isClass ? ContextData.classNavColor : ContextData.posNavColor;
+  const setcolor = isClass
+    ? ContextData.setClassNavColor
+    : ContextData.setPosNavColor;
+  const backcolor = isClass
+    ? ContextData.classBackColor
+    : ContextData.backcolor;
+  const setbackcolor = isClass
+    ? ContextData.setClassBackColor
+    : ContextData.setPosBackColor;
+
+  const Font_Color = Boolean(backcolor === "#1A1C1E");
   const FontStyle = {
-    color: Font_Color ? "white" : "#0D1B2A",
+    color: Font_Color ? "#E1E1E1" : "#0D1B2A",
   };
+
   const InputStyle = {
-    backgroundColor: backcolor ? "#FFFFFF" : "#0d1b2a21",
-    color: backcolor ? "black" : "white",
+    backgroundColor: Font_Color ? "#25282C" : "#FFFFFF",
+    color: Font_Color ? "#FFFFFF" : "#000000",
+    border: Font_Color ? "1px solid #444" : "1px solid #ccc",
   };
 
   useEffect(() => {

@@ -7,6 +7,7 @@ import TableLoading from "../Components/tableloading";
 import CustomerLoading from "../Components/loadingcustomer";
 import { useSecurityCheck } from "../Hooks/SecurityCheck";
 import { useGetStaff } from "../Api_Call";
+import { useLocation } from "react-router-dom";
 
 function StaffManagement() {
   const nameref = useRef();
@@ -15,14 +16,30 @@ function StaffManagement() {
   const roleref = useRef();
 
   const [show, setshow] = useState(false);
-
-  const { backcolor } = useContext(Context);
   const { Staff, GetStaff } = useGetStaff();
   const { ReturnJsx, openbox } = useSecurityCheck();
+
+  const ContextData = useContext(Context);
+  const location = useLocation();
+
+  const isClass = location.pathname.includes("/class");
+
+  const color = isClass ? ContextData.classNavColor : ContextData.posNavColor;
+  const setcolor = isClass
+    ? ContextData.setClassNavColor
+    : ContextData.setPosNavColor;
+  const backcolor = isClass
+    ? ContextData.classBackColor
+    : ContextData.backcolor;
+  const setbackcolor = isClass
+    ? ContextData.setClassBackColor
+    : ContextData.setPosBackColor;
+
   const Font_Color = Boolean(backcolor === "#1A1C1E");
   const FontStyle = {
     color: Font_Color ? "#E1E1E1" : "#0D1B2A",
   };
+
   const ButtonStyle = {
     color: Font_Color && "#0D1B2A",
     background: Font_Color ? "white" : "#0D1B2A",
