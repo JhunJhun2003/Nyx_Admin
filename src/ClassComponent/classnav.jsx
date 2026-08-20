@@ -8,16 +8,13 @@ import ArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import ArrowDown from "@mui/icons-material/KeyboardArrowDown";
 
 function ClassNav() {
-  const [show1, setshow1] = useState(false);
-  const [show2, setshow2] = useState(false);
-  const [show3, setshow3] = useState(false);
+  const [show1, setshow1] = useState(false); //for training
+  const [show2, setshow2] = useState(false); //for renatal
+  const [show3, setshow3] = useState(false); //for canteen
+  const { setisClassLogin } = useContext(Context);
 
-  // Context မှ classNavColor နှင့် classBackColor ကို ရယူခြင်း
-  const { classNavColor, classBackColor, setisClassLogin } =
-    useContext(Context);
   const nagivate = useNavigate();
 
-  const isDark = classBackColor === "#1A1C1E";
   function handleTraining() {
     setshow1(!show1);
     setshow2(false);
@@ -39,8 +36,7 @@ function ClassNav() {
   return (
     <>
       <div className="classnavcontainer">
-        {/* Class Sidebar သည် classNavColor ကို သုံးမည် */}
-        <div className="classnav" style={{ background: classNavColor }}>
+        <div className="classnav">
           <div className="classnavheader">
             <img src={Logo} alt="Logo" />
             <h1>Service</h1>
@@ -105,11 +101,11 @@ function ClassNav() {
                   <NavLink className="dropdownlist" to="classvenuemanagement">
                     Venue MANAGEMENT
                   </NavLink>
-                  <NavLink className="dropdownlist" to="classwalk-in">
-                    WALK-IN
-                  </NavLink>
                   <NavLink className="dropdownlist" to="classmember">
                     CUSTOMERS
+                  </NavLink>
+                  <NavLink className="dropdownlist" to="walkin">
+                    Walk-In
                   </NavLink>
                 </span>
               )}
@@ -157,9 +153,7 @@ function ClassNav() {
             </button>
           </div>
         </div>
-
-        {/* Dashboard သည် classBackColor အတိုင်း သီးခြား ပြောင်းမည် */}
-        <div className="classdashboard" style={{ background: classBackColor }}>
+        <div className="classdashboard">
           <Outlet />
         </div>
       </div>

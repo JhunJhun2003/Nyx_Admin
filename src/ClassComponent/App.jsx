@@ -55,29 +55,16 @@ import ClassRentalOverveiw from "./ClassComponent/classrentaloverview";
 import ClassCanteenOverview from "./ClassComponent/classcanteenoverview";
 import Courses from "./ClassComponent/courses";
 import AddClassForm from "./ClassComponent/courseaddclass ";
-import ClassWalkIn from "./ClassComponent/classwalkin";
-import WalkBooking from "./ClassComponent/walkbooking";
-import WalkBookingList from "./ClassComponent/walkbookinglist";
+import WalkIn from "./Class/classwalkin";
 
 function App() {
   const [childData, SetchildData] = useState({});
-
-  // POS အတွက် Theme State များ သီးသန့်ခွဲခြင်း
-  const [color, setPosNavColor] = useState(
-    localStorage.getItem("pos_navcolor") || "#0D1B2A",
+  const [NavColor, setNavColor] = useState(
+    localStorage.getItem("navcolor") || "#0D1B2A",
   );
-  const [backcolor, setPosBackColor] = useState(
-    localStorage.getItem("pos_background") || "#F0F0F0",
+  const [BackColor, setBackColor] = useState(
+    localStorage.getItem("background") || "#F0F0F0",
   );
-
-  // Class အတွက် Theme State များ သီးသန့်ခွဲခြင်း
-  const [classNavColor, setClassNavColor] = useState(
-    localStorage.getItem("class_navcolor") || "#0D1B2A",
-  );
-  const [classBackColor, setClassBackColor] = useState(
-    localStorage.getItem("class_background") || "#F0F0F0",
-  );
-
   const [Length, setLength] = useState(1);
   const [islogin, setislogin] = useState(
     localStorage.getItem("islogin") === "true",
@@ -90,17 +77,10 @@ function App() {
     <>
       <Context.Provider
         value={{
-          // POS Theme
-          color,
-          setPosNavColor,
-          backcolor,
-          setPosBackColor,
-          // Class Theme
-          classNavColor,
-          setClassNavColor,
-          classBackColor,
-          setClassBackColor,
-
+          color: NavColor,
+          setcolor: setNavColor,
+          backcolor: BackColor,
+          setbackcolor: setBackColor,
           Length: Length,
           setLength: setLength,
           childdata: childData,
@@ -122,20 +102,26 @@ function App() {
               }
             >
               <Route index element={<Navigate to="/posoverview" replace />} />
+
               <Route path="posoverview" element={<PosOverview />} />
+
               <Route path="posorder" element={<PosOrder />}>
                 <Route index element={<Navigate to="mobileorder" replace />} />
                 <Route path="mobileorder" element={<MobileOrder />} />
                 <Route path="localorder" element={<LocalOrder />} />
                 <Route path="posaddorder" element={<AddOrder />} />
               </Route>
+
               <Route path="poscategory" element={<PosCategory />} />
+
               <Route path="posproduct" element={<PosProduct />}>
                 <Route path="posaddproduct" element={<AddProduct />} />
               </Route>
+
               <Route path="poscustomer" element={<PosCustomer />} />
               <Route path="posinventory" element={<PosInventory />} />
               <Route path="posreport" element={<PosReport />} />
+
               <Route path="possetting" element={<PosSetting />}>
                 <Route
                   index
@@ -178,6 +164,7 @@ function App() {
               <Route path="classcourses" element={<Courses />}>
                 <Route path="add_courseclass" element={<AddClassForm />} />
               </Route>
+
               <Route
                 path="classcoursemanagement"
                 element={<CourseManagement />}
@@ -216,12 +203,8 @@ function App() {
                 <Route path="classcourtdetail" element={<ClassCourtDetail />} />
                 <Route path="classaddcourt" element={<ClassAddCourt />} />
               </Route>
-
-              <Route path="classwalk-in" element={<ClassWalkIn />} />
-              <Route path="booking-list" element={<WalkBookingList />} />
-              <Route path="walkbooking" element={<WalkBooking />} />
-
               <Route path="classmember" element={<ClassCustomer />} />
+              <Route path="walkin" element={<WalkIn />} />
               <Route path="classorder" element={<ClassOrder />}>
                 <Route path="classorderaddmenu" element={<AddMenu />} />
               </Route>

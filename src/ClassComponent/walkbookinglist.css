@@ -1,0 +1,340 @@
+.booking-list-page {
+  --bg-page: #f4f5f7;
+  --bg-card: #ffffff;
+  --border-color: #e5e7eb;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --table-header-bg: #f9fafb;
+  --table-hover-bg: #f3f4f6;
+  --input-bg: #ffffff;
+  --primary-color: #2563eb;
+  --active-tab-bg: #1e293b;
+  --active-tab-text: #ffffff;
+  --inactive-tab-bg: #e2e8f0;
+  --inactive-tab-text: #475569;
+
+  min-height: 100vh;
+  padding: 30px 40px;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+/* Dark Mode support */
+.booking-list-page.dark-mode {
+  --bg-page: #121212;
+  --bg-card: #1e293b;
+  --border-color: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --table-header-bg: #0f172a;
+  --table-hover-bg: #334155;
+  --input-bg: #0f172a;
+  --active-tab-bg: #38bdf8;
+  --active-tab-text: #0f172a;
+  --inactive-tab-bg: #334155;
+  --inactive-tab-text: #cbd5e1;
+}
+
+.booking-list-page *,
+.booking-list-page *::before,
+.booking-list-page *::after {
+  box-sizing: border-box;
+}
+
+/* Header Section */
+.list-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.title-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title-icon {
+  font-size: 32px !important;
+  color: var(--text-primary);
+}
+
+.title-container h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+/* Switch Buttons */
+.order-switch-container {
+  display: flex;
+  background-color: var(--inactive-tab-bg);
+  padding: 4px;
+  border-radius: 10px;
+  gap: 4px;
+}
+
+.switch-btn {
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--inactive-tab-text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.switch-btn.active {
+  background-color: var(--active-tab-bg);
+  color: var(--active-tab-text);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Main Table Card */
+.table-card {
+  background-color: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.table-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.controls-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Search Box */
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-secondary);
+  font-size: 20px !important;
+}
+
+.search-box input {
+  padding: 8px 16px 8px 38px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  width: 220px;
+  transition: border-color 0.2s;
+}
+
+.search-box input:focus {
+  border-color: var(--primary-color);
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filter-btn:hover {
+  background-color: var(--table-header-bg);
+}
+
+/* Table Area */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.custom-table th {
+  background-color: var(--table-header-bg);
+  color: var(--text-secondary);
+  padding: 14px 16px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.custom-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.custom-table tbody tr:hover {
+  background-color: var(--table-hover-bg);
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-medium {
+  font-weight: 600;
+}
+
+/* Proof Thumbnail Placeholder */
+.proof-thumbnail {
+  width: 36px;
+  height: 28px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 2px;
+  background-color: var(--table-header-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumbnail-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #cbd5e1;
+  border-radius: 2px;
+}
+
+/* View Button */
+.btn-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 20px;
+  background-color: #a7f3d0;
+  color: #065f46;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-view:hover {
+  opacity: 0.85;
+}
+
+.no-data {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 30px !important;
+}
+
+/* Pagination Footer */
+.pagination-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.pagination-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.page-btn {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.page-btn.active {
+  background-color: #1e293b;
+  color: #ffffff;
+  border-color: #1e293b;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Responsive UI Adjustments */
+@media (max-width: 768px) {
+  .booking-list-page {
+    padding: 20px 16px;
+  }
+
+  .list-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .order-switch-container {
+    width: 100%;
+  }
+
+  .switch-btn {
+    flex: 1;
+  }
+
+  .table-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .controls-right {
+    width: 100%;
+  }
+
+  .search-box {
+    flex: 1;
+  }
+
+  .search-box input {
+    width: 100%;
+  }
+}
