@@ -13,34 +13,13 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CloseIcon from "@mui/icons-material/Close";
 import SportsTennisIcon from "@mui/icons-material/SportsTennis";
-import RestaurantOutlinedIcon from "@mui/icons-material/RestaurantOutlined";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Context } from "../Hooks/context"; // Context လမ်းကြောင်းကို စစ်ဆေးပေးပါ
 import "./walkbooking.css";
 
 const COURT_FEE = 50000;
-
-const equipmentList = [
-  {
-    id: "shuttlecock",
-    name: "Shuttlecock",
-    category: "Equipment",
-    price: 2000,
-  },
-  {
-    id: "racket",
-    name: "Badminton Racket",
-    category: "Equipment",
-    price: 5000,
-  },
-  { id: "towel", name: "Towel", category: "Equipment", price: 1500 },
-];
-
-const snackList = [
-  { id: "popcorn", name: "Popcorn", category: "Snacks", price: 4000 },
-  { id: "water", name: "Mineral Water", category: "Snacks", price: 1000 },
-  { id: "energy-drink", name: "Energy Drink", category: "Snacks", price: 2500 },
-];
+const PAYMENT_LIST_URL = "http://130.94.99.9:5001/api/cart/showPayment";
+const CREATE_BOOKING_URL = "http://130.94.99.9:5000/api/walk_in/booking";
 
 const courtList = [
   {
@@ -62,8 +41,6 @@ const courtList = [
     hours: "09:00 AM - 10:00 PM",
   },
 ];
-
-const paymentMethods = ["KBPay", "WavePay", "Cash"];
 
 const getToday = () => {
   const date = new Date();
@@ -99,14 +76,31 @@ function WalkBooking() {
   const { classBackColor } = useContext(Context);
   const isDark = classBackColor === "#1A1C1E";
 
+  const location = useLocation();
+  const {
+    venueName,
+    venueId,
+    court: sourceCourt,
+    walkInConfig,
+  } = location.state || {};
+  const bookingCourt = sourceCourt
+    ? {
+        id: sourceCourt.id,
+        name: sourceCourt.court_name || `Court ${sourceCourt.id}`,
+        sport: venueName || "-",
+        hours: `${walkInConfig?.openTime || "-"} - ${walkInConfig?.closeTime || "-"}`,
+        equipment: sourceCourt.equipment || [],
+      }
+    : courtList[0];
+  const courtFee = Number(walkInConfig?.price || COURT_FEE);
   const [customerName, setCustomerName] = useState("");
   const [phone, setPhone] = useState("");
   const [bookingDate, setBookingDate] = useState(getToday());
-  const [selectedCourt, setSelectedCourt] = useState(courtList[0]);
-  const [activeTab, setActiveTab] = useState("Equipment");
+  const [selectedCourt, setSelectedCourt] = useState(bookingCourt);
   const [items, setItems] = useState([]);
   const [showItemSelector, setShowItemSelector] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("KBPay");
+  const [paymentAccounts, setPaymentAccounts] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [receipt, setReceipt] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -114,6 +108,24 @@ function WalkBooking() {
   const [errors, setErrors] = useState({});
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const getPaymentAccounts = async () => {
+      try {
+        const response = await fetch(PAYMENT_LIST_URL);
+        if (!response.ok) return;
+
+        const result = await response.json();
+        const accounts = Array.isArray(result?.data) ? result.data : [];
+        setPaymentAccounts(accounts);
+        setPaymentMethod((currentMethod) => currentMethod || accounts[0]?.payment_method || "");
+      } catch (error) {
+        console.error("Payment list loading error:", error);
+      }
+    };
+
+    getPaymentAccounts();
+  }, []);
 
   useEffect(() => {
     const savedDraft = localStorage.getItem("walkInBookingDraft");
@@ -124,9 +136,9 @@ function WalkBooking() {
       setCustomerName(draft.customerName || "");
       setPhone(draft.phone || "");
       setBookingDate(draft.bookingDate || getToday());
-      setSelectedCourt(draft.selectedCourt || courtList[0]);
+      setSelectedCourt(sourceCourt ? bookingCourt : draft.selectedCourt || bookingCourt);
       setItems(draft.items || []);
-      setPaymentMethod(draft.paymentMethod || "KBPay");
+      setPaymentMethod(draft.paymentMethod || "");
     } catch (error) {
       console.error("Draft loading error:", error);
     }
@@ -148,16 +160,26 @@ function WalkBooking() {
     return items.reduce((total, item) => total + item.price * item.qty, 0);
   }, [items]);
 
-  const totalAmount = useMemo(() => COURT_FEE + rentalTotal, [rentalTotal]);
+  const equipmentTotal = useMemo(
+    () =>
+      items
+        .filter((item) => item.category === "Equipment")
+        .reduce((total, item) => total + item.price * item.qty, 0),
+    [items],
+  );
 
-  const currentItems = activeTab === "Equipment" ? equipmentList : snackList;
+  const totalAmount = useMemo(() => courtFee + rentalTotal, [courtFee, rentalTotal]);
 
-  const handleCourtChange = (event) => {
-    const courtId = event.target.value;
-    const court = courtList.find((item) => item.id === courtId);
-    if (court) setSelectedCourt(court);
-    setErrors((current) => ({ ...current, court: "" }));
-  };
+  const equipmentItems = (selectedCourt.equipment || []).map((item) => ({
+    id: item.id,
+    name: item.product_name,
+    category: "Equipment",
+    price: Number(item.rental_price || 0),
+  }));
+  const currentItems = equipmentItems;
+  const selectedPayment = paymentAccounts.find(
+    (account) => account.payment_method === paymentMethod,
+  );
 
   const handleAddItem = (item) => {
     setItems((currentItems) => {
@@ -223,6 +245,7 @@ function WalkBooking() {
     const reader = new FileReader();
     reader.onload = () => {
       setReceipt({
+        file,
         name: file.name,
         type: file.type,
         size: file.size,
@@ -258,8 +281,54 @@ function WalkBooking() {
   const handleCreateBooking = async () => {
     if (!validateForm()) return;
 
+    const walkInId = walkInConfig?.walkInId || walkInConfig?.walk_in_id;
+    const courtId = sourceCourt?.court_id || sourceCourt?.id;
+
+    if (!venueId || !courtId || !walkInId) {
+      setErrors((current) => ({
+        ...current,
+        booking: "Booking information is incomplete. Please return and select the court again.",
+      }));
+      return;
+    }
+
     setIsSubmitting(true);
     try {
+      const formData = new FormData();
+      if (receipt?.file) formData.append("payment_image", receipt.file);
+      formData.append("walk_in_id", String(walkInId));
+      formData.append("payment_method", paymentMethod);
+      formData.append("venue_id", String(venueId));
+      formData.append("court_id", String(courtId));
+      formData.append("name", customerName.trim());
+      formData.append("phone", phone.trim());
+      formData.append("date", bookingDate);
+      formData.append(
+        "items",
+        JSON.stringify(
+          items
+            .filter((item) => item.category === "Equipment")
+            .map((item) => ({
+              equipment_id: item.id,
+              quantity: item.qty,
+            })),
+        ),
+      );
+
+      const response = await fetch(CREATE_BOOKING_URL, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message ||
+            errorData.error ||
+            `Booking failed (${response.status})`,
+        );
+      }
+
       const bookingData = {
         bookingId: createBookingId(),
         customer: { name: customerName.trim(), phone: phone.trim() },
@@ -277,21 +346,11 @@ function WalkBooking() {
           qty: item.qty,
           subtotal: item.price * item.qty,
         })),
-        payment: {
-          method: paymentMethod,
-          receipt:
-            paymentMethod === "Cash"
-              ? null
-              : receipt
-                ? { name: receipt.name, type: receipt.type }
-                : null,
-        },
-        pricing: { courtFee: COURT_FEE, rentalTotal, totalAmount },
+        payment: { method: paymentMethod, receipt: receipt || null },
+        pricing: { courtFee, rentalTotal, totalAmount },
         status: "Pending",
         createdAt: new Date().toISOString(),
       };
-
-      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const savedBookings =
         JSON.parse(localStorage.getItem("walkInBookings")) || [];
@@ -306,7 +365,7 @@ function WalkBooking() {
     } catch (error) {
       console.error("Booking error:", error);
       setIsSubmitting(false);
-      alert("Something went wrong. Please try again.");
+      alert(error.message || "Something went wrong. Please try again.");
     }
   };
 
@@ -315,9 +374,9 @@ function WalkBooking() {
     setCustomerName("");
     setPhone("");
     setBookingDate(getToday());
-    setSelectedCourt(courtList[0]);
+    setSelectedCourt(bookingCourt);
     setItems([]);
-    setPaymentMethod("KBPay");
+    setPaymentMethod(paymentAccounts[0]?.payment_method || "");
     setReceipt(null);
     setErrors({});
     localStorage.removeItem("walkInBookingDraft");
@@ -395,33 +454,18 @@ function WalkBooking() {
             <section className="booking-card">
               <div className="section-title">
                 <SportsTennisIcon className="section-icon" />
-                <h2 className="section-heading">Select Venue / Court</h2>
+                <h2 className="section-heading">Selected Venue & Court</h2>
               </div>
 
               <div className="form-grid">
                 <div className="form-group">
-                  <label className="form-label">SPORT TYPE</label>
+                  <label className="form-label">Venue</label>
                   <div className="disabled-field">{selectedCourt.sport}</div>
                 </div>
 
                 <div className="form-group">
                   <label className="form-label">COURT NAME</label>
-                  <div
-                    className={`select-wrapper ${errors.court ? "input-error" : ""}`}
-                  >
-                    <select
-                      className="select-input"
-                      value={selectedCourt.id}
-                      onChange={handleCourtChange}
-                    >
-                      {courtList.map((court) => (
-                        <option key={court.id} value={court.id}>
-                          {court.name}
-                        </option>
-                      ))}
-                    </select>
-                    <ExpandMoreIcon className="select-icon" />
-                  </div>
+                  <div className="disabled-field">{selectedCourt.name}</div>
                   {errors.court && (
                     <span className="error-message">{errors.court}</span>
                   )}
@@ -460,25 +504,9 @@ function WalkBooking() {
               <div className="rental-header">
                 <div className="section-title">
                   <Inventory2OutlinedIcon className="section-icon" />
-                  <h2 className="section-heading">Rental Items & Snacks</h2>
+                  <h2 className="section-heading">Rental Items</h2>
                 </div>
 
-                <div className="item-tabs">
-                  <button
-                    type="button"
-                    className={`tab-button ${activeTab === "Equipment" ? "active" : ""}`}
-                    onClick={() => setActiveTab("Equipment")}
-                  >
-                    Equipment
-                  </button>
-                  <button
-                    type="button"
-                    className={`tab-button ${activeTab === "Snacks" ? "active" : ""}`}
-                    onClick={() => setActiveTab("Snacks")}
-                  >
-                    Snacks
-                  </button>
-                </div>
               </div>
 
               <button
@@ -487,7 +515,7 @@ function WalkBooking() {
                 onClick={() => setShowItemSelector(true)}
               >
                 <AddCircleOutlineIcon />
-                <span>Select from {activeTab}</span>
+                <span>Select Equipment</span>
               </button>
 
               <div className="items-table">
@@ -548,12 +576,12 @@ function WalkBooking() {
             <section className="summary-card">
               <h2 className="summary-title">TOTAL AMOUNT</h2>
               <div className="summary-row">
-                <span>Court Fee (1 hr)</span>
-                <span>{formatPrice(COURT_FEE)} Ks</span>
+                <span>Court Fee (1 day)</span>
+                <span>{formatPrice(courtFee)} Ks</span>
               </div>
               <div className="summary-row">
-                <span>Rental Items</span>
-                <span>{formatPrice(rentalTotal)} Ks</span>
+                <span>Rental Equipment</span>
+                <span>{formatPrice(equipmentTotal)} Ks</span>
               </div>
               <div className="summary-divider" />
               <div className="total-row">
@@ -578,9 +606,9 @@ function WalkBooking() {
                     value={paymentMethod}
                     onChange={handlePaymentMethodChange}
                   >
-                    {paymentMethods.map((method) => (
-                      <option key={method} value={method}>
-                        {method}
+                    {paymentAccounts.map((account) => (
+                      <option key={account.id} value={account.payment_method}>
+                        {account.payment_method}
                       </option>
                     ))}
                   </select>
@@ -605,11 +633,11 @@ function WalkBooking() {
                   <div className="payment-info">
                     <div className="info-row">
                       <span>Agent Name</span>
-                      <strong>Agent Name</strong>
+                      <strong>{selectedPayment?.payment_name || "-"}</strong>
                     </div>
                     <div className="info-row">
                       <span>Agent Number</span>
-                      <strong>09 xxxxxxxx</strong>
+                      <strong>{selectedPayment?.payment_number || "-"}</strong>
                     </div>
                   </div>
                 )}
@@ -701,7 +729,7 @@ function WalkBooking() {
           <div className="item-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <div>
-                <h2 className="modal-title">Select {activeTab}</h2>
+                <h2 className="modal-title">Select Equipment</h2>
                 <span className="modal-subtitle">Choose an item to add</span>
               </div>
               <button
@@ -726,11 +754,7 @@ function WalkBooking() {
                     onClick={() => handleAddItem(item)}
                   >
                     <div className="selector-icon">
-                      {activeTab === "Equipment" ? (
-                        <Inventory2OutlinedIcon />
-                      ) : (
-                        <RestaurantOutlinedIcon />
-                      )}
+                      <Inventory2OutlinedIcon />
                     </div>
                     <div className="selector-info">
                       <strong>{item.name}</strong>

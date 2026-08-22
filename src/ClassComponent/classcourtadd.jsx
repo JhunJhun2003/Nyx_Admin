@@ -276,7 +276,7 @@ function ClassCourtDetail({ data }) {
                     <p>Loading...</p>
                   </div>
                 )}
-                <div
+                {/* <div
                   className="courtaddphoto"
                   onClick={() => fileref.current.click()}
                 >
@@ -288,7 +288,7 @@ function ClassCourtDetail({ data }) {
                   />
                   <CameraIcon className="add-icon-svg" />
                   <h3>+ Add Photo</h3>
-                </div>
+                </div> */}
               </div>
               <div className="addcourtleft12">
                 {Array.isArray(Courts?.data) ? (
