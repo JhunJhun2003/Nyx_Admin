@@ -271,7 +271,7 @@ function WalkBooking() {
     if (!selectedCourt) newErrors.court = "Please select a court.";
     if (!paymentMethod)
       newErrors.paymentMethod = "Please select payment method.";
-    if (paymentMethod !== "Cash" && !receipt)
+    if (paymentMethod !== "Cash" && !receipt?.file)
       newErrors.receipt = "Please upload payment receipt.";
 
     setErrors(newErrors);
@@ -281,8 +281,14 @@ function WalkBooking() {
   const handleCreateBooking = async () => {
     if (!validateForm()) return;
 
-    const walkInId = walkInConfig?.walkInId || walkInConfig?.walk_in_id;
-    const courtId = sourceCourt?.court_id || sourceCourt?.id;
+    const walkInId =
+      walkInConfig?.walkInId ||
+      walkInConfig?.walk_in_id ||
+      walkInConfig?.Walk_In_id ||
+      sourceCourt?.walk_in_id ||
+      sourceCourt?.Walk_In_id;
+    const courtId =
+      sourceCourt?.court_id || sourceCourt?.id || walkInConfig?.court_id;
 
     if (!venueId || !courtId || !walkInId) {
       setErrors((current) => ({
@@ -295,24 +301,34 @@ function WalkBooking() {
     setIsSubmitting(true);
     try {
       const formData = new FormData();
-      if (receipt?.file) formData.append("payment_image", receipt.file);
+      if (receipt?.file) {
+        formData.append("payment_image", receipt.file, receipt.file.name);
+      }
       formData.append("walk_in_id", String(walkInId));
       formData.append("payment_method", paymentMethod);
-      formData.append("venue_id", String(venueId));
+      formData.append("vanue_id", String(venueId));
       formData.append("court_id", String(courtId));
       formData.append("name", customerName.trim());
       formData.append("phone", phone.trim());
       formData.append("date", bookingDate);
-      formData.append(
-        "items",
-        JSON.stringify(
-          items
-            .filter((item) => item.category === "Equipment")
-            .map((item) => ({
-              equipment_id: item.id,
-              quantity: item.qty,
-            })),
-        ),
+      const bookingItems = items
+        .filter((item) => item.category === "Equipment" && item.id)
+        .map((item) => ({
+          equipment_id: Number(item.id),
+          quantity: Number(item.qty),
+        }));
+      if (bookingItems.length > 0) {
+        formData.append("items", JSON.stringify(bookingItems));
+      } else {
+        formData.append("items", "");
+      }
+
+      console.table(
+        Array.from(formData.entries()).map(([key, value]) => ({
+          key,
+          value: value instanceof File ? value.name : value,
+          type: value instanceof File ? value.type : "text",
+        })),
       );
 
       const response = await fetch(CREATE_BOOKING_URL, {
@@ -321,23 +337,37 @@ function WalkBooking() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorText = await response.text();
+        let errorData = {};
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { message: errorText };
+        }
         throw new Error(
           errorData.message ||
             errorData.error ||
+            errorData.details ||
             `Booking failed (${response.status})`,
         );
       }
 
+      const responseData = await response.json().catch(() => ({}));
+      const bookingResult = responseData.result || responseData.data || {};
+
       const bookingData = {
-        bookingId: createBookingId(),
-        customer: { name: customerName.trim(), phone: phone.trim() },
-        venue: {
-          sport: selectedCourt.sport,
-          court: selectedCourt.name,
-          operatingHours: selectedCourt.hours,
+        bookingId: bookingResult.booking_id || createBookingId(),
+        walkInId: bookingResult.Walk_In_id || walkInId,
+        customer: {
+          name: bookingResult.booking_name || customerName.trim(),
+          phone: bookingResult.phone || phone.trim(),
         },
-        date: bookingDate,
+        venue: {
+          sport: bookingResult.venue_name || selectedCourt.sport,
+          court: bookingResult.court_name || selectedCourt.name,
+          operatingHours: bookingResult.operating_hour || selectedCourt.hours,
+        },
+        date: bookingResult.date || bookingDate,
         items: items.map((item) => ({
           id: item.id,
           name: item.name,
@@ -346,8 +376,15 @@ function WalkBooking() {
           qty: item.qty,
           subtotal: item.price * item.qty,
         })),
-        payment: { method: paymentMethod, receipt: receipt || null },
-        pricing: { courtFee, rentalTotal, totalAmount },
+        payment: {
+          method: bookingResult.payment_method || paymentMethod,
+          receipt: receipt || null,
+        },
+        pricing: {
+          courtFee: Number(bookingResult.walk_in_price ?? courtFee),
+          rentalTotal: Number(bookingResult.equipment_price ?? rentalTotal),
+          totalAmount: Number(bookingResult.amount ?? totalAmount),
+        },
         status: "Pending",
         createdAt: new Date().toISOString(),
       };
@@ -690,6 +727,9 @@ function WalkBooking() {
             </section>
 
             <div className="action-buttons">
+              {errors.booking && (
+                <span className="error-message">{errors.booking}</span>
+              )}
               <button
                 type="button"
                 className="cancel-button"
