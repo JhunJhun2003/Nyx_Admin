@@ -797,23 +797,15 @@
 }
 
 .confirm-button {
-  border: 1px solid #0f172a;
-  background: #0f172a;
+  border: 1px solid #2979ff;
+  background: #2979ff;
   color: #ffffff;
   font-weight: bold;
 }
 
 .confirm-button:hover {
-  background: #102658;
-  border-color: #0f172a;
-}
-
-.booking-page.dark-mode .confirm-button {
-  border: 1px solid #0f172a;
   background: #1c68e3;
   border-color: #1c68e3;
-  color: #ffffff;
-  font-weight: bold;
 }
 
 .confirm-button:disabled {

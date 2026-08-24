@@ -118,7 +118,9 @@ function WalkBooking() {
         const result = await response.json();
         const accounts = Array.isArray(result?.data) ? result.data : [];
         setPaymentAccounts(accounts);
-        setPaymentMethod((currentMethod) => currentMethod || accounts[0]?.payment_method || "");
+        setPaymentMethod(
+          (currentMethod) => currentMethod || accounts[0]?.payment_method || "",
+        );
       } catch (error) {
         console.error("Payment list loading error:", error);
       }
@@ -136,7 +138,9 @@ function WalkBooking() {
       setCustomerName(draft.customerName || "");
       setPhone(draft.phone || "");
       setBookingDate(draft.bookingDate || getToday());
-      setSelectedCourt(sourceCourt ? bookingCourt : draft.selectedCourt || bookingCourt);
+      setSelectedCourt(
+        sourceCourt ? bookingCourt : draft.selectedCourt || bookingCourt,
+      );
       setItems(draft.items || []);
       setPaymentMethod(draft.paymentMethod || "");
     } catch (error) {
@@ -168,7 +172,10 @@ function WalkBooking() {
     [items],
   );
 
-  const totalAmount = useMemo(() => courtFee + rentalTotal, [courtFee, rentalTotal]);
+  const totalAmount = useMemo(
+    () => courtFee + rentalTotal,
+    [courtFee, rentalTotal],
+  );
 
   const equipmentItems = (selectedCourt.equipment || []).map((item) => ({
     id: item.id,
@@ -293,7 +300,8 @@ function WalkBooking() {
     if (!venueId || !courtId || !walkInId) {
       setErrors((current) => ({
         ...current,
-        booking: "Booking information is incomplete. Please return and select the court again.",
+        booking:
+          "Booking information is incomplete. Please return and select the court again.",
       }));
       return;
     }
@@ -543,7 +551,6 @@ function WalkBooking() {
                   <Inventory2OutlinedIcon className="section-icon" />
                   <h2 className="section-heading">Rental Items</h2>
                 </div>
-
               </div>
 
               <button
