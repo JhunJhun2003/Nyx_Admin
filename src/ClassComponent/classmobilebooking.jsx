@@ -258,7 +258,6 @@ function ClassMobileBooking() {
             </tbody>
           </table>
         </div>
-        {TableFooterJsx}
       </div>
     </div>
   );

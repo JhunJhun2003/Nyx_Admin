@@ -256,7 +256,6 @@ function ClassLoaclBooking() {
             </tbody>
           </table>
         </div>
-        {TableFooterJsx}
       </div>
     </div>
   );
