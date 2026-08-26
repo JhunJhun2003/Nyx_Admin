@@ -453,7 +453,7 @@ function WalkBooking() {
 
         <div className="booking-layout">
           <div className="left-column">
-            <section className="booking-card">
+            <section className="summary-card">
               <div className="section-title">
                 <PersonIcon className="section-icon" />
                 <h2 className="section-heading">Customer Information</h2>
@@ -496,7 +496,7 @@ function WalkBooking() {
               </div>
             </section>
 
-            <section className="booking-card">
+            <section className="summary-card">
               <div className="section-title">
                 <SportsTennisIcon className="section-icon" />
                 <h2 className="section-heading">Selected Venue & Court</h2>
@@ -536,7 +536,6 @@ function WalkBooking() {
                         setErrors((cur) => ({ ...cur, bookingDate: "" }));
                       }}
                     />
-                    <CalendarMonthOutlinedIcon className="date-icon" />
                   </div>
                   {errors.bookingDate && (
                     <span className="error-message">{errors.bookingDate}</span>
@@ -545,7 +544,7 @@ function WalkBooking() {
               </div>
             </section>
 
-            <section className="booking-card rental-card">
+            <section className="summary-card rental-card">
               <div className="rental-header">
                 <div className="section-title">
                   <Inventory2OutlinedIcon className="section-icon" />

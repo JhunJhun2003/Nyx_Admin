@@ -192,6 +192,7 @@ const WalkBookingList = () => {
 
   const closePaymentProof = () => {
     setShowPaymentProof(false);
+    setSelectedBooking(null);
   };
 
   const getTotalAmount = (booking) => {
