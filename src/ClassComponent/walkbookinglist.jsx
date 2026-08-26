@@ -1,5 +1,12 @@
-import React, { useEffect, useMemo, useRef, useState, useContext } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useContext,
+} from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ArrowBackIosNew,
   DescriptionOutlined,
@@ -22,59 +29,10 @@ import html2canvas from "html2canvas";
 import { Context } from "../Hooks/context";
 import "./walkbookinglist.css";
 
+const MOBILE_BOOKING_API_URL =
+  "http://130.94.99.9:5000/api/walk_in/mobile_booking_list";
 const LOCAL_API_URL = "http://130.94.99.9:5000/api/walk_in";
 const ITEMS_PER_PAGE = 20;
-
-const mobileDemoData = [
-  {
-    id: "#M001",
-    name: "Mg Mg",
-    phone: "09123456789",
-    venue: "Badminton",
-    court: "Court 1",
-    date: "01/06/26",
-    time: "9:00 AM",
-    payment: "KPay",
-    paymentProof: "/uploads/payment-proof-7101.jpg",
-    courtFee: 50000,
-    rentFee: 3000,
-    snackBill: 4500,
-    discount: 0,
-    amount: 57500,
-  },
-  {
-    id: "#M002",
-    name: "Aung Aung",
-    phone: "09123456789",
-    venue: "Badminton",
-    court: "Court 2",
-    date: "01/06/26",
-    time: "10:00 AM",
-    payment: "KBZ Pay",
-    paymentProof: "/uploads/payment-proof-7102.jpg",
-    courtFee: 15000,
-    rentFee: 3000,
-    snackBill: 0,
-    discount: 0,
-    amount: 18000,
-  },
-  {
-    id: "#M003",
-    name: "Aung Kyaw",
-    phone: "097123456789",
-    venue: "Badminton",
-    court: "Court 3",
-    date: "01/06/26",
-    time: "11:00 AM",
-    payment: "KPay",
-    paymentProof: "/uploads/payment-proof-7103.jpg",
-    courtFee: 20000,
-    rentFee: 3000,
-    snackBill: 4500,
-    discount: 0,
-    amount: 27500,
-  },
-];
 
 const formatMoney = (value) => {
   return `${Number(value || 0).toLocaleString("en-US")} Ks`;
@@ -96,6 +54,7 @@ const WalkBookingList = () => {
   const isDark = classBackColor === "#1A1C1E";
 
   const [orderType, setOrderType] = useState("mobile");
+  const [mobileBookings, setMobileBookings] = useState([]);
   const [localBookings, setLocalBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
@@ -107,14 +66,14 @@ const WalkBookingList = () => {
   const paymentSuccessRef = useRef(null);
   const navigate = useNavigate();
 
-  const fetchLocalBookings = async () => {
+  const fetchBookings = useCallback(async (url, setBookings) => {
     setIsLoading(true);
     setApiError("");
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-      const response = await fetch(LOCAL_API_URL, {
+      const response = await fetch(url, {
         method: "GET",
         headers: { Accept: "application/json" },
         signal: controller.signal,
@@ -147,9 +106,9 @@ const WalkBookingList = () => {
         amount: Number(item.amount || 0),
       }));
 
-      setLocalBookings(formattedData);
+      setBookings(formattedData);
     } catch (error) {
-      console.error("Local booking API error:", error);
+      console.error("Booking API error:", error);
       if (error.name === "AbortError") {
         setApiError("Server response is taking too long. Please try again.");
       } else {
@@ -157,19 +116,28 @@ const WalkBookingList = () => {
           "Unable to connect to the booking server. Please check your network connection.",
         );
       }
-      setLocalBookings([]);
+      setBookings([]);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  const fetchMobileBookings = useCallback(
+    () => fetchBookings(MOBILE_BOOKING_API_URL, setMobileBookings),
+    [fetchBookings],
+  );
+
+  const fetchLocalBookings = useCallback(
+    () => fetchBookings(LOCAL_API_URL, setLocalBookings),
+    [fetchBookings],
+  );
 
   useEffect(() => {
-    if (orderType === "local") {
-      fetchLocalBookings();
-    }
-  }, [orderType]);
+    if (orderType === "mobile") fetchMobileBookings();
+    else fetchLocalBookings();
+  }, [fetchLocalBookings, fetchMobileBookings, orderType]);
 
-  const currentData = orderType === "local" ? localBookings : mobileDemoData;
+  const currentData = orderType === "local" ? localBookings : mobileBookings;
 
   const filteredBookings = useMemo(() => {
     const keyword = searchText.trim().toLowerCase();
@@ -375,7 +343,7 @@ const WalkBookingList = () => {
             </div>
           )}
 
-          {!isLoading && orderType === "local" && apiError && (
+          {!isLoading && apiError && (
             <div className="booking-error-container">
               <div className="booking-error-box">
                 <div className="booking-error-icon">
@@ -385,7 +353,11 @@ const WalkBookingList = () => {
                 <div className="booking-error-message">{apiError}</div>
                 <button
                   className="booking-retry-button"
-                  onClick={fetchLocalBookings}
+                  onClick={
+                    orderType === "mobile"
+                      ? fetchMobileBookings
+                      : fetchLocalBookings
+                  }
                 >
                   <Refresh className="booking-retry-icon" />
                   Try Again
