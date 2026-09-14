@@ -1,20 +1,39 @@
 import "../PosSettingCss/paymenttax.css";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Context } from "../Hooks/context";
 import AddCircle from "@mui/icons-material/AddCircleOutlineTwoTone";
+import DeleteIcon from "@mui/icons-material/DeleteTwoTone";
+import CloudUploadIcon from "@mui/icons-material/CloudUploadTwoTone";
+import CloseIcon from "@mui/icons-material/Close";
 import { useSecurityCheck } from "../Hooks/SecurityCheck";
 import AddPaymentPopUp from "../Components/addpaymentpopup";
 import toast, { Toaster } from "react-hot-toast";
 import { useGetPayment } from "../Api_Call";
 import { useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
+
+// Demo Base64 Images to replace broken external placeholders
+const DEMO_BANNER_1 =
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='350' viewBox='0 0 800 350'><rect width='800' height='350' fill='%230D1B2A'/><circle cx='150' cy='175' r='100' fill='%231B263B' opacity='0.5'/><text x='400' y='160' fill='%23E0E1DD' font-family='sans-serif' font-size='32' font-weight='bold' text-anchor='middle'>Badminton Pro Training Center</text><text x='400' y='210' fill='%23778DA9' font-family='sans-serif' font-size='20' text-anchor='middle'>Special Discount - 20% OFF This Month</text></svg>";
+
+const DEMO_BANNER_2 =
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='350' viewBox='0 0 800 350'><rect width='800' height='350' fill='%231B263B'/><rect x='40' y='40' width='720' height='270' rx='15' fill='%23415A77' opacity='0.3'/><text x='400' y='160' fill='%23FFFFFF' font-family='sans-serif' font-size='34' font-weight='bold' text-anchor='middle'>HAPPY HOUR SALE !</text><text x='400' y='210' fill='%23E0E1DD' font-family='sans-serif' font-size='18' text-anchor='middle'>Get Exclusive Voucher Code Inside App</text></svg>";
 
 function PosPaymentTax() {
   const [show, setshow] = useState(false);
   const [items, setitems] = useState(null);
 
-  const taxref = useRef();
+  // Announcement Modal & Image State
+  const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
-  const { Payment, GetPayment, Tax, GetTax } = useGetPayment();
+  const [announcements, setAnnouncements] = useState([
+    { id: 1, url: DEMO_BANNER_1 },
+    { id: 2, url: DEMO_BANNER_2 },
+  ]);
+
+  const { Payment, GetPayment } = useGetPayment();
   const { ReturnJsx, openbox } = useSecurityCheck();
 
   const ContextData = useContext(Context);
@@ -22,102 +41,144 @@ function PosPaymentTax() {
 
   const isClass = location.pathname.includes("/class");
 
-  const color = isClass ? ContextData.classNavColor : ContextData.posNavColor;
-  const setcolor = isClass
-    ? ContextData.setClassNavColor
-    : ContextData.setPosNavColor;
   const backcolor = isClass
     ? ContextData.classBackColor
     : ContextData.backcolor;
-  const setbackcolor = isClass
-    ? ContextData.setClassBackColor
-    : ContextData.setPosBackColor;
 
   const Font_Color = Boolean(backcolor === "#1A1C1E");
+
   const FontStyle = {
     color: Font_Color ? "#E1E1E1" : "#0D1B2A",
   };
 
-  const InputStyle = {
-    backgroundColor: Font_Color ? "#25282C" : "#FFFFFF",
-    color: Font_Color ? "#FFFFFF" : "#000000",
-    border: Font_Color ? "1px solid #444" : "1px solid #ccc",
+  // SweetAlert Theme Helper based on Dark/Light mode
+  const getSwalTheme = () => {
+    return {
+      background: Font_Color ? "#25282C" : "#FFFFFF",
+      color: Font_Color ? "#FFFFFF" : "#0D1B2A",
+    };
   };
 
   useEffect(() => {
     GetPayment();
-    GetTax();
   }, []);
 
-  // tax update authorization
-  function update_confirm_tax(id) {
-    if (taxref.current.value == Tax.result[0].id)
-      return console.log("function return p");
-    openbox(() => update_tax(id));
+  // Image Selection Handler
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  // SweetAlert Delete Announcement Action
+  async function handleDeleteAnnouncement(id) {
+    if (!id) return;
+
+    const result = await Swal.fire({
+      title: "Delete Announcement?",
+      text: "Are you sure you want to remove this banner announcement?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+      ...getSwalTheme(),
+    });
+
+    if (!result.isConfirmed) return;
+
+    // Remove item locally for Frontend preview
+    setAnnouncements((prev) => prev.filter((item) => item.id !== id));
+
+    await Swal.fire({
+      title: "Action Successful",
+      text: "Announcement deleted successfully from list",
+      icon: "success",
+      confirmButtonText: "Great, Thanks!",
+      confirmButtonColor: "#3b82f6",
+      ...getSwalTheme(),
+    });
   }
 
-  async function update_tax(id) {
-    if (taxref.current.value == Tax.result[0].id)
-      return console.log("function return p");
-    const updating = toast.loading("Please wait...");
-    if (taxref.current.value == "") return console.log("data ma par par");
-    try {
-      let response = await fetch(`${import.meta.env.VITE_UPDATE_TAX}/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Token}`,
-        },
-        body: JSON.stringify({ tax: taxref.current.value }),
-      });
-      if (response.ok) {
-        await GetTax();
-        toast.success("successfully updated", { id: updating });
-      } else {
-        toast.error("update failed", { id: updating });
-      }
-    } catch (err) {
-      console.log(err);
-      toast.error("Cannot connect with sever", { id: updating });
+  // Add New Announcement Handler
+  const handleCreateAnnouncement = () => {
+    if (!selectedImage && !imagePreview) {
+      toast.error("Please upload an announcement banner picture");
+      return;
     }
-  }
+
+    const newAnnouncement = {
+      id: Date.now(),
+      url: imagePreview,
+    };
+
+    setAnnouncements([newAnnouncement, ...announcements]);
+    setShowAnnouncementModal(false);
+    setSelectedImage(null);
+    setImagePreview(null);
+    toast.success("New announcement added successfully!");
+  };
 
   return (
     <div
-      className="pospaymentwarper"
-      style={{ border: Font_Color && "1px solid white" }}
+      className={`pospaymentwarper ${Font_Color ? "dark-theme" : "light-theme"}`}
     >
       <Toaster />
       {ReturnJsx}
-      <div className="pospaymentchild2">
-        <div>
-          <p style={FontStyle}>Tax Percentage( % )</p>
-          {Array.isArray(Tax.result) && Tax.result.length > 0 ? (
-            Tax.result.map((item, index) => {
-              return (
-                <input
-                  ref={taxref}
-                  type="number"
-                  key={index}
-                  defaultValue={item.tax}
-                  style={InputStyle}
-                />
-              );
-            })
-          ) : (
-            <input type="text" value="loading.." readOnly style={InputStyle} />
+
+      {/* Announcement Banners Section */}
+      <div className="announcement-section">
+        <div className="announcement-header">
+          <div>
+            <h3 style={FontStyle}>Announcement Banners</h3>
+            <p
+              className="sub-title-text"
+              style={{ color: Font_Color ? "#AAA" : "#666" }}
+            >
+              Banners shown at top of the mobile home page
+            </p>
+          </div>
+          <button
+            className="create-announcement-btn"
+            onClick={() => setShowAnnouncementModal(true)}
+          >
+            + Create Announcement
+          </button>
+        </div>
+
+        <div className="announcement-list">
+          {announcements.map((item) => (
+            <div className="announcement-card" key={item.id}>
+              <img src={item.url} alt="Mobile App Announcement Banner" />
+              <button
+                className="delete-announcement-btn"
+                title="Delete Announcement"
+                onClick={() => handleDeleteAnnouncement(item.id)}
+              >
+                <DeleteIcon style={{ fontSize: "18px" }} />
+              </button>
+            </div>
+          ))}
+
+          {announcements.length === 0 && (
+            <div
+              className="empty-announcement-box"
+              style={{ color: Font_Color ? "#888" : "#999" }}
+            >
+              No active announcements. Click "Create Announcement" to add.
+            </div>
           )}
         </div>
-        <div>
-          <p style={FontStyle}>Currency</p>
-          <input type="text" value="MMK" readOnly style={InputStyle} />
-        </div>
       </div>
+
       <h3 className="pospaymentmethod" style={FontStyle}>
         Payment Method
       </h3>
       <div className="pospaymentbody">
-        {Array.isArray(Payment.result) && Payment.result.length > 0 ? (
+        {Array.isArray(Payment?.result) && Payment.result.length > 0 ? (
           Payment.result.map((item, index) => {
             return (
               <div
@@ -142,21 +203,16 @@ function PosPaymentTax() {
         )}
 
         <div className="paymentaddbtn" onClick={() => setshow(true)}>
-          <AddCircle style={{ width: "50px", height: "50px" }} />
+          <AddCircle style={{ width: "40px", height: "40px" }} />
           <p>Add Payment Method</p>
         </div>
       </div>
+
       <div className="pospaymentbutton">
-        <button>cancel</button>
-        <button
-          style={{ background: "#0D1B2A", color: "white" }}
-          onClick={() => {
-            update_confirm_tax(Tax.result[0].id || 1);
-          }}
-        >
-          Save Changes
-        </button>
+        <button className="btn-cancel">Cancel</button>
+        <button className="btn-save">Save Changes</button>
       </div>
+
       {show && (
         <AddPaymentPopUp
           data={setshow}
@@ -164,9 +220,79 @@ function PosPaymentTax() {
           FTS={openbox}
           items={items}
           setitems={setitems}
-        /> /*FTS stand for function to open Security check*/
+        />
+      )}
+
+      {/* Styled Modal Box for Adding Announcement (Dark/Light Responsive) */}
+      {showAnnouncementModal && (
+        <div className="announcement-modal-overlay">
+          <div
+            className={`announcement-modal ${Font_Color ? "dark-modal" : "light-modal"}`}
+          >
+            <div className="modal-header">
+              <h3>Add New Announcement</h3>
+              <button
+                className="close-icon-btn"
+                onClick={() => {
+                  setShowAnnouncementModal(false);
+                  setImagePreview(null);
+                }}
+              >
+                <CloseIcon />
+              </button>
+            </div>
+
+            <div className="modal-body">
+              <label className="upload-dropzone">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  hidden
+                />
+                {imagePreview ? (
+                  <div className="preview-container">
+                    <img src={imagePreview} alt="Selected Banner" />
+                    <span className="change-img-text">
+                      Click to change image
+                    </span>
+                  </div>
+                ) : (
+                  <div className="upload-placeholder">
+                    <CloudUploadIcon
+                      style={{ fontSize: 44, color: "#3b82f6" }}
+                    />
+                    <p className="upload-title">Choose Photo / Banner</p>
+                    <p className="upload-subtitle">
+                      PNG, JPG or WEBP (Recommended 800x350)
+                    </p>
+                  </div>
+                )}
+              </label>
+            </div>
+
+            <div className="modal-actions">
+              <button
+                className="modal-cancel-btn"
+                onClick={() => {
+                  setShowAnnouncementModal(false);
+                  setImagePreview(null);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="modal-create-btn"
+                onClick={handleCreateAnnouncement}
+              >
+                Create Banner
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
 }
+
 export default PosPaymentTax;

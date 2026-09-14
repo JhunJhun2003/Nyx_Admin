@@ -11,6 +11,7 @@ function ClassNav() {
   const [show1, setshow1] = useState(false);
   const [show2, setshow2] = useState(false);
   const [show3, setshow3] = useState(false);
+  const [show4, setshow4] = useState(false);
 
   // Context မှ classNavColor နှင့် classBackColor ကို ရယူခြင်း
   const { classNavColor, classBackColor, setisClassLogin } =
@@ -22,18 +23,28 @@ function ClassNav() {
     setshow1(!show1);
     setshow2(false);
     setshow3(false);
+    setshow4(false);
   }
 
   function handleRental() {
     setshow2(!show2);
     setshow1(false);
     setshow3(false);
+    setshow4(false);
   }
 
   function handleCanteen() {
     setshow3(!show3);
     setshow1(false);
     setshow2(false);
+    setshow4(false);
+  }
+
+  function handleTourament() {
+    setshow4(!show4);
+    setshow1(false);
+    setshow2(false);
+    setshow3(false);
   }
 
   return (
@@ -137,6 +148,36 @@ function ClassNav() {
                   </NavLink>
                   <NavLink className="dropdownlist" to="classmenu">
                     MENUS
+                  </NavLink>
+                </span>
+              )}
+            </div>
+
+            <div className="training">
+              <button
+                className="dropdownbutton"
+                onClick={handleTourament}
+                style={{
+                  background: show4 ? "#f0f0f071" : "initial",
+                  color: show4 ? "#0D1B2A" : "white",
+                }}
+              >
+                Tournament
+                <span className="dropdownarrow">
+                  {!show4 ? <ArrowRight /> : <ArrowDown />}
+                </span>
+              </button>
+
+              {show4 && (
+                <span className="dropdownwarper">
+                  <NavLink className="dropdownlist" to="classmanage">
+                    Manage
+                  </NavLink>
+                  <NavLink className="dropdownlist" to="classenrollments">
+                    Enrollments
+                  </NavLink>
+                  <NavLink className="dropdownlist" to="classpoints">
+                    Points & Ranks
                   </NavLink>
                 </span>
               )}

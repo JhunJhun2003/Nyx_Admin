@@ -1,50 +1,316 @@
 .pospaymentwarper {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
   border: 1px solid black;
-  border-radius: 5px;
-  padding: 1em;
-  height: 80vh;
-  overflow-y: scroll;
+  border-radius: 8px;
+  padding: 1.2em;
+  height: 85vh;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
-.pospaymentwarper .pospaymentchild2 {
+
+/* Announcement Header & Section */
+.announcement-section {
   display: flex;
-  width: 50%;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(150, 150, 150, 0.2);
 }
-.pospaymentwarper .pospaymentchild2 div {
+
+.announcement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.announcement-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.sub-title-text {
+  margin: 4px 0 0 0;
+  font-size: 0.82rem;
+}
+
+.create-announcement-btn {
+  background: #0d1b2a;
+  color: #ffffff;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.dark-theme .create-announcement-btn {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.create-announcement-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Announcement List and Cards */
+.announcement-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 16px;
+  align-items: center;
+  min-height: 120px;
 }
-.pospaymentwarper .pospaymentchild2 div input {
-  padding: 10px;
-  border-radius: 5px;
+
+.announcement-card {
+  position: relative;
+  width: 250px;
+  height: 120px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(150, 150, 150, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.announcement-card:hover {
+  transform: scale(1.02);
+}
+
+.announcement-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.delete-announcement-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(239, 68, 68, 0.9);
   border: none;
-  outline: none;
+  border-radius: 50%;
+  color: #ffffff;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
 }
-.pospaymentmethod {
+
+.delete-announcement-btn:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+.empty-announcement-box {
+  width: 100%;
+  padding: 30px;
+  border: 2px dashed rgba(150, 150, 150, 0.3);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* Modal Overlay & Responsive Dark/Light Theme */
+.announcement-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1200;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.announcement-modal {
+  width: 420px;
+  padding: 22px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal Dark / Light Theme Styling */
+.announcement-modal.light-modal {
+  background: #ffffff;
+  color: #0d1b2a;
+}
+
+.announcement-modal.dark-modal {
+  background: #25282c;
+  color: #ffffff;
+  border: 1px solid #383c42;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.close-icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+}
+
+.close-icon-btn:hover {
+  opacity: 1;
+}
+
+/* Upload Dropzone Box */
+.upload-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #3b82f6;
+  border-radius: 10px;
+  padding: 20px;
+  cursor: pointer;
+  background: rgba(59, 130, 246, 0.04);
+  transition: background 0.2s ease;
+  min-height: 150px;
+}
+
+.upload-dropzone:hover {
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.upload-title {
+  font-weight: 600;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.upload-subtitle {
+  margin: 0;
+  font-size: 0.78rem;
+  opacity: 0.6;
+}
+
+.preview-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.preview-container img {
+  width: 100%;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.change-img-text {
+  font-size: 0.8rem;
+  color: #3b82f6;
   font-weight: 500;
 }
+
+/* Modal Actions Buttons */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.modal-cancel-btn {
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: 1px solid #6c757d;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.modal-cancel-btn:hover {
+  background: rgba(150, 150, 150, 0.15);
+}
+
+.light-theme .modal-create-btn {
+  background: #0d1b2a;
+  color: #ffffff;
+  padding: 9px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dark-theme .modal-create-btn {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+/* Existing Payment Section Styles */
+.pospaymentmethod {
+  font-weight: 600;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
 .pospaymentbody {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  height: 60vh;
+  gap: 12px;
   align-content: flex-start;
+  min-height: 150px;
 }
+
 .pospaymentbody .poscurrency {
   display: flex;
-  width: 200px;
+  width: 210px;
   align-items: center;
-  border: 1px solid black;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   justify-content: space-between;
-  padding: 5px;
-  height: 100px;
+  padding: 8px;
+  height: 95px;
   background-color: #becefd;
   border-radius: 10px;
+  cursor: pointer;
+  color: #0d1b2a;
 }
+
 .poscurrecytext {
   display: flex;
   flex-direction: column;
@@ -53,65 +319,82 @@
   justify-content: space-between;
   overflow: hidden;
 }
-.poscurrecytext :last-child {
-  padding: 2px 5px;
-  width: 110px;
+
+.poscurrecytext p {
+  margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.poscurrecytext :nth-child(2) {
-  margin-top: auto;
-  padding: 2px 5px;
-  width: 110px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+
 .poscurrecytext :first-child {
-  padding: 5px;
   font-weight: bold;
-  font-family: Inter;
-  width: 110px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
+
 .poscurrency img {
-  width: 70px;
+  width: 65px;
   height: 80%;
-  border-radius: 5px;
+  border-radius: 6px;
   object-fit: cover;
-  align-self: flex-start;
 }
+
 .paymentaddbtn {
   display: flex;
-  border: 1px solid black;
-  height: 100px;
+  border: 1px dashed #0d1b2a;
+  height: 95px;
   gap: 10px;
   justify-content: center;
   align-items: center;
-  width: 200px !important;
+  width: 210px !important;
   padding: 10px;
   border-radius: 10px;
   background-color: #becefd;
+  cursor: pointer;
+  color: #0d1b2a;
 }
+
 .paymentaddbtn p {
   font-weight: bold;
-  font-family: Inter;
-  white-space: wrap;
+  margin: 0;
 }
 
 .pospaymentbutton {
   align-self: flex-end;
   display: flex;
-  gap: 5px;
-  margin-top: 3em;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 10px;
 }
-.pospaymentbutton button {
-  padding: 10px 1em;
-  border-radius: 10px;
+
+.pospaymentbutton .btn-cancel {
+  padding: 9px 20px;
+  border-radius: 8px;
   font-weight: 500;
-  outline: none;
-  border: 1px solid #0d1b2a;
+  border: 1px solid #6c757d;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.pospaymentbutton .btn-save {
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  background: #0d1b2a;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.dark-theme .pospaymentbutton .btn-save {
+  background: #2563eb;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

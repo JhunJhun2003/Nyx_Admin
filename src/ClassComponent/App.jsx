@@ -56,6 +56,7 @@ import ClassCanteenOverview from "./ClassComponent/classcanteenoverview";
 import Courses from "./ClassComponent/courses";
 import AddClassForm from "./ClassComponent/courseaddclass ";
 import WalkIn from "./Class/classwalkin";
+import ClassManage from "./Class/classmanage";
 
 function App() {
   const [childData, SetchildData] = useState({});
@@ -209,6 +210,7 @@ function App() {
                 <Route path="classorderaddmenu" element={<AddMenu />} />
               </Route>
               <Route path="classmenu" element={<ClassMenu />} />
+              <Route path="classmanage" element={<ClassManage />} />
               <Route path="classsetting" element={<ClassSetting />}>
                 <Route
                   index

@@ -58,6 +58,9 @@ import AddClassForm from "./ClassComponent/courseaddclass ";
 import ClassWalkIn from "./ClassComponent/classwalkin";
 import WalkBooking from "./ClassComponent/walkbooking";
 import WalkBookingList from "./ClassComponent/walkbookinglist";
+import ClassManage from "./Class/classmanage";
+import ClassEnrollments from "./Class/classenrollments";
+import ClassPoints from "./Class/classpoints";
 
 function App() {
   const [childData, SetchildData] = useState({});
@@ -226,6 +229,9 @@ function App() {
                 <Route path="classorderaddmenu" element={<AddMenu />} />
               </Route>
               <Route path="classmenu" element={<ClassMenu />} />
+              <Route path="classmanage" element={<ClassManage />} />
+              <Route path="classenrollments" element={<ClassEnrollments />} />
+              <Route path="classpoints" element={<ClassPoints />} />
               <Route path="classsetting" element={<ClassSetting />}>
                 <Route
                   index
