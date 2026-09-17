@@ -19,6 +19,8 @@ const DEMO_BANNER_1 =
 const DEMO_BANNER_2 =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='350' viewBox='0 0 800 350'><rect width='800' height='350' fill='%231B263B'/><rect x='40' y='40' width='720' height='270' rx='15' fill='%23415A77' opacity='0.3'/><text x='400' y='160' fill='%23FFFFFF' font-family='sans-serif' font-size='34' font-weight='bold' text-anchor='middle'>HAPPY HOUR SALE !</text><text x='400' y='210' fill='%23E0E1DD' font-family='sans-serif' font-size='18' text-anchor='middle'>Get Exclusive Voucher Code Inside App</text></svg>";
 
+const encodeBannerUrl = (url) => (url ? encodeURI(url) : url);
+
 function PosPaymentTax() {
   const [show, setshow] = useState(false);
   const [items, setitems] = useState(null);
@@ -61,6 +63,45 @@ function PosPaymentTax() {
 
   useEffect(() => {
     GetPayment();
+
+    const loadAnnouncements = async () => {
+      try {
+        const response = await fetch(
+          "http://130.94.99.9:5000/api/banner/showbanner",
+          {
+            headers: ContextData.Token
+              ? { Authorization: `Bearer ${ContextData.Token}` }
+              : undefined,
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`Banner fetch failed (${response.status})`);
+        }
+
+        const responseData = await response.json();
+        const banners = responseData.result || responseData.data || responseData;
+        const bannerList = Array.isArray(banners) ? banners : [banners];
+        const loadedAnnouncements = bannerList
+          .map((banner, index) => ({
+            id: banner.id || banner.banner_id || index,
+            url: encodeBannerUrl(
+              banner.banner_image_url ||
+                banner.image_url ||
+                banner.banner_image ||
+                banner.image_path ||
+                banner.url,
+            ),
+          }))
+          .filter((banner) => banner.url);
+
+        setAnnouncements(loadedAnnouncements);
+      } catch (error) {
+        console.error("Load announcements error:", error);
+      }
+    };
+
+    loadAnnouncements();
   }, []);
 
   // Image Selection Handler
@@ -90,36 +131,92 @@ function PosPaymentTax() {
 
     if (!result.isConfirmed) return;
 
-    // Remove item locally for Frontend preview
-    setAnnouncements((prev) => prev.filter((item) => item.id !== id));
+    try {
+      const response = await fetch(
+        `http://130.94.99.9:5000/api/banner/deletebanner/${id}`,
+        {
+          method: "DELETE",
+          headers: ContextData.Token
+            ? { Authorization: `Bearer ${ContextData.Token}` }
+            : undefined,
+        },
+      );
 
-    await Swal.fire({
-      title: "Action Successful",
-      text: "Announcement deleted successfully from list",
-      icon: "success",
-      confirmButtonText: "Great, Thanks!",
-      confirmButtonColor: "#3b82f6",
-      ...getSwalTheme(),
-    });
+      if (!response.ok) {
+        throw new Error(`Banner delete failed (${response.status})`);
+      }
+
+      setAnnouncements((prev) => prev.filter((item) => item.id !== id));
+
+      await Swal.fire({
+        title: "Action Successful",
+        text: "Announcement deleted successfully from list",
+        icon: "success",
+        confirmButtonText: "Great, Thanks!",
+        confirmButtonColor: "#3b82f6",
+        ...getSwalTheme(),
+      });
+    } catch (error) {
+      console.error("Delete announcement error:", error);
+      await Swal.fire({
+        title: "Delete Failed",
+        text: "Could not delete the announcement",
+        icon: "error",
+        confirmButtonText: "Close",
+        confirmButtonColor: "#ef4444",
+        ...getSwalTheme(),
+      });
+    }
   }
 
   // Add New Announcement Handler
-  const handleCreateAnnouncement = () => {
-    if (!selectedImage && !imagePreview) {
+  const handleCreateAnnouncement = async () => {
+    if (!selectedImage) {
       toast.error("Please upload an announcement banner picture");
       return;
     }
 
-    const newAnnouncement = {
-      id: Date.now(),
-      url: imagePreview,
-    };
+    const formData = new FormData();
+    formData.append("banner_image", selectedImage);
+    const loading = toast.loading("Uploading announcement...");
 
-    setAnnouncements([newAnnouncement, ...announcements]);
-    setShowAnnouncementModal(false);
-    setSelectedImage(null);
-    setImagePreview(null);
-    toast.success("New announcement added successfully!");
+    try {
+      const response = await fetch(
+        "http://130.94.99.9:5000/api/banner/addbanner",
+        {
+          method: "POST",
+          headers: ContextData.Token
+            ? { Authorization: `Bearer ${ContextData.Token}` }
+            : undefined,
+          body: formData,
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`Banner upload failed (${response.status})`);
+      }
+
+      const responseData = await response.json().catch(() => ({}));
+      const banner = responseData.result || responseData.data || responseData;
+      const bannerUrl =
+        banner.banner_image_url ||
+        banner.image_url ||
+        banner.image_path ||
+        banner.url ||
+        imagePreview;
+
+      setAnnouncements((current) => [
+        { id: banner.id || Date.now(), url: encodeBannerUrl(bannerUrl) },
+        ...current,
+      ]);
+      setShowAnnouncementModal(false);
+      setSelectedImage(null);
+      setImagePreview(null);
+      toast.success("New announcement added successfully!", { id: loading });
+    } catch (error) {
+      console.error("Create announcement error:", error);
+      toast.error("Could not create announcement", { id: loading });
+    }
   };
 
   return (
