@@ -1,0 +1,414 @@
+.cp-container {
+  padding: 24px;
+  background-color: #f2f4f6;
+  min-height: 100vh;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-sizing: border-box;
+}
+
+/* Topbar */
+.cp-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cp-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cp-icon-box {
+  width: 45px;
+  height: 45px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.cp-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.cp-select {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Grid Layout */
+.cp-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+}
+
+.cp-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Left Card Header Controls */
+.cp-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.cp-card-header h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.cp-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.cp-search-box {
+  position: relative;
+  width: 180px;
+}
+
+.cp-search-box input {
+  width: 100%;
+  padding: 6px 28px 6px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 12px;
+  outline: none;
+  background-color: #f8fafc;
+}
+
+.cp-search-icon {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  font-size: 16px !important;
+}
+
+.cp-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cp-btn-edit {
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.cp-btn-edit.active {
+  background-color: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+}
+
+.cp-btn-sync {
+  background-color: #10b981;
+  color: #ffffff;
+}
+
+.cp-btn-sync:disabled {
+  background-color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+/* Table */
+.cp-table-wrapper {
+  overflow-x: auto;
+}
+
+.cp-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cp-table th {
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  padding: 10px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.cp-table td {
+  padding: 10px;
+  font-size: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.cp-id-cell {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.cp-name-cell {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.cp-sub-text {
+  color: #475569;
+}
+
+.cp-points-cell {
+  font-weight: 600;
+  color: #334155;
+}
+
+.cp-award-input {
+  width: 50px;
+  padding: 4px;
+  text-align: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 12px;
+  outline: none;
+}
+
+.cp-award-input:disabled {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.cp-total-cell {
+  text-align: right;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.cp-empty-row td {
+  height: 41px;
+}
+
+/* Footer & Pagination */
+.cp-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.cp-entries-info {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.cp-pagination {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cp-page-nav {
+  background: none;
+  border: none;
+  font-size: 11px;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.cp-page-nav:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cp-page-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: none;
+  background: none;
+  font-size: 11px;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.cp-page-num.active {
+  background-color: #0d1b2a;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Right Box Leaderboard */
+.cp-leaderboard-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 12px;
+}
+
+.cp-leaderboard-header h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.cp-leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cp-leaderboard-item {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: #f8fafc;
+}
+
+.cp-leaderboard-item.rank-1 {
+  background-color: #fefce8;
+  border: 1px solid #fef08a;
+}
+
+.cp-rank-badge {
+  width: 28px;
+  display: flex;
+  justify-content: center;
+}
+
+.cp-rank-num {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.cp-player-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 6px;
+}
+
+.cp-lb-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.cp-lb-id {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.cp-lb-points {
+  font-size: 12px;
+  font-weight: 700;
+  color: #d97706;
+}
+
+/* 🌙 DARK MODE OVERRIDES */
+.cp-container.dark-mode {
+  background-color: #121315;
+  color: #e1e1e1;
+}
+
+.cp-container.dark-mode .cp-title,
+.cp-container.dark-mode .cp-card-header h3,
+.cp-container.dark-mode .cp-leaderboard-header h3,
+.cp-container.dark-mode .cp-name-cell,
+.cp-container.dark-mode .cp-total-cell,
+.cp-container.dark-mode .cp-lb-name {
+  color: #ffffff;
+}
+
+.cp-container.dark-mode .cp-icon-box,
+.cp-container.dark-mode .cp-card {
+  background-color: #1a1c1e;
+  border-color: #2d3139;
+}
+
+.cp-container.dark-mode .cp-select {
+  background-color: #1a1c1e;
+  border-color: #2d3139;
+  color: #ffffff;
+}
+
+.cp-container.dark-mode .cp-search-box input {
+  background-color: #24272b;
+  border-color: #2d3139;
+  color: #ffffff;
+}
+
+.cp-container.dark-mode .cp-table th {
+  color: #94a3b8;
+  border-bottom-color: #2d3139;
+}
+
+.cp-container.dark-mode .cp-table td {
+  border-bottom-color: #24272b;
+}
+
+.cp-container.dark-mode .cp-sub-text,
+.cp-container.dark-mode .cp-id-cell,
+.cp-container.dark-mode .cp-points-cell {
+  color: #cbd5e1;
+}
+
+.cp-container.dark-mode .cp-award-input {
+  background-color: #24272b;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+.cp-container.dark-mode .cp-award-input:disabled {
+  background-color: #1a1c1e;
+  border-color: #2d3139;
+}
+
+.cp-container.dark-mode .cp-btn-edit {
+  background-color: #24272b;
+  color: #ffffff;
+  border-color: #2d3139;
+}
+
+.cp-container.dark-mode .cp-leaderboard-item {
+  background-color: #24272b;
+}
+
+.cp-container.dark-mode .cp-leaderboard-item.rank-1 {
+  background-color: #2e2a14;
+  border-color: #854d0e;
+}
+
+.cp-container.dark-mode .cp-page-num.active {
+  background-color: #3b82f6;
+}

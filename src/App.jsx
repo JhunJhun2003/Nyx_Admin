@@ -61,6 +61,9 @@ import WalkBookingList from "./ClassComponent/walkbookinglist";
 import ClassManage from "./Class/classmanage";
 import ClassEnrollments from "./Class/classenrollments";
 import ClassPoints from "./Class/classpoints";
+import CreateTournament from "./ClassComponent/CreateTournament";
+import TournamentDetails from "./ClassComponent/tournamentdetails";
+import ClassBanners from "./Class/classbanners";
 
 function App() {
   const [childData, SetchildData] = useState({});
@@ -229,9 +232,14 @@ function App() {
                 <Route path="classorderaddmenu" element={<AddMenu />} />
               </Route>
               <Route path="classmenu" element={<ClassMenu />} />
-              <Route path="classmanage" element={<ClassManage />} />
+              <Route path="classmanage" element={<ClassManage />}>
+                <Route path="create" element={<CreateTournament />} />
+                <Route path="edit/:id" element={<TournamentDetails />} />
+              </Route>
+
               <Route path="classenrollments" element={<ClassEnrollments />} />
               <Route path="classpoints" element={<ClassPoints />} />
+              <Route path="classbanners" element={<ClassBanners />} />
               <Route path="classsetting" element={<ClassSetting />}>
                 <Route
                   index

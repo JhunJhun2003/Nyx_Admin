@@ -1,0 +1,359 @@
+* {
+  box-sizing: border-box;
+}
+
+/* 🎯 Main Page Container Overlay (ClassAddCourt Pattern) */
+.create-tournament-main {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: calc(100% - 230px);
+  height: 100vh;
+  overflow-y: auto;
+  background-color: #f2f4f6;
+  z-index: 30;
+  font-family:
+    "Inter",
+    Work Sans,
+    sans-serif;
+}
+
+/* 🎯 Top Sticky Nav Bar */
+.ct-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 50px;
+  background-color: #0d1b2a;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.ct-nav button {
+  background-color: #ffffff;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* 🎯 Main Content Outer Body */
+.ct-body-container {
+  padding: 20px 24px 40px 24px;
+}
+
+/* 🎯 Card Layout */
+.ct-card {
+  background-color: #ffffff;
+  border: 1px solid #dce1e8;
+  border-radius: 14px;
+  padding: 24px 30px;
+}
+
+.ct-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.trophy-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: #fef3c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trophy-badge-icon {
+  color: #d97706;
+  font-size: 20px !important;
+}
+
+.ct-card-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+/* 🎯 Form Grid Layout */
+.ct-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+}
+
+.ct-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0058be;
+  margin: 0 0 16px 0;
+}
+
+.ct-input-group {
+  margin-bottom: 16px;
+}
+
+.ct-input-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+
+.ct-input-group input,
+.ct-input-group textarea,
+.ct-input-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  outline-color: #3b82f6;
+  font-size: 14px;
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+.ct-grid-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* 🎯 Drag & Drop Upload Zone */
+.ct-upload-box {
+  border: 2px dashed #cbd5e1;
+  background-color: #f8fafc;
+  border-radius: 10px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.ct-upload-box:hover {
+  border-color: #3b82f6;
+}
+
+.ct-hidden-file {
+  display: none;
+}
+
+.ct-banner-preview {
+  max-width: 100%;
+  max-height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.ct-upload-icon {
+  color: #0058be;
+  font-size: 26px !important;
+  margin-bottom: 4px;
+}
+
+.ct-upload-text {
+  font-size: 13px;
+  color: #475569;
+  margin: 0;
+}
+
+.ct-upload-text span {
+  color: #0058be;
+  font-weight: 500;
+}
+
+.ct-upload-sub {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* 🎯 Points & Rewards Area */
+.ct-rewards-card {
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 20px;
+}
+
+.ct-rewards-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0058be;
+  margin-bottom: 12px;
+}
+
+.ct-rewards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.ct-reward-item {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+.ct-reward-label {
+  font-size: 10px;
+  color: #64748b;
+  display: block;
+}
+
+.ct-reward-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ct-reward-input-wrap input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 13px;
+  background: transparent;
+}
+
+.ct-add-rank-btn {
+  width: 100%;
+  padding: 8px;
+  background-color: #eff6ff;
+  border: 1px dashed #bfdbfe;
+  color: #2563eb;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* 🎯 Action Buttons */
+.ct-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.ct-btn-cancel {
+  padding: 10px 30px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ct-btn-submit {
+  padding: 10px 48px;
+  border-radius: 8px;
+  border: none;
+  background-color: #0d1b2a;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------- */
+/* 🌙 DARK MODE OVERRIDES (ClassAddCourt Pattern) */
+/* ---------------------------------------------------- */
+.create-tournament-main.dark-mode {
+  background-color: #121315;
+  color: #e1e1e1;
+}
+
+.create-tournament-main.dark-mode .ct-nav {
+  background-color: #1a1c1e;
+  border-bottom: 1px solid #2d3139;
+}
+
+.create-tournament-main.dark-mode .ct-nav button {
+  background-color: #2d3139;
+  color: #e1e1e1;
+}
+
+.create-tournament-main.dark-mode .ct-card {
+  background-color: #1a1c1e;
+  border: 1px solid #2d3139;
+}
+
+.create-tournament-main.dark-mode .ct-card-header h2 {
+  color: #ffffff;
+}
+
+.create-tournament-main.dark-mode .ct-section-title,
+.create-tournament-main.dark-mode .ct-rewards-title {
+  color: #60a5fa;
+}
+
+.create-tournament-main.dark-mode .ct-input-group label {
+  color: #94a3b8;
+}
+
+.create-tournament-main.dark-mode input[type="text"],
+.create-tournament-main.dark-mode input[type="number"],
+.create-tournament-main.dark-mode input[type="date"],
+.create-tournament-main.dark-mode textarea,
+.create-tournament-main.dark-mode select {
+  background-color: #24272b;
+  color: #ffffff;
+  border: 1px solid #383d44;
+}
+
+.create-tournament-main.dark-mode .ct-upload-box {
+  background-color: #24272b;
+  border: 2px dashed #383d44;
+}
+
+.create-tournament-main.dark-mode .ct-rewards-card {
+  background-color: #141618;
+  border-color: #2d3139;
+}
+
+.create-tournament-main.dark-mode .ct-reward-item {
+  background-color: #24272b;
+  border-color: #383d44;
+}
+
+.create-tournament-main.dark-mode .ct-reward-input-wrap input {
+  color: #ffffff;
+}
+
+.create-tournament-main.dark-mode .ct-btn-cancel {
+  background-color: #24272b;
+  color: #e1e1e1;
+  border: 1px solid #383d44;
+}
+
+.create-tournament-main.dark-mode .ct-btn-submit {
+  background-color: #3b82f6;
+  color: white;
+}

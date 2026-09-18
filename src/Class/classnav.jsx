@@ -179,6 +179,9 @@ function ClassNav() {
                   <NavLink className="dropdownlist" to="classpoints">
                     Points & Ranks
                   </NavLink>
+                  <NavLink className="dropdownlist" to="classbanners">
+                    Banners
+                  </NavLink>
                 </span>
               )}
             </div>

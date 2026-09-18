@@ -1,0 +1,408 @@
+* {
+  box-sizing: border-box;
+}
+
+.td-main {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: calc(100% - 230px);
+  height: 100vh;
+  overflow-y: auto;
+  background-color: #f2f4f6;
+  z-index: 30;
+  font-family:
+    "Inter",
+    Work Sans,
+    sans-serif;
+}
+
+.td-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 50px;
+  background-color: #0d1b2a;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.td-nav button {
+  background-color: #ffffff;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.td-body-container {
+  padding: 20px 24px 40px 24px;
+}
+
+.td-card {
+  background-color: #ffffff;
+  border: 1px solid #dce1e8;
+  border-radius: 14px;
+  padding: 24px 30px;
+}
+
+.td-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.td-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.trophy-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: #fef3c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trophy-badge-icon {
+  color: #d97706;
+  font-size: 20px !important;
+}
+
+.td-card-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.td-edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.td-edit-btn.active {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.td-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+}
+
+.td-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0058be;
+  margin: 0 0 16px 0;
+}
+
+.td-input-group {
+  margin-bottom: 16px;
+}
+
+.td-input-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.td-input-group input,
+.td-input-group textarea,
+.td-input-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  outline-color: #3b82f6;
+  font-size: 14px;
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+.td-input-group input:disabled,
+.td-input-group textarea:disabled,
+.td-input-group select:disabled {
+  background-color: #f8fafc;
+  color: #475569;
+  border-color: #e2e8f0;
+  cursor: not-allowed;
+}
+
+.td-grid-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.td-banner-row {
+  display: flex;
+  gap: 16px;
+}
+
+.td-current-banner {
+  width: 55%;
+  height: 105px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  background-color: #e2e8f0;
+}
+
+.td-current-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.td-no-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.td-add-photo-box {
+  width: 45%;
+  height: 105px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.td-add-photo-box.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.td-hidden-file {
+  display: none;
+}
+
+.td-add-icon {
+  color: #94a3b8;
+  font-size: 22px !important;
+}
+
+.td-add-photo-box span {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.td-rewards-card {
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 20px;
+}
+
+.td-rewards-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0058be;
+  margin-bottom: 12px;
+}
+
+.td-rewards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.td-reward-item {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+.td-reward-label {
+  font-size: 10px;
+  color: #64748b;
+  display: block;
+}
+
+.td-reward-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.td-reward-input-wrap input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 13px;
+  background: transparent;
+}
+
+.td-add-rank-btn {
+  width: 100%;
+  padding: 8px;
+  background-color: #eff6ff;
+  border: 1px dashed #bfdbfe;
+  color: #2563eb;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.td-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.td-btn-cancel {
+  padding: 10px 30px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.td-btn-submit {
+  padding: 10px 48px;
+  border-radius: 8px;
+  border: none;
+  background-color: #0d1b2a;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.td-btn-submit.disabled-btn {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 🌙 DARK MODE OVERRIDES */
+.td-main.dark-mode {
+  background-color: #121315;
+  color: #e1e1e1;
+}
+
+.td-main.dark-mode .td-nav {
+  background-color: #1a1c1e;
+  border-bottom: 1px solid #2d3139;
+}
+
+.td-main.dark-mode .td-nav button {
+  background-color: #2d3139;
+  color: #e1e1e1;
+}
+
+.td-main.dark-mode .td-card {
+  background-color: #1a1c1e;
+  border: 1px solid #2d3139;
+}
+
+.td-main.dark-mode .td-card-header h2 {
+  color: #ffffff;
+}
+
+.td-main.dark-mode .td-section-title,
+.td-main.dark-mode .td-rewards-title {
+  color: #60a5fa;
+}
+
+.td-main.dark-mode .td-input-group label {
+  color: #94a3b8;
+}
+
+.td-main.dark-mode input[type="text"],
+.td-main.dark-mode input[type="number"],
+.td-main.dark-mode input[type="date"],
+.td-main.dark-mode textarea,
+.td-main.dark-mode select {
+  background-color: #24272b;
+  color: #ffffff;
+  border: 1px solid #383d44;
+}
+
+.td-main.dark-mode input:disabled,
+.td-main.dark-mode textarea:disabled,
+.td-main.dark-mode select:disabled {
+  background-color: #141618;
+  color: #94a3b8;
+  border-color: #2d3139;
+}
+
+.td-main.dark-mode .td-add-photo-box {
+  background-color: #24272b;
+  border-color: #383d44;
+}
+
+.td-main.dark-mode .td-rewards-card {
+  background-color: #141618;
+  border-color: #2d3139;
+}
+
+.td-main.dark-mode .td-reward-item {
+  background-color: #24272b;
+  border-color: #383d44;
+}
+
+.td-main.dark-mode .td-reward-input-wrap input {
+  color: #ffffff;
+}
+
+.td-main.dark-mode .td-btn-cancel {
+  background-color: #24272b;
+  color: #e1e1e1;
+  border: 1px solid #383d44;
+}
+
+.td-main.dark-mode .td-btn-submit {
+  background-color: #3b82f6;
+  color: white;
+}
