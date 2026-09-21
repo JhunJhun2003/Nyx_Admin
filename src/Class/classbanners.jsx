@@ -141,7 +141,7 @@ function ClassBannners() {
         <div className="tb-stat-divider" />
 
         {/* Active On App */}
-        <div className="tb-stat-box">
+        {/* <div className="tb-stat-box">
           <div className="tb-stat-icon-wrapper active">
             <span className="tb-pulse-ring"></span>
             <CheckCircleOutlineIcon className="tb-stat-icon-svg active" />
@@ -150,7 +150,7 @@ function ClassBannners() {
             <span className="tb-stat-label">ACTIVE ON APP</span>
             <span className="tb-stat-value">{activeBanners}</span>
           </div>
-        </div>
+        </div> */}
 
         <div className="tb-info-box">
           <InfoOutlinedIcon className="tb-info-icon" />
@@ -167,23 +167,23 @@ function ClassBannners() {
           <div key={item.id} className="tb-card">
             <div className="tb-card-img-wrapper">
               <img src={item.imageUrl} alt="Banner" className="tb-card-img" />
-              <span
+              {/* <span
                 className={`tb-badge ${item.isActive ? "active" : "inactive"}`}
               >
                 <span className="tb-badge-dot" />
                 {item.isActive ? "Active" : "Inactive"}
-              </span>
+              </span> */}
             </div>
 
             <div className="tb-card-footer">
               <label className="tb-checkbox-label">
-                <input
+                {/* <input
                   type="checkbox"
                   checked={item.isActive}
                   onChange={() => handleToggleActive(item.id)}
                   className="tb-checkbox"
                 />
-                <span className="tb-checkbox-text">Active immediately</span>
+                <span className="tb-checkbox-text">Active immediately</span> */}
               </label>
 
               <div className="tb-card-actions">
@@ -260,7 +260,7 @@ function ClassBannners() {
               </div>
 
               <div className="tb-status-section">
-                <span className="tb-upload-label">Status on App</span>
+                {/* <span className="tb-upload-label">Status on App</span>
                 <label className="tb-checkbox-label">
                   <input
                     type="checkbox"
@@ -269,7 +269,7 @@ function ClassBannners() {
                     className="tb-checkbox"
                   />
                   <span className="tb-checkbox-text">Active immediately</span>
-                </label>
+                </label> */}
               </div>
             </div>
 
