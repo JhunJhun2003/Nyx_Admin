@@ -4,15 +4,16 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import CloseIcon from "@mui/icons-material/Close";
-import { Context } from "../Hooks/context"; // Context Path အမှန် စစ်ပေးပါ
+import { Context } from "../Hooks/context";
 import "../classCss/classenrollments.css";
 
-// 🎯 KBZ Pay Proof Image Preview ပါဝင်သော Mock Data
+// 🎯 Data များကို တိုတိုနှင့် သေသပ်အောင် ပြင်ဆင်ထားပါသည်
 const INITIAL_DATA = [
   {
     id: "#1",
     player: "Aung Aung",
     contact: "+959 1234 56789",
+    address: "Pyay Road, Kamayut, Yangon", // တိုတိုလေး ပြင်ထားသည်
     venue: "Badminton / Court A",
     tournament: "Smash Summer Open 2026",
     appDate: "Oct 12, 2026",
@@ -26,6 +27,7 @@ const INITIAL_DATA = [
     id: "#2",
     player: "Kyaw Kyaw",
     contact: "+959 9876 54321",
+    address: "Bogyoke Street, Latha, Yangon",
     venue: "Badminton / Court B",
     tournament: "Weekend Shuttle Masters",
     appDate: "Oct 13, 2026",
@@ -39,6 +41,7 @@ const INITIAL_DATA = [
     id: "#3",
     player: "Min Min",
     contact: "+959 4567 89123",
+    address: "78th St, 30x31 St, Mandalay",
     venue: "Badminton / Court A",
     tournament: "Smash Summer Open 2026",
     appDate: "Oct 14, 2026",
@@ -52,6 +55,7 @@ const INITIAL_DATA = [
     id: "#4",
     player: "Su Su",
     contact: "+959 1111 22222",
+    address: "University Avenue, Bahan, Yangon",
     venue: "Badminton / Court C",
     tournament: "National Badminton Championship",
     appDate: "Jan 10, 2026",
@@ -65,6 +69,7 @@ const INITIAL_DATA = [
     id: "#5",
     player: "Zaw Zaw",
     contact: "+959 3333 44444",
+    address: "Main Road, Mawlamyine",
     venue: "Badminton / Court B",
     tournament: "Weekend Shuttle Masters",
     appDate: "Oct 15, 2026",
@@ -77,7 +82,6 @@ const INITIAL_DATA = [
 ];
 
 function ClassEnrollments() {
-  // 🌙 Dark Mode Detection
   const contextData = useContext(Context);
   const outletContext = useOutletContext() || {};
   const { isDark: parentIsDark } = outletContext;
@@ -85,16 +89,14 @@ function ClassEnrollments() {
   const isDark =
     parentIsDark ?? contextData?.classBackColor?.toLowerCase() === "#1a1c1e";
 
-  // State Management
   const [activeTab, setActiveTab] = useState("Pending");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [enrollments, setEnrollments] = useState(INITIAL_DATA);
-  const [selectedProof, setSelectedProof] = useState(null); // Proof Modal State
+  const [selectedProof, setSelectedProof] = useState(null);
 
   const ITEMS_PER_PAGE = 5;
 
-  // Approve / Reject Handler
   const handleStatusChange = (id, newStatus) => {
     setEnrollments((prev) =>
       prev.map((item) =>
@@ -103,19 +105,19 @@ function ClassEnrollments() {
     );
   };
 
-  // Filtered Data
   const filteredData = useMemo(() => {
     return enrollments.filter((item) => {
       const matchesTab = item.status === activeTab;
       const matchesSearch =
         item.player.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.tournament.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.contact.includes(searchTerm);
+        item.contact.includes(searchTerm) ||
+        (item.address &&
+          item.address.toLowerCase().includes(searchTerm.toLowerCase()));
       return matchesTab && matchesSearch;
     });
   }, [enrollments, activeTab, searchTerm]);
 
-  // Pagination Logic
   const totalEntries = filteredData.length;
   const totalPages = Math.ceil(totalEntries / ITEMS_PER_PAGE) || 1;
 
@@ -126,16 +128,15 @@ function ClassEnrollments() {
 
   const emptyRowsCount = Math.max(0, ITEMS_PER_PAGE - paginatedData.length);
 
-  // CSV Export
   const handleExport = () => {
     if (filteredData.length === 0) return alert("No data to export!");
 
     const headers = [
-      "ID,PLAYER NAME,CONTACT NUMBER,VENUE / COURT,TOURNAMENT NAME,APPLICATION DATE,SUBMISSION DATE,STATUS\n",
+      "ID,PLAYER NAME,CONTACT NUMBER,ADDRESS,VENUE / COURT,TOURNAMENT NAME,APPLICATION DATE,SUBMISSION DATE,STATUS\n",
     ];
     const rows = filteredData.map(
       (d) =>
-        `"${d.id}","${d.player}","${d.contact}","${d.venue}","${d.tournament}","${d.appDate} ${d.appTime}","${d.subDate}","${d.status}"`,
+        `"${d.id}","${d.player}","${d.contact}","${d.address}","${d.venue}","${d.tournament}","${d.appDate} ${d.appTime}","${d.subDate}","${d.status}"`,
     );
 
     const blob = new Blob([headers + rows.join("\n")], { type: "text/csv" });
@@ -148,7 +149,6 @@ function ClassEnrollments() {
 
   return (
     <div className={`pe-container ${isDark ? "dark-mode" : ""}`}>
-      {/* HEADER SECTION */}
       <div className="pe-header">
         <div className="pe-icon-box">
           <DescriptionOutlinedIcon
@@ -166,9 +166,7 @@ function ClassEnrollments() {
         </div>
       </div>
 
-      {/* MAIN CARD */}
       <div className="pe-card">
-        {/* CONTROLS */}
         <div className="pe-controls">
           <div className="pe-tabs">
             {["Pending", "Approved", "Rejected"].map((tab) => {
@@ -217,6 +215,7 @@ function ClassEnrollments() {
                 <th>ID</th>
                 <th>PLAYER NAME</th>
                 <th>CONTACT NUMBER</th>
+                <th>ADDRESS</th>
                 <th>VENUE / COURT</th>
                 <th>TOURNAMENT NAME</th>
                 <th>APPLICATION DATE</th>
@@ -229,8 +228,9 @@ function ClassEnrollments() {
               {paginatedData.map((row) => (
                 <tr key={row.id}>
                   <td className="pe-id-cell">{row.id}</td>
-                  <td className="pe-name-cell">{row.player}</td>
-                  <td className="pe-sub-text">{row.contact}</td>
+                  <td className="pe-name-cell pe-contact-cell">{row.player}</td>
+                  <td className="pe-sub-text pe-contact-cell">{row.contact}</td>
+                  <td className="pe-sub-text pe-address-cell">{row.address}</td>
                   <td className="pe-sub-text">{row.venue}</td>
                   <td className="pe-tournament-cell">{row.tournament}</td>
                   <td>
@@ -239,7 +239,6 @@ function ClassEnrollments() {
                   </td>
                   <td className="pe-sub-text">{row.subDate}</td>
                   <td>
-                    {/* 🖼️ Image Click Handler for Modal */}
                     <img
                       src={row.proof}
                       alt="proof"
@@ -280,17 +279,15 @@ function ClassEnrollments() {
                 </tr>
               ))}
 
-              {/* EMPTY ROWS */}
               {Array.from({ length: emptyRowsCount }).map((_, idx) => (
                 <tr key={`empty-${idx}`} className="pe-empty-row">
-                  <td colSpan={9}>&nbsp;</td>
+                  <td colSpan={10}>&nbsp;</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        {/* FOOTER */}
         <div className="pe-footer">
           <span className="pe-entries-info">
             Showing{" "}
@@ -329,7 +326,6 @@ function ClassEnrollments() {
         </div>
       </div>
 
-      {/* 💳 PAYMENT PROOF MODAL CARD */}
       {selectedProof && (
         <div
           className="pe-modal-overlay"

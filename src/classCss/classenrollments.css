@@ -179,6 +179,23 @@
   color: #475569;
 }
 
+/* 📞 Contact Number ကို တစ်ကြောင်းတည်းပဲ ပေါ်စေရန် */
+.pe-contact-cell {
+  white-space: nowrap !important;
+}
+
+/* 🏠 Address ကို အကျယ် ကန့်သတ်ပြီး နှစ်ကြောင်းခွဲ ပေါ်စေရန် */
+.pe-address-cell {
+  max-width: 180px;
+  white-space: normal;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .pe-tournament-cell {
   font-weight: 600;
   color: #1e293b;
