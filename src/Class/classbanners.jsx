@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useOutletContext } from "react-router-dom";
 import CollectionsOutlinedIcon from "@mui/icons-material/CollectionsOutlined";
 import ViewCarouselOutlinedIcon from "@mui/icons-material/ViewCarouselOutlined"; // TOTAL BANNERS အတွက် Icon သစ်
@@ -12,27 +12,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Context } from "../Hooks/context";
 import "../classCss/classbanners.css";
 
-const INITIAL_BANNERS = [
-  {
-    id: "BNR-1",
-    imageUrl:
-      "https://images.unsplash.com/photo-1511067007398-7e4b90cfa4bc?q=80&w=800&auto=format&fit=crop",
-    isActive: true,
-  },
-  {
-    id: "BNR-2",
-    imageUrl:
-      "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=800&auto=format&fit=crop",
-    isActive: false,
-  },
-  {
-    id: "BNR-3",
-    imageUrl:
-      "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=800&auto=format&fit=crop",
-    isActive: true,
-  },
-];
-
 function ClassBannners() {
   const contextData = useContext(Context);
   const outletContext = useOutletContext() || {};
@@ -41,7 +20,7 @@ function ClassBannners() {
   const isDark =
     parentIsDark ?? contextData?.classBackColor?.toLowerCase() === "#1a1c1e";
 
-  const [banners, setBanners] = useState(INITIAL_BANNERS);
+  const [banners, setBanners] = useState([]);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
@@ -50,17 +29,55 @@ function ClassBannners() {
   const [newImage, setNewImage] = useState(null);
   const [newImagePreview, setNewImagePreview] = useState("");
   const [isActiveImmediately, setIsActiveImmediately] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
 
   const totalBanners = banners.length;
-  const activeBanners = useMemo(() => {
-    return banners.filter((b) => b.isActive).length;
-  }, [banners]);
 
-  const handleToggleActive = (id) => {
-    setBanners((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, isActive: !b.isActive } : b)),
-    );
-  };
+  useEffect(() => {
+    const loadTournamentBanners = async () => {
+      try {
+        const response = await fetch(
+          "http://130.94.99.9:5000/api/tournament/banner/showbanner",
+          {
+            headers: contextData?.Token
+              ? { Authorization: `Bearer ${contextData.Token}` }
+              : undefined,
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`Tournament banner fetch failed (${response.status})`);
+        }
+
+        const responseData = await response.json();
+        const bannerData = responseData.result || responseData.data || responseData;
+        const bannerList = Array.isArray(bannerData)
+          ? bannerData
+          : bannerData
+            ? [bannerData]
+            : [];
+
+        const loadedBanners = bannerList
+          .map((banner, index) => ({
+            id: banner.id || banner.banner_id || `BNR-${index + 1}`,
+            imageUrl:
+              banner.banner_image_url ||
+              banner.image_url ||
+              banner.banner_image ||
+              banner.image_path ||
+              banner.url,
+            isActive: banner.isActive ?? banner.is_active ?? true,
+          }))
+          .filter((banner) => banner.imageUrl);
+
+        setBanners(loadedBanners);
+      } catch (error) {
+        console.error("Load tournament banners error:", error);
+      }
+    };
+
+    loadTournamentBanners();
+  }, [contextData?.Token]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -70,18 +87,54 @@ function ClassBannners() {
     }
   };
 
-  const handleAddBanner = (e) => {
+  const handleAddBanner = async (e) => {
     e.preventDefault();
-    if (!newImagePreview) return;
+    if (!newImage || isUploading) return;
 
-    const newBanner = {
-      id: `BNR-${Date.now()}`,
-      imageUrl: newImagePreview,
-      isActive: isActiveImmediately,
-    };
+    const formData = new FormData();
+    formData.append("banner_image", newImage);
+    setIsUploading(true);
 
-    setBanners([newBanner, ...banners]);
-    closeAddModal();
+    try {
+      const response = await fetch(
+        "http://130.94.99.9:5000/api/tournament/banner/addbanner",
+        {
+          method: "POST",
+          headers: contextData?.Token
+            ? { Authorization: `Bearer ${contextData.Token}` }
+            : undefined,
+          body: formData,
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`Tournament banner upload failed (${response.status})`);
+      }
+
+      const responseData = await response.json().catch(() => ({}));
+      const banner = responseData.result || responseData.data || responseData;
+      const imageUrl =
+        banner.banner_image_url ||
+        banner.image_url ||
+        banner.banner_image ||
+        banner.image_path ||
+        banner.url ||
+        newImagePreview;
+
+      setBanners((current) => [
+        {
+          id: banner.id || banner.banner_id || `BNR-${Date.now()}`,
+          imageUrl,
+          isActive: isActiveImmediately,
+        },
+        ...current,
+      ]);
+      closeAddModal();
+    } catch (error) {
+      console.error("Create tournament banner error:", error);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const closeAddModal = () => {
@@ -91,10 +144,28 @@ function ClassBannners() {
     setIsActiveImmediately(true);
   };
 
-  const confirmDelete = () => {
-    if (deleteTargetId) {
-      setBanners((prev) => prev.filter((b) => b.id !== deleteTargetId));
+  const confirmDelete = async () => {
+    if (!deleteTargetId) return;
+
+    try {
+      const response = await fetch(
+        `http://130.94.99.9:5000/api/tournament/banner/deletebanner/${deleteTargetId}`,
+        {
+          method: "DELETE",
+          headers: contextData?.Token
+            ? { Authorization: `Bearer ${contextData.Token}` }
+            : undefined,
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`Tournament banner delete failed (${response.status})`);
+      }
+
+      setBanners((prev) => prev.filter((banner) => banner.id !== deleteTargetId));
       setDeleteTargetId(null);
+    } catch (error) {
+      console.error("Delete tournament banner error:", error);
     }
   };
 
@@ -279,11 +350,11 @@ function ClassBannners() {
               </button>
               <button
                 className="tb-btn-upload"
-                disabled={!newImagePreview}
+                disabled={!newImagePreview || isUploading}
                 onClick={handleAddBanner}
               >
                 <CloudUploadOutlinedIcon style={{ fontSize: "18px" }} />
-                Upload Banner
+                {isUploading ? "Uploading..." : "Upload Banner"}
               </button>
             </div>
           </div>
