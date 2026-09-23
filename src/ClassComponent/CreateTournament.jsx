@@ -222,10 +222,13 @@ function CreateTournament() {
 
               <div className="ct-input-group">
                 <label>MATCH FORMAT</label>
-                <select required defaultValue="Singles">
-                  <option value="Singles">Singles</option>
-                  <option value="Doubles">Doubles</option>
-                </select>
+                <input
+                  type="text"
+                  name="format"
+                  placeholder="Singles"
+                  defaultValue="Singles"
+                  required
+                />
               </div>
 
               <div className="ct-input-group">

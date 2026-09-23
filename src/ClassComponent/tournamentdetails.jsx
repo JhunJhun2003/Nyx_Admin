@@ -251,15 +251,14 @@ function TournamentDetails() {
 
               <div className="td-input-group">
                 <label>MATCH FORMAT</label>
-                <select
+                <input
+                  type="text"
                   name="format"
                   value={formData.format}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                >
-                  <option value="Singles">Singles</option>
-                  <option value="Doubles">Doubles</option>
-                </select>
+                  required
+                />
               </div>
 
               <div className="td-input-group">
