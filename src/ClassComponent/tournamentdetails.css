@@ -248,16 +248,51 @@
 }
 
 .td-reward-item {
+  position: relative;
   background-color: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
-  padding: 6px 8px;
+  padding: 6px 24px 6px 8px;
 }
 
 .td-reward-label {
   font-size: 10px;
   color: #64748b;
   display: block;
+}
+
+.td-rank-edit-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  color: #334155;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 0;
+  margin: 0 0 4px;
+}
+
+.td-remove-rank-btn {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.td-remove-rank-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.td-remove-rank-btn:hover:not(:disabled) {
+  color: #ef4444;
 }
 
 .td-reward-input-wrap {

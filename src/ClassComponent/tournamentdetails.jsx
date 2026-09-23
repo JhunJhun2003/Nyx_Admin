@@ -40,6 +40,7 @@ function TournamentDetails() {
     startDate: incomingData?.startDate || "",
     endDate: incomingData?.endDate || "",
     time: incomingData?.time || "",
+    address: incomingData?.address || "",
     fee: incomingData?.fee || "",
     slots: incomingData?.slots || "",
   });
@@ -72,6 +73,16 @@ function TournamentDetails() {
     const updated = [...rankPoints];
     updated[index].value = val;
     setRankPoints(updated);
+  };
+
+  const handleRankChange = (index, val) => {
+    const updated = [...rankPoints];
+    updated[index].rank = val;
+    setRankPoints(updated);
+  };
+
+  const handleRemoveRankPoint = (index) => {
+    setRankPoints((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleAddRankPoint = () => {
@@ -219,7 +230,23 @@ function TournamentDetails() {
                 <div className="td-rewards-grid">
                   {rankPoints.map((item, i) => (
                     <div key={i} className="td-reward-item">
-                      <span className="td-reward-label">{item.rank}</span>
+                      <button
+                        type="button"
+                        className="td-remove-rank-btn"
+                        onClick={() => handleRemoveRankPoint(i)}
+                        aria-label={`Remove ${item.rank}`}
+                        disabled={!isEditing}
+                      >
+                        ×
+                      </button>
+                      <input
+                        type="text"
+                        className="td-rank-edit-input"
+                        value={item.rank}
+                        onChange={(e) => handleRankChange(i, e.target.value)}
+                        disabled={!isEditing}
+                        placeholder="Rank name"
+                      />
                       <div className="td-reward-input-wrap">
                         <TrophyIcon sx={{ fontSize: 13, color: "#94a3b8" }} />
                         <input
@@ -251,14 +278,15 @@ function TournamentDetails() {
 
               <div className="td-input-group">
                 <label>MATCH FORMAT</label>
-                <input
-                  type="text"
+                <select
                   name="format"
                   value={formData.format}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  required
-                />
+                >
+                  <option value="Singles">Singles</option>
+                  <option value="Doubles">Doubles</option>
+                </select>
               </div>
 
               <div className="td-input-group">
@@ -320,6 +348,18 @@ function TournamentDetails() {
                   value={formData.time}
                   onChange={handleInputChange}
                   disabled={!isEditing}
+                />
+              </div>
+
+              <div className="td-input-group">
+                <label>TOURNAMENT ADDRESS</label>
+                <input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                  required
                 />
               </div>
 

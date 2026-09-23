@@ -61,6 +61,16 @@ function CreateTournament() {
     setRankPoints(updated);
   };
 
+  const handleRankChange = (index, val) => {
+    const updated = [...rankPoints];
+    updated[index].rank = val;
+    setRankPoints(updated);
+  };
+
+  const handleRemoveRankPoint = (index) => {
+    setRankPoints((prev) => prev.filter((_, i) => i !== index));
+  };
+
   // Submit Handler
   const handleCreateTournament = async (e) => {
     e.preventDefault();
@@ -192,7 +202,21 @@ function CreateTournament() {
                 <div className="ct-rewards-grid">
                   {rankPoints.map((item, i) => (
                     <div key={i} className="ct-reward-item">
-                      <span className="ct-reward-label">{item.rank}</span>
+                      <button
+                        type="button"
+                        className="ct-remove-rank-btn"
+                        onClick={() => handleRemoveRankPoint(i)}
+                        aria-label={`Remove ${item.rank}`}
+                      >
+                        ×
+                      </button>
+                      <input
+                        type="text"
+                        className="ct-rank-edit-input"
+                        value={item.rank}
+                        onChange={(e) => handleRankChange(i, e.target.value)}
+                        placeholder="Rank name"
+                      />
                       <div className="ct-reward-input-wrap">
                         <TrophyIcon sx={{ fontSize: 13, color: "#94a3b8" }} />
                         <input
@@ -222,13 +246,10 @@ function CreateTournament() {
 
               <div className="ct-input-group">
                 <label>MATCH FORMAT</label>
-                <input
-                  type="text"
-                  name="format"
-                  placeholder="Singles"
-                  defaultValue="Singles"
-                  required
-                />
+                <select required defaultValue="Singles">
+                  <option value="Singles">Singles</option>
+                  <option value="Doubles">Doubles</option>
+                </select>
               </div>
 
               <div className="ct-input-group">
@@ -266,6 +287,16 @@ function CreateTournament() {
               <div className="ct-input-group">
                 <label>TOURNAMENT TIME</label>
                 <input type="text" placeholder="09:00 AM - 05:00 PM" required />
+              </div>
+
+              <div className="ct-input-group">
+                <label>TOURNAMENT ADDRESS</label>
+                <input
+                  type="text"
+                  name="address"
+                  placeholder="e.g. 123 Sports Avenue, Yangon"
+                  required
+                />
               </div>
 
               <div className="ct-input-group">
