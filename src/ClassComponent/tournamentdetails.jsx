@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext, useEffect } from "react";
+import React, { useState, useRef, useContext } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useOutletContext } from "react-router-dom";
 import BackIcon from "@mui/icons-material/ArrowBackIosNew";
@@ -34,9 +34,9 @@ function TournamentDetails() {
   const [formData, setFormData] = useState({
     name: incomingData?.title || "",
     description: incomingData?.description || "",
-    format: incomingData?.format || "Singles",
-    category: incomingData?.category || "Badminton",
-    courtNumber: incomingData?.court || "Court 1",
+    format: String(incomingData?.formatId ?? incomingData?.format ?? "1"),
+    category: String(incomingData?.categoryId ?? incomingData?.category ?? ""),
+    courtNumber: String(incomingData?.courtId ?? incomingData?.court ?? ""),
     startDate: incomingData?.startDate || "",
     endDate: incomingData?.endDate || "",
     time: incomingData?.time || "",
@@ -46,8 +46,12 @@ function TournamentDetails() {
   });
 
   const [bannerPreview, setBannerPreview] = useState(incomingData?.image || "");
+  const [bannerFile, setBannerFile] = useState(null);
   const [rankPoints, setRankPoints] = useState(
-    incomingData?.rankPoints || [
+    incomingData?.rankPoints?.map((item) => ({
+      rank: item.rank || `${item.rank_position}th Place`,
+      value: String(item.value ?? item.points ?? ""),
+    })) || [
       { rank: "1st Place", value: "500" },
       { rank: "2nd Place", value: "250" },
       { rank: "3rd Place", value: "100" },
@@ -65,6 +69,7 @@ function TournamentDetails() {
   const handleImageChange = (e) => {
     const img = e.target.files[0];
     if (img) {
+      setBannerFile(img);
       setBannerPreview(URL.createObjectURL(img));
     }
   };
@@ -103,7 +108,57 @@ function TournamentDetails() {
     }
 
     try {
-      // API Update Call သို့မဟုတ် State Sync နေရာ
+      const requestData = new FormData();
+      const tournamentFee = String(formData.fee || "").replace(/,/g, "");
+
+      requestData.append("tournament_name", formData.name);
+      requestData.append("rules_description", formData.description);
+      requestData.append("match_format_id", formData.format);
+      requestData.append("court_category_id", formData.category);
+      requestData.append("court_id", formData.courtNumber);
+      requestData.append("start_date", formData.startDate);
+      requestData.append("end_date", formData.endDate);
+      requestData.append(
+        "dates",
+        JSON.stringify([formData.startDate, formData.endDate]),
+      );
+      requestData.append("tournament_time", formData.time);
+      requestData.append("tournament_address", formData.address);
+      requestData.append("tournament_fee", tournamentFee);
+      requestData.append("max_participants", formData.slots);
+      requestData.append("status_id", "1");
+      requestData.append(
+        "rank_points",
+        JSON.stringify(
+          rankPoints.map((item, index) => ({
+            rank_position: index + 1,
+            points: Number(item.value),
+          })),
+        ),
+      );
+
+      if (bannerFile) {
+        requestData.append("banner_image", bannerFile);
+      }
+
+      const response = await fetch(
+        `http://130.94.99.9:5000/api/tournament/updatetournament/${incomingData?.id}`,
+        {
+          method: "PUT",
+          headers: contextData?.Token
+            ? { Authorization: `Bearer ${contextData.Token}` }
+            : undefined,
+          body: requestData,
+        },
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          errorText || `Tournament update failed (${response.status})`,
+        );
+      }
+
       await Swal.fire({
         title: "Success",
         text: "Tournament details updated successfully!",
@@ -284,8 +339,8 @@ function TournamentDetails() {
                   onChange={handleInputChange}
                   disabled={!isEditing}
                 >
-                  <option value="Singles">Singles</option>
-                  <option value="Doubles">Doubles</option>
+                  <option value="1">Singles</option>
+                  <option value="2">Group</option>
                 </select>
               </div>
 
@@ -297,6 +352,9 @@ function TournamentDetails() {
                   onChange={handleInputChange}
                   disabled={!isEditing}
                 >
+                  <option value={String(incomingData?.categoryId ?? "badminton")}>
+                    {incomingData?.category || "Badminton"}
+                  </option>
                   <option value="badminton">Badminton</option>
                   <option value="tennis">Tennis</option>
                   <option value="football">Football</option>
@@ -311,7 +369,10 @@ function TournamentDetails() {
                   onChange={handleInputChange}
                   disabled={!isEditing}
                 >
-                  <option value="Court 1">Court 1</option>
+                  <option value={String(incomingData?.courtId ?? "Court 1")}>
+                    {incomingData?.court || "Court 1"}
+                  </option>
+                  <option value="1">Court 1</option>
                   <option value="Court 2">Court 2</option>
                   <option value="Court 3">Court 3</option>
                 </select>

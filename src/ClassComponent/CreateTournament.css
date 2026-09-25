@@ -258,6 +258,14 @@
   gap: 4px;
 }
 
+.ct-rank-label {
+  display: block;
+  color: #334155;
+  font-size: 11px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
 .ct-reward-input-wrap input {
   border: none;
   outline: none;
@@ -371,6 +379,10 @@
 .create-tournament-main.dark-mode .ct-reward-item {
   background-color: #24272b;
   border-color: #383d44;
+}
+
+.create-tournament-main.dark-mode .ct-rank-label {
+  color: #e1e1e1;
 }
 
 .create-tournament-main.dark-mode .ct-reward-input-wrap input {

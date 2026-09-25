@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import AddIcon from "@mui/icons-material/Add";
@@ -18,7 +18,7 @@ const Manage = () => {
   const navigate = useNavigate();
 
   // 1. Context မှ Dark Mode ရယူခြင်း
-  const { classBackColor } = useContext(Context);
+  const { classBackColor, Token } = useContext(Context);
   const isDark = classBackColor === "#1A1C1E";
 
   // Dynamic Status တွက်ချက်ပေးသည့် Function
@@ -105,10 +105,80 @@ const Manage = () => {
     },
   ];
 
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+
   // State များ သတ်မှတ်ခြင်း (Delete လုပ်နိုင်ရန် state ပြောင်းထားသည်)
   const [tournaments, setTournaments] = useState(initialTournaments);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+
+  useEffect(() => {
+    const formatDate = (dateValue) => {
+      if (!dateValue) return "";
+
+      const date = String(dateValue).slice(0, 10);
+      const [year, month, day] = date.split("-").map(Number);
+      return new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+      }).format(new Date(year, month - 1, day));
+    };
+
+    const fetchTournaments = async () => {
+      try {
+        setLoadError("");
+        const response = await fetch(
+          "http://130.94.99.9:5000/api/tournament/showtournaments",
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch tournaments (${response.status})`);
+        }
+
+        const result = await response.json();
+        const apiTournaments = Array.isArray(result?.data) ? result.data : [];
+
+        setTournaments(
+          apiTournaments.map((item) => ({
+            id: item.id,
+            title: item.tournament_name,
+            category: String(
+              item.court_category_name || item.court_category_id || "",
+            ).toLowerCase(),
+            startDate: String(item.start_date || "").slice(0, 10),
+            endDate: String(item.end_date || "").slice(0, 10),
+            displayDates: `${formatDate(item.start_date)} - ${formatDate(item.end_date)}`,
+            court: item.court_name || item.court_id,
+            format: item.match_format_name || item.match_format_id,
+            formatId: item.match_format_id,
+            categoryId: item.court_category_id,
+            courtId: item.court_id,
+            slots: item.max_participants,
+            fee: item.tournament_fee,
+            time: item.tournament_time,
+            address: item.tournament_address,
+            description: item.rules_description,
+            image: item.banner_photo,
+            rankPoints: Array.isArray(item.rank_points)
+              ? item.rank_points.map((rankPoint) => ({
+                  rank: `${rankPoint.rank_position}${rankPoint.rank_position === 1 ? "st" : rankPoint.rank_position === 2 ? "nd" : rankPoint.rank_position === 3 ? "rd" : "th"} Place`,
+                  value: String(rankPoint.points),
+                }))
+              : [],
+          })),
+        );
+      } catch (error) {
+        console.error("Tournament fetch error:", error);
+        setLoadError("Unable to load tournaments.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTournaments();
+  }, []);
 
   // Delete Modal အတွက် State
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -123,10 +193,26 @@ const Manage = () => {
   });
 
   // Delete အတည်ပြုသည့် Function
-  const handleDeleteConfirm = () => {
-    if (deleteTarget) {
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+
+    try {
+      const response = await fetch(
+        `http://130.94.99.9:5000/api/tournament/deletetournament/${deleteTarget.id}`,
+        {
+          method: "DELETE",
+          headers: Token ? { Authorization: `Bearer ${Token}` } : undefined,
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`Tournament deletion failed (${response.status})`);
+      }
+
       setTournaments((prev) => prev.filter((t) => t.id !== deleteTarget.id));
       setDeleteTarget(null);
+    } catch (error) {
+      console.error("Tournament delete error:", error);
     }
   };
 
@@ -246,6 +332,18 @@ const Manage = () => {
             <option value="tennis">Tennis</option>
           </select>
         </div>
+
+        {(isLoading || loadError) && (
+          <p
+            style={{
+              margin: "0 0 24px",
+              color: loadError ? "#ef4444" : isDark ? "#cbd5e1" : "#64748b",
+              fontSize: "14px",
+            }}
+          >
+            {loadError || "Loading tournaments..."}
+          </p>
+        )}
 
         {/* TOURNAMENT CARDS GRID */}
         <div
